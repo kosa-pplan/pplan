@@ -31,6 +31,15 @@ body, html {
     align-items: center;
     justify-content: center;
 }
+.middle_main {
+    width: 100%;
+    height: 100%;
+    border: 1px solid navy;
+    flex: 1; /* 남은 공간을 모두 차지하게 합니다 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* footer 클래스를 가진 요소를 중앙 정렬합니다 */
 .footer {

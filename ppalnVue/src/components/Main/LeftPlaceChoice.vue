@@ -4,7 +4,7 @@ export default {
 </script>
 
 <template>
-<div></div>
+<div>LeftPlace</div>
 </template>
 
 <style scoped>

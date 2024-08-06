@@ -4,7 +4,7 @@ export default {
 </script>
 
 <template>
-<div></div>
+<div>LeftCategory</div>
 </template>
 
 <style scoped>
