@@ -6,7 +6,7 @@ export default {
 <template>
 
   <div class="middle">
-    <h3>MiddleCompo</h3>
+    <h3>Middeleadsgkadsjgklasdjglkads jfl;kasdjflk;adsj fl;kasdjfl;ksajlk;f asdl;kfads ljk;</h3>
 
   </div>
 
