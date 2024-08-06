@@ -4,7 +4,10 @@ export default {
 </script>
 
 <template>
-<div></div>
+    <div>
+        <h3>leftPlace</h3>
+    </div>
+
 </template>
 
 <style scoped>

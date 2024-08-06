@@ -41,3 +41,20 @@ body, html {
     align-items: center;
     justify-content: center;
 }
+.left {
+    width: 20%; /* 너비를 20%로 설정 */
+    height: 100%;
+    border: 1px solid black; /* 시각적으로 구분하기 위해 테두리 추가 */
+  }
+  
+.center {
+    width: 60%; /* 너비를 60%로 설정 */
+    height: 100%;
+    border: 1px solid black; /* 시각적으로 구분하기 위해 테두리 추가 */
+  }
+  
+.right {
+    width: 20%; /* 너비를 20%로 설정 */
+    height: 100%;
+    border: 1px solid black; /* 시각적으로 구분하기 위해 테두리 추가 */
+  }
