@@ -1,11 +1,11 @@
 <template>
   <div class="footer">
-    <h3>Footer</h3>
-
+    <h6>ⓒcopyright pplan</h6>
   </div>
 </template>
 
 <script>
+
 export default{
 
 }
