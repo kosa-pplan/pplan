@@ -11,10 +11,16 @@ export default {
 
 <template>
   <div class="middle_main">
-    <LeftCategorySection/>
-    <LeftPlaceChoice/>
-    <CenterPlaceList/>
-    <RightCheckList/>
+    <div class="left">
+      <LeftPlaceChoice/>
+      <LeftCategorySection/>
+    </div>
+    <div class="center">
+      <CenterPlaceList/>
+    </div>
+    <div class="right">
+      <RightCheckList/>
+    </div>
   </div>
 </template>
 
