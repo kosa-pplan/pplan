@@ -1,10 +1,13 @@
 <script>
 export default {
+  name: "LoginCompo"
 }
 </script>
 
 <template>
-<div>센터</div>
+  <div class="middle_main">
+      LOGIN PAGE
+  </div>
 </template>
 
 <style scoped>
