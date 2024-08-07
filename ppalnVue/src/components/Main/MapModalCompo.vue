@@ -10,15 +10,26 @@
   </template>
   
   <script>
-  import html2canvas from 'html2canvas';
-  import jsonData from '@/components/Main/test.json';
+  // import html2canvas from 'html2canvas';
+  // import jsonData from '@/components/Main/test.json';
   
   export default {
+    
     data() {
       return {
         map: null,
+        jsonData: null
       };
     },
+    //props 받기
+    props: {
+    message: {
+      type: String,
+      required: true
+    },
+  },
+    
+  
     mounted() {
       if (window.kakao && window.kakao.maps) {
         this.initMap();
@@ -29,6 +40,23 @@
         script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=86f3b8a4c013ae2ddba3b540b16bc569&libraries=services';
         document.head.appendChild(script);
       }
+
+      // JSON 문자열을 객체로 변환
+    // try {
+    //   this.jsonData = JSON.parse(this.message);
+    // } catch (e) {
+    //   console.error('Invalid JSON data:', e);
+    //   this.jsonData = {}; // 파싱 실패 시 빈 객체 할당
+    // }
+    // this.jsonData = JSON.parse(JSON.stringify(JSON.parse(this.message), null, 2));
+    // this.jsonData = JSON.stringify(JSON.parse(this.message));
+    // this.jsonData = JSON.parse(this.message)
+    // console.log(JSON.parse(this.message))
+    console.log(this.message)
+    console.log(JSON.parse(this.message))
+    this.jsonData = JSON.parse(this.message);
+    // console.log("테스트")
+    // console.log(this.jsonData);
     },
     methods: {
       initMap() {
@@ -41,11 +69,12 @@
         this.drawRoute();
       },
       async drawRoute() {
-        function extractLatLngFromJson() {
+        function extractLatLngFromJson(jsonData) {
           const linePaths = [];
-          console.log('JSON Data:', jsonData);
-  
+          // console.log('JSON Data:', jsonData);
+          
           if (jsonData && jsonData.routes) {
+            
             jsonData.routes.forEach((route) => {
               route.sections.forEach((section) => {
                 section.roads.forEach((road) => {
@@ -97,15 +126,16 @@
         }
       },
       saveMap() {
-        html2canvas(document.getElementById('map')).then((canvas) => {
-          const link = document.createElement('a');
-          link.href = canvas.toDataURL('image/png');
-          link.download = 'map.png';
-          link.click();
-        });
+        // html2canvas(document.getElementById('map')).then((canvas) => {
+        //   const link = document.createElement('a');
+        //   link.href = canvas.toDataURL('image/png');
+        //   link.download = 'map.png';
+        //   link.click();
+        // });
       },
     },
   };
+
   </script>
   
   <style scoped>
