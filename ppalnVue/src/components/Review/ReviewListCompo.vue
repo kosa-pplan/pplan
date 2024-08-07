@@ -4,7 +4,9 @@ export default {
 </script>
 
 <template>
-<div>센터</div>
+  <div class="middle_main">
+      <h5>리뷰</h5>
+  </div>
 </template>
 
 <style scoped>

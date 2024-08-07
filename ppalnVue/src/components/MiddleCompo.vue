@@ -5,10 +5,12 @@ export default {
 
 <template>
 
-  <div class="middle">
-    <h3>Middeleadsgkadsjgklasdjglkads jfl;kasdjflk;adsj fl;kasdjfl;ksajlk;f asdl;kfads ljk;</h3>
+<!--  <div class="middle">
+    <h3>MiddleCompo</h3>
 
-  </div>
+  </div>-->
+
+  <router-view></router-view>
 
 </template>
 
