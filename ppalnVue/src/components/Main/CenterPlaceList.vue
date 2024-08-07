@@ -22,7 +22,13 @@ export default {
     handleBoxClick(index) {
       const place = this.placeSelectedColor[index];
       if (place) {
-        console.log(`Clicked on ${place.name} with coordinates: (${place.x}, ${place.y})`);
+        const newItem = {
+          name:  place.name,
+          x: place.x,
+          y:place.y,
+        };
+        this.$store.dispatch('addItem', newItem); // Vuex 액션을 호출하여 아이템을 추가합니다
+        console.log(`Clicked on ${place.name} with coordinates: (${place.x},${place.y} )`);
         // 필요에 따라 아래 코드로 데이터를 다른 컴포넌트로 전달 가능
         this.$emit('placeSelected', place);
       } else {

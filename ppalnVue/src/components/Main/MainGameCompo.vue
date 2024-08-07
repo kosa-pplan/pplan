@@ -9,6 +9,7 @@ export default {
   data() {
     return {
       selectedColor: '' // 선택된 색상을 저장
+
     };
   },
   methods: {

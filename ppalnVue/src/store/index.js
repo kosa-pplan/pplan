@@ -13,11 +13,11 @@ const store = new Vuex.Store({
         nextIdx: 1
     },
     mutations: {
-        ADD_ITEM(state, name) {
+        ADD_ITEM(state, { name, x = 0, y = 0 }) {
             state.items.push({
                 name: name,
-                x:0,
-                y:state.nextIdx++,
+                x: x,
+                y: y,
                 idx: state.nextIdx++
             });
         },
@@ -29,10 +29,8 @@ const store = new Vuex.Store({
         }
     },
     actions: {
-        addItem({ commit }, name) {
-            if (name.trim()) {
-                commit('ADD_ITEM', name.trim());
-            }
+        addItem({ commit }, item) {
+            commit('ADD_ITEM', item);
         },
         deleteItem({ commit }, id) {
             commit('DELETE_ITEM', id);
