@@ -3,6 +3,7 @@ import reviewListCompo from "@/components/Review/ReviewListCompo.vue";
 import loginCompo from "@/components/User/LoginCompo.vue";
 import signUpCompo from "@/components/User/SignUpCompo.vue";
 import MiddleCompo from "@/components/MiddleCompo.vue";
+import reviewWriteCompo from "@/components/Review/ReviewWriteCompo.vue";
 
 export default [
     {
@@ -17,6 +18,10 @@ export default [
             {
                 path: '/review',
                 component: reviewListCompo,
+            },
+            {
+                path: '/review/write',
+                component: reviewWriteCompo,
             },
             {
                 path: '/login',
