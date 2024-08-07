@@ -3,7 +3,7 @@ export default {}
 </script>
 
 <template>
-  <div></div>
+  <div>Right</div>
 </template>
 
 <style scoped>

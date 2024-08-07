@@ -21,7 +21,7 @@ public class DataSourceTests {
           Connection con =
                   DriverManager.getConnection(
                           "jdbc:oracle:thin:@localhost:1521/xepdb1"
-                          ,"pplan","ppaln");
+                          ,"pplan","pplan");
           System.out.println(con);
       } catch (SQLException e) {
           System.out.println(e.getMessage());
