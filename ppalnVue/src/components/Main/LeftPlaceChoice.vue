@@ -4,7 +4,7 @@ export default {
     return {
       isModalOpen: false,
       selectedColor: '',
-      colors: ['blue', 'pink', 'lightgreen', 'orange', 'purple'],
+      colors: ['blue', 'pink', 'green', 'orange', 'purple'],
     };
   },
   methods: {
@@ -17,6 +17,10 @@ export default {
     chooseRandomColor() {
       const randomIndex = Math.floor(Math.random() * this.colors.length);
       this.selectedColor = this.colors[randomIndex];
+    },
+    selectColor() {
+      this.$emit('colorSelected', this.selectedColor); // 선택된 색상을 부모 컴포넌트로 전달
+      this.closeModal();
     }
   }
 };
@@ -30,8 +34,11 @@ export default {
         <h2>지역 선택</h2>
         <button @click="chooseRandomColor">랜덤 색상 선택</button>
         <div :style="{backgroundColor:selectedColor}" class="selected-color"></div>
-        <button @click="closeModal">선택</button>
+        <button @click="selectColor">선택</button>
       </div>
+    </div>
+    <div>
+      선택된 색상 : {{ selectedColor}}
     </div>
   </aside>
 </template>
@@ -57,6 +64,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 .modal-content {
   background: white;
