@@ -10,7 +10,7 @@
 </template>
 
 <script>
-// import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 
 export default {
   data() {
@@ -136,12 +136,12 @@ export default {
       }
     },
     saveMap() {
-      // html2canvas(document.getElementById('map')).then((canvas) => {
-      //   const link = document.createElement('a');
-      //   link.href = canvas.toDataURL('image/png');
-      //   link.download = 'map.png';
-      //   link.click();
-      // });
+      html2canvas(document.getElementById('map')).then((canvas) => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'map.png';
+        link.click();
+      });
     },
   },
 };
