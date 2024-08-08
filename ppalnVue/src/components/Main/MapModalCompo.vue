@@ -6,17 +6,25 @@
     <div>
       <button @click="saveMap">저장</button>
     </div>
+
+    <!-- 확인 모달 컴포넌트 -->
+    <SaveConfirmModal v-if="showConfirmModal" @confirm="handleSave" @close="showConfirmModal = false" />
   </div>
 </template>
 
 <script>
-import html2canvas from 'html2canvas';
+import axios from 'axios';
+import SaveConfirmModal from './SaveConfirmModal.vue'; // 추가된 모달 컴포넌트
 
 export default {
+  components: {
+    SaveConfirmModal
+  },
   data() {
     return {
       map: null,
-      jsonData: null
+      jsonData: null,
+      showConfirmModal: false // 저장 확인 모달 표시 여부
     };
   },
   props: {
@@ -24,6 +32,13 @@ export default {
       type: String,
       required: true
     },
+  },
+  computed: {
+    localButtons: {
+      get() {
+        return this.$store.getters.items;
+      }
+    }
   },
   mounted() {
     try {
@@ -40,11 +55,32 @@ export default {
       const script = document.createElement('script');
       /* global kakao */
       script.onload = () => kakao.maps.load(() => this.initMap());
-      script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=86f3b8a4c013ae2ddba3b540b16bc569&libraries=services';
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_API_key2}&libraries=services`;
       document.head.appendChild(script);
     }
   },
   methods: {
+    sendData() {
+      let newArray = this.localButtons.map(button => {
+        return {
+          name: button.name,
+          address: button.address
+        };
+      });
+      console.log(newArray);
+
+      axios.post('http://localhost:8080/api/test', newArray, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+    },
     initMap() {
       const container = document.getElementById('map');
       const options = {
@@ -136,15 +172,14 @@ export default {
       }
     },
     saveMap() {
-      html2canvas(document.getElementById('map')).then((canvas) => {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'map.png';
-        link.click();
-      });
+      this.showConfirmModal = true; // 확인 모달 열기
     },
-  },
-};
+    handleSave() {
+      this.sendData();
+      this.showConfirmModal = false; // 모달 닫기
+    }
+  }
+}
 </script>
 
 <style scoped>

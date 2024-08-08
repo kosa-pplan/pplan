@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="org.pplan.repository.mapper.CourseMapper">
+
+<!--    <insert id="insertCourse" parameterType="org.pplan.service.dto.CourseDTO">-->
+<!--        INSERT INTO t_course (review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id)-->
+<!--        VALUES (#{reviewCheck}, #{placeDTO1}, #{placeDTO2}, #{placeDTO3}, #{placeDTO4}, #{placeDTO5}, #{userEmail}, #{userId})-->
+<!--    </insert>-->
+
+    <insert id="insertCourse" parameterType="org.pplan.service.dto.CourseDTO">
+        INSERT INTO t_course (
+        review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id
+        )
+        VALUES (
+        #{reviewCheck},
+        PLACE(#{placeDTO1.locationName}, #{placeDTO1.address}),
+        PLACE(#{placeDTO2.locationName}, #{placeDTO2.address}),
+        PLACE(#{placeDTO3.locationName}, #{placeDTO3.address}),
+        PLACE(#{placeDTO4.locationName}, #{placeDTO4.address}),
+        PLACE(#{placeDTO5.locationName}, #{placeDTO5.address}),
+        #{userEmail},
+        #{userId}
+        )
+    </insert>
+
+
+    <select id="findById" parameterType="long" resultType="org.pplan.service.dto.CourseDTO">
+        SELECT * FROM t_course WHERE id = #{id}
+    </select>
+
+</mapper>
+

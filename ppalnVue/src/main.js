@@ -11,7 +11,7 @@ Vue.prototype.$axios = axios
 Vue.prototype.$serverUrl = '//localhost:8080';
 
 new Vue({
-  render: h => h(App),
-  store,
-  router,
+    render: h => h(App),
+    store,
+    router,
 }).$mount('#app')
