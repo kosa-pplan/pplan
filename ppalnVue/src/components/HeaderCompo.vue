@@ -6,11 +6,12 @@ export default {
 
 <template>
   <div class="header">
-      <img src="@/assets/logo.png" alt="logo" class="logo"/>
-      <div class="nav-button">
-        <button class="board-button">게시판</button>
-        <button class="login-button">로그인</button>
-        <button class="signup-button">회원가입</button>
+    <router-link to="/"><img src="@/assets/logo.png" alt="logo" class="logo"/>
+    </router-link>
+    <div class="nav-button">
+        <router-link to="/review" class="board-button">게시판</router-link>
+        <router-link to="/login" class="login-button">로그인</router-link>
+        <router-link to="/sign-up" class="signup-button">회원가입</router-link>
       </div>
   </div>
 </template>
@@ -47,5 +48,6 @@ export default {
   cursor: pointer;
   border-radius: 5px;
   font-size: 14px;
+  text-decoration: none;
 }
 </style>

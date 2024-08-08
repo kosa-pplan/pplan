@@ -25,7 +25,16 @@ body, html {
 /* middle 클래스를 가진 요소를 flexbox 컨테이너로 설정하고, flex-grow를 사용하여 남은 공간을 차지하게 합니다 */
 .middle {
     width: 100%;
-    border: 1px solid navy;
+    /*border: 1px solid navy;*/
+    flex: 1; /* 남은 공간을 모두 차지하게 합니다 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.middle_main {
+    width: 100%;
+    height: 100%;
+    /*border: 1px solid navy;*/
     flex: 1; /* 남은 공간을 모두 차지하게 합니다 */
     display: flex;
     align-items: center;
@@ -40,4 +49,30 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.left{
+    /*border: 1px solid navy;*/
+    height: 100%;
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.left > *:not(:last-child) {
+    margin-bottom: 20px; /* 간격 조정 */
+}
+
+.center{
+    /*border: 1px solid navy;*/
+    height :100%;
+    width: 70%;
+}
+
+.right{
+    width: 20%; /* 너비를 20%로 설정 */
+    height: 80%;
+    text-align: center;
 }
