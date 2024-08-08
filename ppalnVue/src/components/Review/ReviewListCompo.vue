@@ -2,9 +2,19 @@
   <div class="page-container">
     <div class="review_list">
       <div class="card" v-for="(card, index) in displayedCards" :key="index">
-        <img :src="card.image" alt="Card Image" class="card-image">
+<!--        &lt;!&ndash; 첫 번째 썸네일 이미지 표시 &ndash;&gt;
+        <img v-if="card.reviewImageDTOList && card.reviewImageDTOList.length > 0"
+             :src="`http://localhost:8080/imgs/${card.reviewImageDTOList[0].urlPath}`"
+             alt="Card Image"
+             class="card-image">
+
+        &lt;!&ndash; 썸네일이 없을 때의 기본 이미지 &ndash;&gt;
+        <img v-else
+             src="https://via.placeholder.com/150"
+             alt="Default Card Image"
+             class="card-image">-->
         <h3>{{ card.title }}</h3>
-        <p>{{ card.content }}</p>
+        <p>{{ card.regDate }}</p>
       </div>
     </div>
     <button @click="loadMore" v-if="displayedCards.length < cards.length" class="load-more-button">더보기</button>
@@ -12,8 +22,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'CardBoard',
   data() {
@@ -30,7 +38,7 @@ export default {
   methods: {
     async fetchCards() {
       try {
-        const response = await axios.get('/data.json'); // JSON 파일 경로
+        const response = await this.$axios.get(this.$serverUrl + "/review/list"); // Spring Boot 서버에서 데이터 가져오기
         this.cards = response.data;
         this.loadMore(); // 처음에 몇 개의 카드를 로드
       } catch (error) {
@@ -46,11 +54,9 @@ export default {
         this.currentPage++;
       }
     }
-
   }
 };
 </script>
-
 <style scoped>
 .page-container {
   height: 100vh;
