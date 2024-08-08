@@ -1,20 +1,24 @@
 package org.pplan.repository.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.pplan.service.dto.review.ReviewRequestDTO;
-import org.pplan.service.dto.review.ReviewResponseDTO;
+import org.pplan.service.dto.review.ReviewDTO;
 
 import java.util.List;
 
 @Mapper
 public interface ReviewMapper {
-    void reviewSave(ReviewRequestDTO reviewRequestDTO);
+    void insertReview(ReviewDTO reviewDTO);
 
-    List<ReviewResponseDTO> reviewList();
+    long selectInsertId(long userId);
 
-    ReviewResponseDTO getReview(long id);
+    void insertReviewImage(String urlPath, String sUrlPath, long reviewId);
 
-    long reviewUpdate(ReviewRequestDTO reviewRequestDTO);
+    List<ReviewDTO> reviewList();
+
+    ReviewDTO getReview(long id);
+
+    long reviewUpdate(ReviewDTO reviewRequestDTO);
 
     long reviewDelete(long id);
+
 }

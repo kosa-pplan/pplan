@@ -3,9 +3,11 @@ package org.pplan.service.review;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pplan.repository.mapper.ReviewMapper;
-import org.pplan.service.dto.review.ReviewRequestDTO;
-import org.pplan.service.dto.review.ReviewResponseDTO;
+import org.pplan.service.dto.review.ReviewDTO;
+import org.pplan.service.dto.review.ReviewImageDTO;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,20 +18,50 @@ public class ReviewService {
 
     public final ReviewMapper reviewMapper;
 
-    public void save(ReviewRequestDTO reviewRequestDTO){
-        reviewMapper.reviewSave(reviewRequestDTO);
+    @Value("${image.upload-dir}")
+    private String uploadDir;
+
+    @Transactional
+    public ReviewDTO saveReview(ReviewDTO reviewDTO) {
+        // 리뷰 저장
+        reviewMapper.insertReview(reviewDTO);
+
+        Long reviewId = reviewDTO.getId();
+
+        // 이미지 저장
+        List<ReviewImageDTO> imageDTOList = reviewDTO.getReviewImageDTOList();
+        for (ReviewImageDTO imageDTO : imageDTOList) {
+            System.out.println("imageDto"+imageDTO.getUrlPath()+" "+imageDTO.getSUrlPath()+" "+reviewId);
+            reviewMapper.insertReviewImage(
+                    imageDTO.getUrlPath(),
+                    imageDTO.getSUrlPath(),
+                    reviewId
+            );
+        }
+        // 저장된 리뷰와 이미지를 포함하여 DTO를 반환
+        return reviewDTO;
     }
 
-    public List<ReviewResponseDTO> reviewList(){
+    public List<ReviewDTO> reviewList() {
+        List<ReviewDTO> reviews = reviewMapper.reviewList();
 
-        return reviewMapper.reviewList();
+        for (ReviewDTO review : reviews) {
+            for (ReviewImageDTO image : review.getReviewImageDTOList()) {
+                // 서버 경로와 파일명을 결합하여 전체 URL 생성
+                String fullUrlPath = uploadDir + "/" + image.getSUrlPath();
+                image.setFullUrlPath(fullUrlPath);
+                System.out.println(image.getFullUrlPath());
+            }
+        }
+
+        return reviews;
     }
 
-    public ReviewResponseDTO getReview(long id){
+    public ReviewDTO getReview(long id) {
         return reviewMapper.getReview(id);
     }
 
-    public long update(ReviewRequestDTO reviewRequestDTO) {
+    public long update(ReviewDTO reviewRequestDTO) {
 
         return reviewMapper.reviewUpdate(reviewRequestDTO);
     }

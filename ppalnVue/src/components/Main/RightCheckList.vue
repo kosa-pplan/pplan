@@ -6,9 +6,9 @@
     <div class="btndiv" style="height: 80%;">
       <draggable v-model="localButtons" group="buttons" direction="vertical" :animation="200" ghost-class="ghost" drag-class="dragging" @start="onDragStart" @end="onDragEnd" class="button-container">
         <transition-group name="flip-list" tag="div">
-          <div v-for="button in localButtons" :key="button.idx" class="button">
+          <div v-for="button in localButtons" :key="button.idx" class="button" @click="openModal(button)">
             {{ button.name }}
-            <span class="remove-button" @click="confirmDelete(button.idx)">X</span>
+            <span class="remove-button" @click.stop="confirmDelete(button.idx)">X</span>
           </div>
         </transition-group>
       </draggable>
@@ -18,9 +18,14 @@
     </div>
 
     <!-- 경로 보기 모달 컴포넌트 -->
-    <ModalCompo v-if="showModal" @close="showModal = false">
-      <h2>경로</h2>
-      <MapModalCompo :message="directions"/>
+    <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
+        <h2>경로</h2>
+        <MapModalCompo :message="directions"/>
+    </ModalCompo>
+    <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
+        <h2>버튼 정보</h2>
+        <p>버튼 이름: {{ selectedButton.name }}</p>
+        <p>버튼 주소: {{ selectedButton.address }}</p>
     </ModalCompo>
 
     <!-- 삭제 확인 모달 컴포넌트 -->
@@ -59,17 +64,19 @@ export default {
       showModal: false,
       showConfirmDeleteModal: false, // 삭제 확인 모달 표시 여부
       buttonToDelete: null, // 삭제할 버튼의 ID 저장
-      directions: ''
+      directions: '',
+      modalType: '',
+      selectedButton: {} // 선택된 버튼 저장
     };
   },
   methods: {
+    
     onDragStart() {
       // 드래그 시작 시 처리할 로직
     },
     onDragEnd() {
       // 드래그가 끝난 후 버튼 순서를 Vuex 스토어에 업데이트
       this.localButtons = this.localButtons.slice(); // 트리거링하기 위해 배열을 새로 할당
-      console.log('현재 버튼 순서:', this.localButtons.map((button) => button.name));
     },
     confirmDelete(id) {
       this.buttonToDelete = id;
@@ -88,7 +95,7 @@ export default {
     //도로명 주소 위경도 변환
     async convertAddressToCoordinates(address) {
       const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
-      const REST_API_KEY = '86f3b8a4c013ae2ddba3b540b16bc569'; // 실제 API 키로 변경
+      const REST_API_KEY = process.env.VUE_APP_API_key; // 실제 API 키로 변경
 
       try {
         const response = await axios.get(API_URL, {
@@ -123,10 +130,10 @@ export default {
         const updatedButtons = await Promise.all(promises);
 
         // 변환된 위도와 경도를 console.log로 출력
-        updatedButtons.forEach(button => {
-          console.log(`Button ID: ${button.idx}, Name: ${button.name}`);
-          console.log(`Latitude: ${button.lat}, Longitude: ${button.lon}`);
-        });
+        // updatedButtons.forEach(button => {
+        //   console.log(`Button ID: ${button.idx}, Name: ${button.name}`);
+        //   console.log(`Latitude: ${button.lat}, Longitude: ${button.lon}`);
+        // });
 
         // 변환된 좌표로 localButtons 업데이트
         this.localButtons = updatedButtons;
@@ -140,41 +147,25 @@ export default {
     async fetchDirections() {
 
       const API_URL = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
-      const REST_API_KEY = '86f3b8a4c013ae2ddba3b540b16bc569'; // 여기에 실제 API 키를 입력하세요
-      console.log(this.localButtons)
+      const REST_API_KEY = process.env.VUE_APP_API_key; // 여기에 실제 API 키를 입력하세요
+      
       try {
         const response = await axios.post(
           API_URL,
           {
-            
-            origin:{
+            origin: {
               x: this.localButtons[0].lon,
               y: this.localButtons[0].lat,
             },
-            destination:{
-              x: this.localButtons[this.localButtons.length-1].lon,
-              y: this.localButtons[this.localButtons.length-1].lat,
+            destination: {
+              x: this.localButtons[this.localButtons.length - 1].lon,
+              y: this.localButtons[this.localButtons.length - 1].lat,
             },
             waypoints: this.localButtons.slice(1, -1).map(button => ({
               name: button.name,
               x: button.lon,
               y: button.lat,
             })),
-            // origin: {
-            //   x: '126.876556771514',
-            //   y: '37.6485750124376',
-            // },
-            // destination: {
-            //   x: '126.899950487559',
-            //   y: '37.6525018505548',
-            // },
-            // waypoints: [
-            //   {
-            //     name: 'name1',
-            //     x: 126.918818537,
-            //     y: 37.636966220
-            //   },
-            // ],
             priority: 'RECOMMEND',
             car_fuel: 'GASOLINE',
             car_hipass: false,
@@ -189,21 +180,27 @@ export default {
           },
         );
         this.directions = JSON.stringify(response.data, null, 2);
-        console.log(JSON.stringify(response.data, null, 2))
+        // console.log(JSON.stringify(response.data, null, 2))
       } catch (error) {
         console.error('Error fetching directions:', error);
       }
     },
+    openModal(button) {
+      this.selectedButton = button;
+      this.modalType = 'button'; // 버튼 클릭 모달을 열기 위해 modalType 설정
+      this.showModal = true;
+    },
     async handleButtonClick() {
-      console.log(this.localButtons)
       if(this.localButtons.length<2){
+      console.log()
         alert("경로 추가해주세요")
+        console.log(process.env.VUE_APP_API_key)
       }else{
         await this.convertAllAddressesToCoordinates();
         await this.fetchDirections();
+      this.modalType = 'directions';
         this.showModal = true;
       }
-      
     },
   },
 };
