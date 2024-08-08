@@ -8,7 +8,7 @@
         <transition-group name="flip-list" tag="div">
           <div v-for="button in localButtons" :key="button.idx" class="button" @click="openModal(button)">
             {{ button.name }}
-            <span class="remove-button" @click="confirmDelete(button.idx)">X</span>
+            <span class="remove-button" @click.stop="confirmDelete(button.idx)">X</span>
           </div>
         </transition-group>
       </draggable>
@@ -18,17 +18,15 @@
     </div>
 
     <!-- 경로 보기 모달 컴포넌트 -->
-    
     <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
         <h2>경로</h2>
         <MapModalCompo :message="directions"/>
-      </ModalCompo>
-      <ModalCompo v-if="modalType === 'button'" @close="showModal = false,  modalType=''">
+    </ModalCompo>
+    <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
         <h2>버튼 정보</h2>
         <p>버튼 이름: {{ selectedButton.name }}</p>
         <p>버튼 주소: {{ selectedButton.address }}</p>
-        <!-- 추가적으로 필요한 버튼 정보 표시 -->
-      </ModalCompo>
+    </ModalCompo>
 
     <!-- 삭제 확인 모달 컴포넌트 -->
     <ConfirmDeleteModal v-if="showConfirmDeleteModal" @confirm="deleteButton" @close="showConfirmDeleteModal = false" />
@@ -67,38 +65,18 @@ export default {
       showConfirmDeleteModal: false, // 삭제 확인 모달 표시 여부
       buttonToDelete: null, // 삭제할 버튼의 ID 저장
       directions: '',
-      modalType: ''
+      modalType: '',
+      selectedButton: {} // 선택된 버튼 저장
     };
   },
   methods: {
-    sendData() {
-      let newArray = this.localButtons.map(button => {
-        return {
-          name: button.name,
-          address: button.address
-        };
-      });
-      console.log(newArray);
-
-      axios.post('http://localhost:8080/api/test',newArray , {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('There was an error!', error);
-      });
-    },
+    
     onDragStart() {
       // 드래그 시작 시 처리할 로직
     },
     onDragEnd() {
       // 드래그가 끝난 후 버튼 순서를 Vuex 스토어에 업데이트
       this.localButtons = this.localButtons.slice(); // 트리거링하기 위해 배열을 새로 할당
-      // console.log('현재 버튼 순서:', this.localButtons.map((button) => button.name));
     },
     confirmDelete(id) {
       this.buttonToDelete = id;
@@ -175,35 +153,19 @@ export default {
         const response = await axios.post(
           API_URL,
           {
-            
-            origin:{
+            origin: {
               x: this.localButtons[0].lon,
               y: this.localButtons[0].lat,
             },
-            destination:{
-              x: this.localButtons[this.localButtons.length-1].lon,
-              y: this.localButtons[this.localButtons.length-1].lat,
+            destination: {
+              x: this.localButtons[this.localButtons.length - 1].lon,
+              y: this.localButtons[this.localButtons.length - 1].lat,
             },
             waypoints: this.localButtons.slice(1, -1).map(button => ({
               name: button.name,
               x: button.lon,
               y: button.lat,
             })),
-            // origin: {
-            //   x: '126.876556771514',
-            //   y: '37.6485750124376',
-            // },
-            // destination: {
-            //   x: '126.899950487559',
-            //   y: '37.6525018505548',
-            // },
-            // waypoints: [
-            //   {
-            //     name: 'name1',
-            //     x: 126.918818537,
-            //     y: 37.636966220
-            //   },
-            // ],
             priority: 'RECOMMEND',
             car_fuel: 'GASOLINE',
             car_hipass: false,
@@ -229,21 +191,16 @@ export default {
       this.showModal = true;
     },
     async handleButtonClick() {
-
-      this.sendData();
-    
-      
-      // if(this.localButtons.length<2){
-      // console.log()
-      //   alert("경로 추가해주세요")
-      //   console.log(process.env.VUE_APP_API_key)
-      // }else{
-      //   await this.convertAllAddressesToCoordinates();
-      //   await this.fetchDirections();
-      //this.modalType = 'directions';
-      //   this.showModal = true;
-      // }
-      
+      if(this.localButtons.length<2){
+      console.log()
+        alert("경로 추가해주세요")
+        console.log(process.env.VUE_APP_API_key)
+      }else{
+        await this.convertAllAddressesToCoordinates();
+        await this.fetchDirections();
+      this.modalType = 'directions';
+        this.showModal = true;
+      }
     },
   },
 };
