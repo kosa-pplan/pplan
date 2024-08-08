@@ -40,7 +40,7 @@ export default {
       const script = document.createElement('script');
       /* global kakao */
       script.onload = () => kakao.maps.load(() => this.initMap());
-      script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=86f3b8a4c013ae2ddba3b540b16bc569&libraries=services';
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_API_key2}&libraries=services`;
       document.head.appendChild(script);
     }
   },
@@ -137,10 +137,19 @@ export default {
     },
     saveMap() {
       html2canvas(document.getElementById('map')).then((canvas) => {
+        // const link = document.createElement('a');
+        // link.href = canvas.toDataURL('image/png');
+        // link.download = 'map.png';
+        // link.click();
+        // 캔버스를 이미지로 변환
+        const imgData = canvas.toDataURL('image/png');
+        // 이미지 다운로드 링크 생성
         const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'map.png';
+        link.href = imgData;
+        link.download = 'map_image.png';
         link.click();
+
+        
       });
     },
   },

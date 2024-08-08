@@ -69,7 +69,7 @@ export default {
     onDragEnd() {
       // 드래그가 끝난 후 버튼 순서를 Vuex 스토어에 업데이트
       this.localButtons = this.localButtons.slice(); // 트리거링하기 위해 배열을 새로 할당
-      console.log('현재 버튼 순서:', this.localButtons.map((button) => button.name));
+      // console.log('현재 버튼 순서:', this.localButtons.map((button) => button.name));
     },
     confirmDelete(id) {
       this.buttonToDelete = id;
@@ -88,7 +88,7 @@ export default {
     //도로명 주소 위경도 변환
     async convertAddressToCoordinates(address) {
       const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
-      const REST_API_KEY = '86f3b8a4c013ae2ddba3b540b16bc569'; // 실제 API 키로 변경
+      const REST_API_KEY = process.env.VUE_APP_API_key; // 실제 API 키로 변경
 
       try {
         const response = await axios.get(API_URL, {
@@ -123,10 +123,10 @@ export default {
         const updatedButtons = await Promise.all(promises);
 
         // 변환된 위도와 경도를 console.log로 출력
-        updatedButtons.forEach(button => {
-          console.log(`Button ID: ${button.idx}, Name: ${button.name}`);
-          console.log(`Latitude: ${button.lat}, Longitude: ${button.lon}`);
-        });
+        // updatedButtons.forEach(button => {
+        //   console.log(`Button ID: ${button.idx}, Name: ${button.name}`);
+        //   console.log(`Latitude: ${button.lat}, Longitude: ${button.lon}`);
+        // });
 
         // 변환된 좌표로 localButtons 업데이트
         this.localButtons = updatedButtons;
@@ -140,8 +140,8 @@ export default {
     async fetchDirections() {
 
       const API_URL = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
-      const REST_API_KEY = '86f3b8a4c013ae2ddba3b540b16bc569'; // 여기에 실제 API 키를 입력하세요
-      console.log(this.localButtons)
+      const REST_API_KEY = process.env.VUE_APP_API_key; // 여기에 실제 API 키를 입력하세요
+      
       try {
         const response = await axios.post(
           API_URL,
@@ -189,15 +189,17 @@ export default {
           },
         );
         this.directions = JSON.stringify(response.data, null, 2);
-        console.log(JSON.stringify(response.data, null, 2))
+        // console.log(JSON.stringify(response.data, null, 2))
       } catch (error) {
         console.error('Error fetching directions:', error);
       }
     },
     async handleButtonClick() {
-      console.log(this.localButtons)
+      
       if(this.localButtons.length<2){
+      console.log()
         alert("경로 추가해주세요")
+        console.log(process.env.VUE_APP_API_key)
       }else{
         await this.convertAllAddressesToCoordinates();
         await this.fetchDirections();
