@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pplan.repository.mapper.ReviewMapper">
+    <insert id="reviewSave" parameterType="org.pplan.service.dto.review.ReviewRequestDTO">
+        INSERT INTO T_REVIEW(title, contents)
+        VALUES (#{title}, #{contents})
+    </insert>
+    <select id="reviewList">
+        SELECT id, title, CONTENTS, REG_DATE AS regDate
+        FROM T_REVIEW
+    </select>
+    <select id="getReview">
+        SELECT id, title, CONTENTS, REG_DATE AS regDate
+        FROM T_REVIEW
+        where ID = #{id}
+    </select>
+    <update id="reviewUpdate">
+        update T_REVIEW
+        set title    = #{title}
+          , contents = #{contents}
+          , REG_DATE = sysdate
+        where ID = #{id}
+    </update>
+    <delete id="reviewDelete">
+        delete
+        from T_REVIEW
+        where id = #{id}
+    </delete>
+</mapper>
