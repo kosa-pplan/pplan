@@ -6,7 +6,7 @@
     <div class="btndiv" style="height: 80%;">
       <draggable v-model="localButtons" group="buttons" direction="vertical" :animation="200" ghost-class="ghost" drag-class="dragging" @start="onDragStart" @end="onDragEnd" class="button-container">
         <transition-group name="flip-list" tag="div">
-          <div v-for="button in localButtons" :key="button.idx" class="button">
+          <div v-for="button in localButtons" :key="button.idx" class="button" @click="openModal(button)">
             {{ button.name }}
             <span class="remove-button" @click="confirmDelete(button.idx)">X</span>
           </div>
@@ -18,10 +18,17 @@
     </div>
 
     <!-- 경로 보기 모달 컴포넌트 -->
-    <ModalCompo v-if="showModal" @close="showModal = false">
-      <h2>경로</h2>
-      <MapModalCompo :message="directions"/>
-    </ModalCompo>
+    
+    <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
+        <h2>경로</h2>
+        <MapModalCompo :message="directions"/>
+      </ModalCompo>
+      <ModalCompo v-if="modalType === 'button'" @close="showModal = false,  modalType=''">
+        <h2>버튼 정보</h2>
+        <p>버튼 이름: {{ selectedButton.name }}</p>
+        <p>버튼 주소: {{ selectedButton.address }}</p>
+        <!-- 추가적으로 필요한 버튼 정보 표시 -->
+      </ModalCompo>
 
     <!-- 삭제 확인 모달 컴포넌트 -->
     <ConfirmDeleteModal v-if="showConfirmDeleteModal" @confirm="deleteButton" @close="showConfirmDeleteModal = false" />
@@ -59,10 +66,32 @@ export default {
       showModal: false,
       showConfirmDeleteModal: false, // 삭제 확인 모달 표시 여부
       buttonToDelete: null, // 삭제할 버튼의 ID 저장
-      directions: ''
+      directions: '',
+      modalType: ''
     };
   },
   methods: {
+    sendData() {
+      let newArray = this.localButtons.map(button => {
+        return {
+          name: button.name,
+          address: button.address
+        };
+      });
+      console.log(newArray);
+
+      axios.post('http://localhost:8080/api/test',newArray , {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+    },
     onDragStart() {
       // 드래그 시작 시 처리할 로직
     },
@@ -194,17 +223,26 @@ export default {
         console.error('Error fetching directions:', error);
       }
     },
+    openModal(button) {
+      this.selectedButton = button;
+      this.modalType = 'button'; // 버튼 클릭 모달을 열기 위해 modalType 설정
+      this.showModal = true;
+    },
     async handleButtonClick() {
+
+      this.sendData();
+    
       
-      if(this.localButtons.length<2){
-      console.log()
-        alert("경로 추가해주세요")
-        console.log(process.env.VUE_APP_API_key)
-      }else{
-        await this.convertAllAddressesToCoordinates();
-        await this.fetchDirections();
-        this.showModal = true;
-      }
+      // if(this.localButtons.length<2){
+      // console.log()
+      //   alert("경로 추가해주세요")
+      //   console.log(process.env.VUE_APP_API_key)
+      // }else{
+      //   await this.convertAllAddressesToCoordinates();
+      //   await this.fetchDirections();
+      //this.modalType = 'directions';
+      //   this.showModal = true;
+      // }
       
     },
   },
