@@ -1,18 +1,22 @@
 <template>
   <div class="middle_main">
     <form @submit.prevent="register">
-      <div class="email-group">
+      <div>
         <label for="email">이메일</label>
-        <input type="text" v-model="form.emailLocal" required placeholder="이메일" />
-        <span>@</span>
-        <input type="text" v-model="form.emailDomain" required />
-        <select v-model="form.emailDomain" @change="updateEmailDomain">
-          <option value="">직접입력</option>
-          <option value="gmail.com">gmail.com</option>
-          <option value="naver.com">naver.com</option>
-          <option value="daum.net">daum.net</option>
-          <option value="daum.net">hanmail.net</option>
-        </select>
+        <div class="email-group">
+          <input type="text" v-model="form.emailLocal" required placeholder="이메일" />
+          <span>@</span>
+          <input type="text" v-model="form.emailDomain" required />
+          <select v-model="form.emailDomain" @change="updateEmailDomain">
+            <option value="">직접입력</option>
+            <option value="gmail.com">gmail.com</option>
+            <option value="naver.com">naver.com</option>
+            <option value="daum.net">daum.net</option>
+            <option value="daum.net">hanmail.net</option>
+          </select>
+        </div>
+        <button type="button">중복 확인</button>
+        <p v-if="message">{{ message }}</p>
       </div>
       <div>
         <label for="password">비밀번호</label>
@@ -28,8 +32,6 @@
       </div>
       <button type="submit">가입</button>
     </form>
-    <br />
-    <p v-if="message">{{ message }}</p>
 
     <div v-if="isModalVisible" class="modal-overlay">
       <div class="modal">
