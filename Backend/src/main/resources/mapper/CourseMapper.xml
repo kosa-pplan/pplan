@@ -37,9 +37,7 @@
         place3.location_name AS place3LocationName,
         place3.address AS place3Address,
         place4.location_name AS place4LocationName,
-        place4.address AS place4Address,
-        place5.location_name AS place5LocationName,
-        place5.address AS place5Address
+        place4.address AS place4Address
         FROM
         t_course
         WHERE
@@ -63,9 +61,6 @@
 
         <result property="placeDTO4.locationName" column="place4LocationName"/>
         <result property="placeDTO4.address" column="place4Address"/>
-
-        <result property="placeDTO5.locationName" column="place5LocationName"/>
-        <result property="placeDTO5.address" column="place5Address"/>
     </resultMap>
 </mapper>
 
