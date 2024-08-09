@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     <mapper namespace="org.pplan.repository.mapper.CourseMapper">
 
-<!--    <insert id="insertCourse" parameterType="org.pplan.service.dto.CourseDTO">-->
+<!--    <insert id="insertCourse" parameterType="org.pplan.service.dto.Course.CourseDTO">-->
 <!--        INSERT INTO t_course (review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id)-->
 <!--        VALUES (#{reviewCheck}, #{placeDTO1}, #{placeDTO2}, #{placeDTO3}, #{placeDTO4}, #{placeDTO5}, #{userEmail}, #{userId})-->
 <!--    </insert>-->
 
-    <insert id="insertCourse" parameterType="org.pplan.service.dto.CourseDTO">
+    <insert id="insertCourse" parameterType="org.pplan.service.dto.Course.CourseDTO">
         INSERT INTO t_course (
         review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id
         )
@@ -25,10 +25,47 @@
         )
     </insert>
 
-
-    <select id="findById" parameterType="long" resultType="org.pplan.service.dto.CourseDTO">
-        SELECT * FROM t_course WHERE id = #{id}
+    <select id="findById" parameterType="long" resultMap="CourseResultMap">
+        SELECT
+        review_check AS reviewCheck,
+        t_user_email AS userEmail,
+        t_user_id AS userId,
+        place1.location_name AS place1LocationName,
+        place1.address AS place1Address,
+        place2.location_name AS place2LocationName,
+        place2.address AS place2Address,
+        place3.location_name AS place3LocationName,
+        place3.address AS place3Address,
+        place4.location_name AS place4LocationName,
+        place4.address AS place4Address,
+        place5.location_name AS place5LocationName,
+        place5.address AS place5Address
+        FROM
+        t_course
+        WHERE
+        id = #{id}
     </select>
 
+    <resultMap id="CourseResultMap" type="org.pplan.service.dto.Course.CourseDTO">
+        <result property="reviewCheck" column="review_check"/>
+        <result property="userEmail" column="t_user_email"/>
+        <result property="userId" column="t_user_id"/>
+
+        <!-- PlaceDTO 필드 매핑 -->
+        <result property="placeDTO1.locationName" column="place1LocationName"/>
+        <result property="placeDTO1.address" column="place1Address"/>
+
+        <result property="placeDTO2.locationName" column="place2LocationName"/>
+        <result property="placeDTO2.address" column="place2Address"/>
+
+        <result property="placeDTO3.locationName" column="place3LocationName"/>
+        <result property="placeDTO3.address" column="place3Address"/>
+
+        <result property="placeDTO4.locationName" column="place4LocationName"/>
+        <result property="placeDTO4.address" column="place4Address"/>
+
+        <result property="placeDTO5.locationName" column="place5LocationName"/>
+        <result property="placeDTO5.address" column="place5Address"/>
+    </resultMap>
 </mapper>
 

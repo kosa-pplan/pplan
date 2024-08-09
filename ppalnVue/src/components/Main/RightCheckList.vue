@@ -20,7 +20,7 @@
     <!-- 경로 보기 모달 컴포넌트 -->
     <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
         <h2>경로</h2>
-        <MapModalCompo :message="directions"/>
+        <MapModalCompo :message="directions" @close="showModal = false, modalType=''"/>
     </ModalCompo>
     <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
         <h2>버튼 정보</h2>
@@ -191,16 +191,28 @@ export default {
       this.showModal = true;
     },
     async handleButtonClick() {
-      if(this.localButtons.length<2){
-      console.log()
-        alert("경로 추가해주세요")
-        console.log(process.env.VUE_APP_API_key)
-      }else{
-        await this.convertAllAddressesToCoordinates();
-        await this.fetchDirections();
-      this.modalType = 'directions';
-        this.showModal = true;
-      }
+      // if(this.localButtons.length<2){
+      // console.log()
+      //   alert("경로 추가해주세요")
+      //   console.log(process.env.VUE_APP_API_key)
+      // }else{
+      //   await this.convertAllAddressesToCoordinates();
+      //   await this.fetchDirections();
+      // this.modalType = 'directions';
+      //   this.showModal = true;
+      // }
+
+      axios.post('http://localhost:8080/api/test', this.localButtons, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
     },
   },
 };

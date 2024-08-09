@@ -3,7 +3,7 @@ package org.pplan.repository.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.pplan.service.dto.CourseDTO;
+import org.pplan.service.dto.Course.CourseDTO;
 
 @Mapper
 public interface CourseMapper {

@@ -1,4 +1,4 @@
-package org.pplan.service.dto;
+package org.pplan.service.dto.Course;
 
 public class PlaceDTO {
     private String locationName;

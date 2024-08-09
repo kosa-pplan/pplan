@@ -1,15 +1,14 @@
 package org.pplan.controller.course;
 
-import org.pplan.service.dto.CourseDTO;
-import org.pplan.service.dto.PlaceDTO;
+import org.pplan.service.dto.Course.CourseDTO;
+import org.pplan.service.dto.Course.PlaceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.pplan.service.CourseService;
+import org.pplan.service.Course.CourseService;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,9 @@ public class CourseRestController {
         System.out.println("변환테스트: " + courseDTO);
         System.out.println("변환테스트: " + courseDTO.getPlace1());
 
-        courseService.saveCourse(courseDTO);
+//        courseService.saveCourse(courseDTO);
+
+        courseService.getCourseById(30L);
         return "Data received";
     }
 }

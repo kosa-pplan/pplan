@@ -1,7 +1,7 @@
-package org.pplan.service;
+package org.pplan.service.Course;
 
 import org.pplan.repository.mapper.CourseMapper;
-import org.pplan.service.dto.CourseDTO;
+import org.pplan.service.dto.Course.CourseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +18,8 @@ public class CourseService {
     }
 
     public CourseDTO getCourseById(Long id) {
+        System.out.println(id);
+        System.out.println("불러오기 테스트"+courseMapper.findById(id));
         return courseMapper.findById(id);
     }
 }

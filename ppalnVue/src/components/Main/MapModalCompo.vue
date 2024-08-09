@@ -75,6 +75,7 @@ export default {
         }
       })
       .then(response => {
+        this.$emit('close');
         console.log(response.data);
       })
       .catch(error => {
