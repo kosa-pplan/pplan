@@ -9,8 +9,6 @@ import java.util.List;
 public interface ReviewMapper {
     void insertReview(ReviewDTO reviewDTO);
 
-    long selectInsertId(long userId);
-
     void insertReviewImage(String urlPath, String sUrlPath, long reviewId);
 
     List<ReviewDTO> reviewList();
