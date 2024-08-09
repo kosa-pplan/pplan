@@ -20,12 +20,10 @@ public class CourseRestController {
     @Autowired
     private CourseService courseService;
 
-
     @PostMapping("/api/test")
     @CrossOrigin
     public String receiveString(@RequestBody List<Map<String, String>> data) {
         System.out.println("Received data: " + data);
-        System.out.println("Received data2: " + data.get(0));
 
         // Total number of PlaceDTO objects needed
         int totalPlaces = 5;
