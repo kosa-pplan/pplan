@@ -4,33 +4,56 @@
       <div>
         <label for="email">이메일</label>
         <div class="email-group">
-          <input type="text" v-model="form.emailLocal" required placeholder="이메일" />
+          <input 
+            type="text" 
+            v-model="form.emailLocal" 
+            @input="handleEmailInput" 
+            required 
+            placeholder="이메일" 
+          />
           <span>@</span>
-          <input type="text" v-model="form.emailDomain" required />
+          <input 
+            type="text" 
+            v-model="form.emailDomain" 
+            @input="handleEmailInput" 
+            required 
+          />
           <select v-model="form.emailDomain" @change="updateEmailDomain">
             <option value="">직접입력</option>
             <option value="gmail.com">gmail.com</option>
             <option value="naver.com">naver.com</option>
             <option value="daum.net">daum.net</option>
-            <option value="daum.net">hanmail.net</option>
+            <option value="hanmail.net">hanmail.net</option>
           </select>
         </div>
-        <button type="button">중복 확인</button>
-        <p v-if="message">{{ message }}</p>
+        <div class="duplicate_section">
+          <button class="duplicate_button" type="button" @click="checkEmailDuplicate">중복 확인</button>
+          <p v-if="emailError">{{ emailError }}</p>
+          <p v-if="emailCheckMessage && !isEmailChecked">{{ emailCheckMessage }}</p>
+          <p v-if="!emailCheckMessage && !isEmailChecked && form.emailLocal && form.emailDomain" class="warning">이메일 중복 확인이 필요합니다.</p>
+        </div>
       </div>
       <div>
         <label for="password">비밀번호</label>
         <input type="password" v-model="form.pwd" required />
       </div>
       <div>
-        <label for="phone_number">전화번호</label>
-        <input type="text" v-model="form.phone_number" required placeholder="- 없이 입력해주세요." />
+        <label for="check_password">비밀번호 확인</label>
+        <input type="password" v-model="form.confirmPwd" required />
+        <p v-if="passwordMismatchError" class="error">{{ passwordMismatchError }}</p>
       </div>
       <div>
         <label for="nickname">닉네임</label>
-        <input type="text" v-model="form.nickname" required />
+        <input type="text" v-model="form.nickname" @input="handleNicknameInput" required />
+      </div>
+      <div class="duplicate_section">
+        <button class="duplicate_button" type="button" @click="checkNicknameDuplicate">중복 확인</button>
+        <p v-if="nicknameError">{{ nicknameError }}</p>
+        <p v-if="nicknameCheckMessage && !isnicknameChecked">{{ nicknameCheckMessage }}</p>
+        <p v-if="!nicknameCheckMessage && !isnicknameChecked && form.nickname" class="warning">닉네임 중복 확인이 필요합니다.</p>
       </div>
       <button type="submit">가입</button>
+      <p v-if="formError" class="error">{{ formError }}</p>
     </form>
 
     <div v-if="isModalVisible" class="modal-overlay">
@@ -52,40 +75,167 @@ export default {
         emailLocal: "",
         emailDomain: "",
         pwd: "",
-        phone_number: "",
+        confirmPwd: "",
         nickname: ""
       },
-      message: "",
+      emailError: "",  
+      emailCheckMessage: "",
+      isEmailChecked: false,  
+      nicknameError: "",  
+      nicknameCheckMessage: "",
+      isnicknameChecked: false,  
+      passwordMismatchError: "",  
+      formError: "",  
       isModalVisible: false,
       modalMessage: ""
     };
   },
 
+  watch: {
+    'form.confirmPwd': function() {
+      this.checkPasswordMatch();
+    },
+    'form.pwd': function() {
+      this.checkPasswordMatch();
+    }
+  },
+
   methods: {
+    handleEmailInput() {
+      this.resetEmailCheck();
+    },
+
+    handleNicknameInput() {
+      this.resetNicknameCheck();
+    },
+
+    resetEmailCheck() {
+      this.emailCheckMessage = "";
+      this.emailError = "";
+      this.isEmailChecked = false;
+    },
+
+    async checkEmailDuplicate() {
+      if (!this.form.emailLocal || !this.form.emailDomain) {
+        this.emailError = "이메일을 입력해주세요.";
+        return;
+      }
+
+      const email = `${this.form.emailLocal}@${this.form.emailDomain}`;
+      try {
+        const response = await axios.get("http://localhost:8080/check-email", {
+          params: { email }
+        });
+        if (response.data) {
+          this.emailCheckMessage = "이미 사용된 이메일입니다.";
+          this.isEmailChecked = false;
+        } else {
+          this.emailCheckMessage = "사용 가능한 이메일입니다.";
+          this.isEmailChecked = true;
+          this.emailError = ""; // 사용 가능한 이메일일 때는 에러 메시지 초기화
+        }
+      } catch (error) {
+        this.emailCheckMessage = "오류가 발생했습니다. 다시 시도해주세요.";
+        this.isEmailChecked = false;
+      }
+    },
+
+    resetNicknameCheck() {
+      this.nicknameCheckMessage = "";
+      this.nicknameError = "";
+      this.isnicknameChecked = false;
+    },
+
+    async checkNicknameDuplicate() {
+      if (!this.form.nickname) {
+        this.nicknameError = "닉네임을 입력해주세요.";
+        return;
+      }
+
+      try {
+        const response = await axios.get("http://localhost:8080/check-nickname", {
+          params: { nickname: this.form.nickname }
+        });
+        if (response.data) {
+          this.nicknameCheckMessage = "이미 사용된 닉네임입니다.";
+          this.isnicknameChecked = false;
+        } else {
+          this.nicknameCheckMessage = "사용 가능한 닉네임입니다.";
+          this.isnicknameChecked = true;
+          this.nicknameError = ""; // 사용 가능한 닉네임일 때는 에러 메시지 초기화
+        }
+      } catch (error) {
+        this.nicknameCheckMessage = "오류가 발생했습니다. 다시 시도해주세요.";
+        this.isnicknameChecked = false;
+      }
+    },
+
+    checkPasswordMatch() {
+      if (this.form.pwd && this.form.confirmPwd && this.form.pwd !== this.form.confirmPwd) {
+        this.passwordMismatchError = "비밀번호가 일치하지 않습니다.";
+      } else {
+        this.passwordMismatchError = "";
+      }
+    },
+
     async register() {
+      this.formError = ""; 
+
+      if (!this.form.emailLocal || !this.form.emailDomain) {
+        this.formError = "이메일을 입력해주세요.";
+        return;
+      }
+
+      if (!this.form.pwd || !this.form.confirmPwd) {
+        this.formError = "비밀번호를 입력해주세요.";
+        return;
+      }
+
+      if (this.passwordMismatchError) {
+        this.formError = "비밀번호가 일치하지 않습니다.";
+        return;
+      }
+
+      if (!this.form.nickname) {
+        this.formError = "닉네임을 입력해주세요.";
+        return;
+      }
+
+      if (!this.isEmailChecked) {
+        this.formError = "이메일 중복 확인을 해주세요.";
+        return;
+      }
+
+      if (!this.isnicknameChecked) {
+        this.formError = "닉네임 중복 확인을 해주세요.";
+        return;
+      }
+
       const email = `${this.form.emailLocal}@${this.form.emailDomain}`;
       try {
         const response = await axios.post("http://localhost:8080/sign-up", {
           email: email,
           pwd: this.form.pwd,
-          phone_number: this.form.phone_number,
           nickname: this.form.nickname
         });
-        this.message = "";
+        this.formError = "";
         this.modalMessage = "회원 가입이 완료되었습니다.";
         this.isModalVisible = true;
         console.log(response.data);
       } catch (error) {
-        this.message = "회원 가입 실패: " + (error.response && error.response.data.message ? error.response.data.message : error.message);
+        this.formError = "회원 가입 실패: " + (error.response && error.response.data.message ? error.response.data.message : error.message);
       }
     },
+    
     updateEmailDomain(event) {
+      this.resetEmailCheck();  
       if (event.target.value !== 'custom') {
         this.form.emailDomain = event.target.value;
       } else {
         this.form.emailDomain = '';
       }
     },
+
     handleModalClose() {
       this.isModalVisible = false;
       this.$router.push("/login");
@@ -93,7 +243,6 @@ export default {
   }
 }
 </script>
-
 
 <style scoped>
 .middle_main {
@@ -170,9 +319,29 @@ button:hover {
   opacity: 80%;
 }
 
-p {
+.duplicate_button {
+  width: 25%;
+}
+
+.duplicate_section {
+  display: flex;
+}
+
+.duplicate_section p {
+  margin: 0 auto;
+  align-content: center;
+}
+
+.error {
+  color: red;
+  margin-top: 5px;
   text-align: center;
-  color: #333;
+}
+
+.warning {
+  color: orange;
+  margin-top: 5px;
+  text-align: center;
 }
 
 .modal-overlay {

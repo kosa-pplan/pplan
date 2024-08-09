@@ -12,10 +12,17 @@ public class UserService {
     private final UserMapper userMapper;
 
     public UserDTO registerUser(UserDTO userDTO) {
-        if (userMapper.findByEmail(userDTO.getEmail()) != null) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
-        }
         userMapper.insertUser(userDTO);
         return userDTO;
+    }
+
+    // 이메일 중복 확인 메서드
+    public boolean checkEmailExists(String email) {
+        return userMapper.findByEmail(email) != null;
+    }
+
+    // 닉네임 중복 확인 메서드
+    public boolean checkNicknameExists(String nickname) {
+        return userMapper.findByNickname(nickname) != null;
     }
 }

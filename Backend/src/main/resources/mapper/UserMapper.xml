@@ -8,7 +8,6 @@
         <id property="id" column="id" />
         <result property="email" column="email" />
         <result property="pwd" column="pwd" />
-        <result property="phone_number" column="phone_number" />
         <result property="nickname" column="nickname" />
         <result property="user_type" column="user_type" />
     </resultMap>
@@ -17,9 +16,13 @@
         SELECT * FROM t_user WHERE email = #{email}
     </select>
 
+    <select id="findByNickname" resultMap="UserResultMap">
+        SELECT * FROM t_user WHERE nickname = #{nickname}
+    </select>
+
     <insert id="insertUser">
-        INSERT INTO t_user (email, pwd, phone_number, nickname)
-        VALUES (#{email}, #{pwd}, #{phone_number}, #{nickname})
+        INSERT INTO t_user (email, pwd, nickname)
+        VALUES (#{email}, #{pwd}, #{nickname})
     </insert>
 
 </mapper>
