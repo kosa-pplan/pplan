@@ -8,6 +8,7 @@ import org.pplan.service.review.ReviewService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -23,64 +24,90 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * CrossOrigin 역할
- * SpringFrameWork에서 제공하는 어노테이션,
- * 특정 컨틀롤러나 메소드에 대해 CORS요청을 허용하는 역할
- * 리소스를 요청하는 보안 메커니즘, @CrossOrigin 어노테이션을 사용하면 제어 가능
+ * CrossOrigin 역할:
+ * Spring Framework에서 제공하는 어노테이션으로,
+ * 특정 컨트롤러나 메소드에 대해 CORS 요청을 허용하는 역할을 합니다.
+ * 리소스를 요청하는 보안 메커니즘을 제어할 수 있습니다.
  */
-
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
 
-    public final ReviewService reviewService;
+    // ReviewService 의존성 주입
+    private final ReviewService reviewService;
 
+    // 이미지 업로드 디렉토리 경로를 application.properties에서 가져오기
     @Value("${image.upload-dir}")
     private String uploadDir;
     private static final String PATH_SEPARATOR = getSeparator();
 
+    // OS에 따라 경로 구분자를 반환하는 메소드
     private static String getSeparator() {
         return System.getProperty("os.name").contains("mac") ? File.separator : "/";
     }
-    @GetMapping("/review/images/{filename}")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
-        Path filePath = Paths.get(uploadDir).resolve(filename);
-        Resource file = new FileSystemResource(filePath);
 
-        System.out.println("이미지 요청");
-        if (!file.exists()) {
+    /**
+     * 이미지 파일을 다운로드하는 API
+     * @param filename 파일명
+     * @return 이미지 파일의 Resource
+     */
+    @GetMapping("/imgs/{filename:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            Path file = Paths.get(uploadDir).resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok().body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // 실제 이미지 MIME 타입에 맞게 설정
-                .body(file);
     }
 
+    /**
+     * 리뷰 목록을 가져오는 API
+     * @return 리뷰 DTO 리스트
+     */
     @GetMapping("/review/list")
     public List<ReviewDTO> reviewList() {
         return reviewService.reviewList();
     }
 
+    /**
+     * 특정 리뷰를 가져오는 API
+     * @param id 리뷰 ID
+     * @return 리뷰 DTO
+     */
     @GetMapping("/review/{id}")
     public ReviewDTO getReview(@PathVariable Long id) {
         return reviewService.getReview(id);
     }
 
+    /**
+     * 새로운 리뷰를 작성하고 이미지를 업로드하는 API
+     * @param title 리뷰 제목
+     * @param contents 리뷰 내용
+     * @param images 리뷰에 첨부할 이미지 배열
+     * @return 저장된 리뷰 DTO
+     * @throws IOException 파일 처리 중 발생할 수 있는 예외
+     */
     @PostMapping("/review/write")
     public ResponseEntity<ReviewDTO> write(@RequestParam("title") String title,
                                            @RequestParam("contents") String contents,
                                            @RequestParam("images") MultipartFile[] images) throws IOException {
 
-        // 1.객체 생성
+        // 리뷰 DTO 객체 생성
         ReviewDTO reviewDTO = new ReviewDTO();
         reviewDTO.setTitle(title);
         reviewDTO.setContents(contents);
 
+        // 리뷰 이미지 DTO 리스트 생성
         List<ReviewImageDTO> reviewImageDTOList = new ArrayList<>();
         for (MultipartFile image : images) {
-            // 원본 파일 이름 생성
+            // 원본 파일 이름 및 확장자 추출
             String originalFilename = StringUtils.cleanPath(image.getOriginalFilename());
             String fileExtension = originalFilename.substring(originalFilename.lastIndexOf('.'));
             String uuid = UUID.randomUUID().toString();
@@ -98,18 +125,20 @@ public class ReviewController {
             reviewImageDTO.setSUrlPath("thumbnail_" + fileName);
             reviewImageDTOList.add(reviewImageDTO);
         }
-        System.out.println(uploadDir +"uploadDir");
 
-        // 3. 리뷰와 이미지를 저장
+        // 리뷰와 이미지 정보를 저장
         reviewDTO.setReviewImageDTOList(reviewImageDTOList);
 
         ReviewDTO savedReviewDTO = reviewService.saveReview(reviewDTO);
         return ResponseEntity.ok(savedReviewDTO);
     }
 
+    /**
+     * 리뷰를 삭제하는 API
+     * @param id 리뷰 ID
+     */
     @DeleteMapping("/review/{id}")
     public void delete(@PathVariable Long id) {
         reviewService.delete(reviewService.delete(id));
     }
-
 }
