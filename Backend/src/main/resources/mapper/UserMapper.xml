@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.pplan.repository.mapper.UserMapper">
 
-    <resultMap id="UserResultMap" type="org.pplan.service.dto.User.UserDTO">
+    <resultMap id="UserSignUpResultMap" type="org.pplan.service.dto.User.UserSignUpDTO">
         <id property="id" column="id" />
         <result property="email" column="email" />
         <result property="pwd" column="pwd" />
@@ -12,12 +12,22 @@
         <result property="user_type" column="user_type" />
     </resultMap>
 
-    <select id="findByEmail" resultMap="UserResultMap">
+    <resultMap id="UserLoginResultMap" type="org.pplan.service.dto.User.UserLoginDTO">
+        <id property="id" column="id" />
+        <result property="email" column="email" />
+        <result property="pwd" column="pwd" />
+    </resultMap>
+
+    <select id="signUpFindByEmail" resultMap="UserSignUpResultMap">
         SELECT * FROM t_user WHERE email = #{email}
     </select>
 
-    <select id="findByNickname" resultMap="UserResultMap">
+    <select id="signUpFindByNickname" resultMap="UserSignUpResultMap">
         SELECT * FROM t_user WHERE nickname = #{nickname}
+    </select>
+
+    <select id="loginFindByEmail" resultMap="UserLoginResultMap">
+        SELECT * FROM t_user WHERE email = #{email}
     </select>
 
     <insert id="insertUser">
