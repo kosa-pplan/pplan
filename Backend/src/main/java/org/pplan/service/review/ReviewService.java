@@ -31,7 +31,6 @@ public class ReviewService {
         // 이미지 저장
         List<ReviewImageDTO> imageDTOList = reviewDTO.getReviewImageDTOList();
         for (ReviewImageDTO imageDTO : imageDTOList) {
-            System.out.println("imageDto"+imageDTO.getUrlPath()+" "+imageDTO.getSUrlPath()+" "+reviewId);
             reviewMapper.insertReviewImage(
                     imageDTO.getUrlPath(),
                     imageDTO.getSUrlPath(),
@@ -44,15 +43,6 @@ public class ReviewService {
 
     public List<ReviewDTO> reviewList() {
         List<ReviewDTO> reviews = reviewMapper.reviewList();
-
-        for (ReviewDTO review : reviews) {
-            for (ReviewImageDTO image : review.getReviewImageDTOList()) {
-                // 서버 경로와 파일명을 결합하여 전체 URL 생성
-                String fullUrlPath = uploadDir + "/" + image.getSUrlPath();
-                image.setFullUrlPath(fullUrlPath);
-                System.out.println(image.getFullUrlPath());
-            }
-        }
 
         return reviews;
     }

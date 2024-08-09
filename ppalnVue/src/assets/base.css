@@ -49,6 +49,8 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: rgba(229, 241, 255, 0.5); /* 50% 투명도 */
+
 }
 
 .left{
@@ -75,4 +77,12 @@ body, html {
     width: 20%; /* 너비를 20%로 설정 */
     height: 80%;
     text-align: center;
+}
+
+.page-container {
+    height: 100vh; /* 전체 화면 높이 */
+    overflow-y: auto; /* 세로 스크롤 허용 */
+    padding: 16px; /* 여백 설정 */
+    flex:1;
+    box-sizing: border-box; /* 패딩과 테두리가 전체 너비와 높이에 포함되도록 설정 */
 }

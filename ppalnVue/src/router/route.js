@@ -4,6 +4,7 @@ import loginCompo from "@/components/User/LoginCompo.vue";
 import signUpCompo from "@/components/User/SignUpCompo.vue";
 import MiddleCompo from "@/components/MiddleCompo.vue";
 import reviewWriteCompo from "@/components/Review/ReviewWriteCompo.vue";
+import reviewDetailCompo from "@/components/Review/ReviewDetailCompo.vue";
 
 export default [
     {
@@ -22,6 +23,10 @@ export default [
             {
                 path: '/review/write',
                 component: reviewWriteCompo,
+            },
+            {
+                path: '/review/detail/:id',
+                component: reviewDetailCompo,
             },
             {
                 path: '/login',
