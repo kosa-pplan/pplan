@@ -9,6 +9,8 @@ public interface GameMapper {
 
     GameDTO getGameById(Long id);
 
+    List<GameDTO> getGamesByCategoryAndColor(@Param("category") String category, @Param("regions") List<String> regions);
+
     List<GameDTO> getGameByCategory(String category);
 
     List<GameDTO> getAll();

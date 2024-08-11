@@ -1,14 +1,17 @@
 package org.pplan.service.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class GameDTO {
     private Long id;
     private String category;
-    private String locationName;
-    private double latitude; //x
-    private double longitude; //y
+    private String location_name;
     private String address;
-    private String foodMenu;
+    private String business;
+
 }

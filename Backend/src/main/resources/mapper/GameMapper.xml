@@ -3,6 +3,18 @@
 
 <mapper namespace="org.pplan.repository.mapper.GameMapper">
 
+    <!-- 색상(주소)과 카테고리로 게임 데이터를 조회하는 쿼리 -->
+    <select id="getGamesByCategoryAndColor" parameterType="map" resultType="org.pplan.service.dto.GameDTO">
+        SELECT * FROM t_location
+        WHERE category = #{category}
+        AND (
+        <foreach item="region" index="index" collection="regions" open="" separator="OR" close="">
+            address LIKE '%' || #{region} || '%'
+        </foreach>
+        )
+    </select>
+
+
     <!-- ID로 게임 데이터를 조회하는 쿼리 -->
     <select id="getGameById" parameterType="long" resultType="org.pplan.service.dto.GameDTO">
         SELECT * FROM t_location WHERE id = #{id}
