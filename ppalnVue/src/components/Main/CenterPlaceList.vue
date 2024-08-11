@@ -14,7 +14,8 @@ export default {
       dice2: '',
       dice3: '',
       dice4: '',
-      selectedIndex: null
+      selectedIndex: null,
+      maxfive : false,
     };
   },
   watch: {
@@ -29,6 +30,12 @@ export default {
     selectedCategory(newCategory) {
       if (newCategory) {
         this.fetchPlaces();
+      }
+    },
+    // Vuex 스토어의 items 배열을 감시 -> 5개 받은 후 삭제했을 경우를 위함
+    '$store.state.items'(newItems) {
+      if (newItems.length < 5) {
+        this.maxfive = false;
       }
     }
   },
@@ -55,6 +62,8 @@ export default {
       }
     },
     rollDice() {
+      if(this.maxfive) return;
+
       const diceNums = document.querySelectorAll('.dice-num');
       let sum = 0;
       diceNums.forEach((dice, index) => {
@@ -86,6 +95,9 @@ export default {
       this.highlightSelectedBox(index);
     },
     highlightSelectedBox(index) {
+      if (this.maxfive) {
+        return;
+      }
       this.selectedIndex = index;
 
       if (index >= 0 && index < this.placeSelectedColor.length) {
@@ -105,15 +117,26 @@ export default {
             this.$store.dispatch('addItem', newItem);
             console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
             this.$emit('placeSelected', place);
+
+            if(currentItems.length + 1 == 5){
+              this.maxfive = true;
+            }
           } else {
             console.log('Item limit reached.');
             alert('최대 5개까지 선택 가능합니다.');
+            this.maxfive = true;
           }
         } else {
           console.log(`No place information available for box ${index + 1}`);
         }
       } else {
         console.log(`Index ${index} is out of bounds.`);
+      }
+    },
+    removeItem(index) {
+      this.$store.dispatch('removeItem', index);
+      if (this.$store.state.items.length < 5) {
+        this.maxfive = false; // 아이템이 5개 미만이면 maxfive를 false로 설정
       }
     }
   },
@@ -133,7 +156,7 @@ export default {
   <div class="place-container">
     <div class="map-container">
       <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
-      <div v-for="(box, index) in boxes" :key="index" :class="['clickable-box', { selected: selectedIndex === index }]">
+      <div v-for="(box, index) in boxes" :key="index" :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
         <span v-if="box.name">{{box.name}}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
@@ -146,7 +169,7 @@ export default {
           <div class="dice-num">{{ dice3 }}</div>
           <div class="dice-num">{{ dice4 }}</div>
         </div>
-        <button class="RollDice-btn" @click="rollDice">Roll Dice</button>
+        <button class="RollDice-btn" @click="rollDice" :disabled="maxfive">Roll Dice</button>
       </div>
     </div>
   </div>

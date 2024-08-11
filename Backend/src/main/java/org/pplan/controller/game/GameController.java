@@ -1,7 +1,5 @@
 package org.pplan.controller.game ;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import org.pplan.service.Game.GameService;
 import org.pplan.service.dto.GameDTO;
 import org.springframework.beans.factory.annotation.Autowired;
