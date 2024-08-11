@@ -16,6 +16,7 @@ export default {
       dice4: '',
       selectedIndex: null,
       maxfive : false,
+      intervalid : null, //칸 애니메이션 효과 관리 변수
     };
   },
   watch: {
@@ -73,7 +74,7 @@ export default {
         this[`dice${index + 1}`] = randomNum + 1;
       });
       console.log(`sum: ${sum}`);
-      this.useDiceSumIndex(sum);
+      this.animateSelection(sum);
     },
     getDiceFace(num) {
       const dot = '●';
@@ -87,12 +88,23 @@ export default {
       ];
       return faces[num];
     },
-    useDiceSumIndex(sum) {
-      // 계산된 인덱스가 음수가 되지 않도록 조정합니다.
-      let index = (sum - 1) % this.boxes.length;  // -1을 하고 계산
-      if (index < 0) index = this.boxes.length - 1;  // 음수 인덱스는 마지막 상자로 변경
-      this.selectedIndex = index;
-      this.highlightSelectedBox(index);
+    animateSelection(sum) {
+      let currentIndex = this.selectedIndex !== null ? this.selectedIndex : 0;
+      const targetIndex = (currentIndex + sum) % this.boxes.length;
+
+      if (this.intervalId) clearInterval(this.intervalId);
+
+      this.intervalId = setInterval(() => {
+        this.selectedIndex = currentIndex;
+
+        currentIndex++;
+        if (currentIndex >= this.boxes.length) currentIndex = 0;
+
+        if (currentIndex === targetIndex) {
+          clearInterval(this.intervalId);
+          this.highlightSelectedBox(targetIndex);
+        }
+      }, 200); // 200ms 간격으로 애니메이션
     },
     highlightSelectedBox(index) {
       if (this.maxfive) {
