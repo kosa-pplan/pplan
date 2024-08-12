@@ -8,9 +8,9 @@ import java.util.List;
 @Data
 public class ReviewDTO {
     private Long id;
+    private Long courseId;
     private String title;
     private String contents;
     private List<ReviewImageDTO> reviewImageDTOList;
     private Date regDate;
-
 }
