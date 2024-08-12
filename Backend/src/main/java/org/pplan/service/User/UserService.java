@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.pplan.repository.mapper.UserMapper;
 import org.pplan.service.dto.User.UserLoginDTO;
 import org.pplan.service.dto.User.UserSignUpDTO;
+import org.pplan.util.JwtUtil;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
 
     // 회원 가입 기능
     public UserSignUpDTO registerUser(UserSignUpDTO userSignUpDTO) {
@@ -29,10 +31,11 @@ public class UserService {
     }
 
     // 로그인 기능
-    public UserLoginDTO login(String email, String pwd) {
+    public String login(String email, String pwd) {
         UserLoginDTO userLoginDTO = userMapper.loginFindByEmail(email);
         if (userLoginDTO != null && userLoginDTO.getPwd().equals(pwd)) {
-            return userLoginDTO;
+            // Generate JWT Token
+            return jwtUtil.generateToken(email);
         } else {
             return null;
         }

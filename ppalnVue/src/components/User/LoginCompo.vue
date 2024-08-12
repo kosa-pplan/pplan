@@ -50,7 +50,6 @@ import axios from "axios";
 
 export default {
   name: "LoginCompo",
-
   data() {
     return {
       form: {
@@ -58,12 +57,11 @@ export default {
         emailDomain: "",
         pwd: "",
       },
-      loginError: "",  
+      loginError: "",
       isModalVisible: false,
       modalMessage: ""
     };
   },
-
   methods: {
     updateEmailDomain(event) {
       if (event.target.value !== 'custom') {
@@ -72,13 +70,11 @@ export default {
         this.form.emailDomain = '';
       }
     },
-
     resetLoginError() {
-      this.loginError = "";  // 입력할 때마다 에러 메시지 초기화
+      this.loginError = "";
     },
-
     async login() {
-      this.loginError = ""; 
+      this.loginError = "";
 
       if (!this.form.emailLocal || !this.form.emailDomain) {
         this.loginError = "이메일을 입력해주세요.";
@@ -97,10 +93,14 @@ export default {
           pwd: this.form.pwd,
         });
 
-        if (response.data) {
+        if (response.data && response.data.token) {
+          // JWT 토큰을 localStorage에 저장
+          localStorage.setItem("token", response.data.token);
           this.modalMessage = "로그인 성공!";
           this.isModalVisible = true;
-          console.log(response.data);
+          
+          // 사용자가 로그인했음을 상위 컴포넌트에 알리기 위해 이벤트 발생
+          this.$emit('login-success');
         } else {
           this.loginError = "이메일 또는 비밀번호가 잘못되었습니다.";
         }
@@ -112,10 +112,11 @@ export default {
         }
       }
     },
-
     handleModalClose() {
       this.isModalVisible = false;
-      this.$router.push("/home");
+      this.$router.push("/").then(() => {
+        window.location.reload();
+      });
     }
   }
 }

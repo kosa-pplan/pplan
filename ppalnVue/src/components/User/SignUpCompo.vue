@@ -78,14 +78,14 @@ export default {
         confirmPwd: "",
         nickname: ""
       },
-      emailError: "",  
+      emailError: "",
       emailCheckMessage: "",
-      isEmailChecked: false,  
-      nicknameError: "",  
+      isEmailChecked: false,
+      nicknameError: "",
       nicknameCheckMessage: "",
-      isnicknameChecked: false,  
-      passwordMismatchError: "",  
-      formError: "",  
+      isnicknameChecked: false,
+      passwordMismatchError: "",
+      formError: "",
       isModalVisible: false,
       modalMessage: ""
     };
@@ -132,7 +132,7 @@ export default {
         } else {
           this.emailCheckMessage = "사용 가능한 이메일입니다.";
           this.isEmailChecked = true;
-          this.emailError = ""; // 사용 가능한 이메일일 때는 에러 메시지 초기화
+          this.emailError = ""; // 유효한 이메일에 대한 오류 메시지 지우기
         }
       } catch (error) {
         this.emailCheckMessage = "오류가 발생했습니다. 다시 시도해주세요.";
@@ -162,7 +162,7 @@ export default {
         } else {
           this.nicknameCheckMessage = "사용 가능한 닉네임입니다.";
           this.isnicknameChecked = true;
-          this.nicknameError = ""; // 사용 가능한 닉네임일 때는 에러 메시지 초기화
+          this.nicknameError = ""; // 유효한 닉네임에 대한 오류 메시지 지우기
         }
       } catch (error) {
         this.nicknameCheckMessage = "오류가 발생했습니다. 다시 시도해주세요.";
@@ -179,7 +179,7 @@ export default {
     },
 
     async register() {
-      this.formError = ""; 
+      this.formError = "";
 
       if (!this.form.emailLocal || !this.form.emailDomain) {
         this.formError = "이메일을 입력해주세요.";
@@ -228,7 +228,7 @@ export default {
     },
     
     updateEmailDomain(event) {
-      this.resetEmailCheck();  
+      this.resetEmailCheck();
       if (event.target.value !== 'custom') {
         this.form.emailDomain = event.target.value;
       } else {
