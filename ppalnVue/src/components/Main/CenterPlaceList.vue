@@ -111,15 +111,6 @@ export default {
         return;
       }
       this.selectedIndex = index;
-      const place = this.placeSelectedColor[index];
-      if (place) {
-        const newItem = {
-          name: place.name,
-          address: place.location,
-          category:place.category,
-          business:place.business
-        };
-        console.log(newItem);
 
       if (index >= 0 && index < this.placeSelectedColor.length) {
         const place = this.placeSelectedColor[index];
@@ -153,8 +144,7 @@ export default {
       } else {
         console.log(`Index ${index} is out of bounds.`);
       }
-    }
-  },
+    },
     removeItem(index) {
       this.$store.dispatch('removeItem', index);
       if (this.$store.state.items.length < 5) {
