@@ -111,7 +111,6 @@ export default {
         return;
       }
       this.selectedIndex = index;
-<<<<<<< HEAD
       const place = this.placeSelectedColor[index];
       if (place) {
         const newItem = {
@@ -120,8 +119,6 @@ export default {
           category:place.category,
           business:place.business
         };
-=======
->>>>>>> c10f777f54d0398b41e9f8a80a41c16cb5c13ace
 
       if (index >= 0 && index < this.placeSelectedColor.length) {
         const place = this.placeSelectedColor[index];
