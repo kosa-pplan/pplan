@@ -90,7 +90,9 @@ export default {
     },
     animateSelection(sum) {
       let currentIndex = this.selectedIndex !== null ? this.selectedIndex : 0;
-      const targetIndex = (currentIndex + sum) % this.boxes.length;
+      // 현재 위치에서 1칸 다음 위치부터 카운트 시작
+      currentIndex = (currentIndex + 1) % this.boxes.length;
+      const targetIndex = (currentIndex + sum -1) % this.boxes.length;
 
       if (this.intervalId) clearInterval(this.intervalId);
 
@@ -123,7 +125,8 @@ export default {
           // 현재 아이템이 5개 미만일 때만 추가
           if (currentItems.length < 5) {
             const newItem = {
-              location_name: place.location_name,
+              catergory : place.catergory,
+              name: place.location_name,
               address: place.address,
               business: place.business,
             };

@@ -40,9 +40,9 @@ import MapModalCompo from './MapModalCompo.vue';
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; // 추가된 모달 컴포넌트
 
 
-//import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
+import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
 
-import axios from 'axios';
+
 
 export default {
   components: {
@@ -104,36 +104,36 @@ export default {
     async handleButtonClick() {
 
       //불러오기 테스트
-      try {
-        const response = await axios.get('http://localhost:8080/api/course', {
-          params: { id: 123 } // 예시로 ID 1을 사용
-        });
-        const course = response.data;
-        console.log(course)
-      } catch (error) {
-        console.error('Error fetching course data:', error);
-      }
-
-      // if(this.localButtons.length<2){
-      // console.log()
-      //   alert("경로를 더 추가해주세요")
-      // }else{
-      //   const updatedButtons = await convertAllAddressesToCoordinates(this.localButtons);
-      //   console.log(updatedButtons)
-      //   if(updatedButtons==="주소변환 실패"){
-      //     alert("주소가 잘못되었습니다")
-      //   }else{
-      //     this.localButtons = updatedButtons;
-      //     this.directions = await fetchDirections(this.localButtons);
-      //     console.log(this.directions)
-      //     if(this.directions==="경로 찾기 실패"){
-      //       alert("경로 찾기 실패")
-      //     }else{
-      //       this.modalType = 'directions';
-      //       this.showModal = true;
-      //     }
-      //   }
+      // try {
+      //   const response = await axios.get('http://localhost:8080/api/course', {
+      //     params: { id: 123 } // 예시로 ID 1을 사용
+      //   });
+      //   const course = response.data;
+      //   console.log(course)
+      // } catch (error) {
+      //   console.error('Error fetching course data:', error);
       // }
+
+      if(this.localButtons.length<2){
+      console.log()
+        alert("경로를 더 추가해주세요")
+      }else{
+        const updatedButtons = await convertAllAddressesToCoordinates(this.localButtons);
+        console.log(updatedButtons)
+        if(updatedButtons==="주소변환 실패"){
+          alert("주소가 잘못되었습니다")
+        }else{
+          this.localButtons = updatedButtons;
+          this.directions = await fetchDirections(this.localButtons);
+          console.log(this.directions)
+          if(this.directions==="경로 찾기 실패"){
+            alert("경로 찾기 실패")
+          }else{
+            this.modalType = 'directions';
+            this.showModal = true;
+          }
+        }
+      }
 
     },
   },
