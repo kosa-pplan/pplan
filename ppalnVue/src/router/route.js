@@ -5,6 +5,7 @@ import signUpCompo from "@/components/User/SignUpCompo.vue";
 import MiddleCompo from "@/components/MiddleCompo.vue";
 import reviewWriteCompo from "@/components/Review/ReviewWriteCompo.vue";
 import reviewDetailCompo from "@/components/Review/ReviewDetailCompo.vue";
+import MyLikeReview from "@/components/Review/MyLikeReview.vue";
 
 export default [
     {
@@ -35,6 +36,10 @@ export default [
             {
                 path: '/sign-up',
                 component: signUpCompo,
+            },
+            {
+                path: '/myLikeReview',
+                component: MyLikeReview,
             },
         ]
     },

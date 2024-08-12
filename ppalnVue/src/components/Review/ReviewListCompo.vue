@@ -2,24 +2,35 @@
   <div class="page-container">
     <div class="review_list">
       <!-- 카드 리스트를 반복하여 표시 -->
-      <div class="card" v-for="(card, index) in displayedCards" :key="index">
-        <!-- 첫 번째 썸네일 이미지가 있을 때 표시 -->
-        <img v-if="card.reviewImageDTOList && card.reviewImageDTOList.length > 0"
-             :src="`http://localhost:8080/imgs/${card.reviewImageDTOList[0].urlPath}`"
-             alt="Card Image"
-             class="card-image">
+      <router-link v-for="(card, index) in displayedCards" :key="index" :to="`/review/detail/${card.id}`" class="card-link">
+        <div class="card">
+          <!-- 첫 번째 썸네일 이미지가 있을 때 표시 -->
+          <img v-if="card.reviewImageDTOList && card.reviewImageDTOList.length > 0"
+               :src="`http://localhost:8080/imgs/${card.reviewImageDTOList[0].urlPath}`"
+               alt="Card Image"
+               class="card-image">
 
-        <!-- 썸네일이 없을 때 기본 이미지 표시 -->
-        <img v-else
-             src="https://via.placeholder.com/150"
-             alt="Default Card Image"
-             class="card-image">
+          <!-- 썸네일이 없을 때 기본 이미지 표시 -->
+          <img v-else
+               src="https://via.placeholder.com/150"
+               alt="Default Card Image"
+               class="card-image">
 
-        <!-- 카드 제목 표시 -->
-        <h3>{{ card.title }}</h3>
-        <!-- 카드 등록 날짜 표시 -->
-        <p>{{ card.regDate }}</p>
-      </div>
+          <!-- 카드 제목 표시 -->
+          <h3>{{ card.title }}</h3>
+          <!-- 카드 등록 날짜 표시 -->
+          <p>{{ card.regDate }}</p>
+
+          <!-- 하트 아이콘 표시 -->
+          <div class="like-container">
+            <img
+                :src="'https://cdn-icons-png.flaticon.com/512/833/833472.png'"
+                class="like-icon"
+            >
+            <span class="like-count">{{card.likeCount}}</span>
+          </div>
+        </div>
+      </router-link>
     </div>
 
     <!-- 더보기 버튼 표시: 표시된 카드 수가 전체 카드 수보다 적을 때만 보이게 함 -->
@@ -68,6 +79,9 @@ export default {
 </script>
 
 <style scoped>
+.page-container {
+  padding: 16px;
+}
 
 .review_list {
   display: grid; /* 카드 목록을 그리드 레이아웃으로 표시 */
@@ -88,9 +102,10 @@ export default {
 }
 
 .card-image {
-  width: 100%; /* 카드 이미지 너비를 카드 너비에 맞춤 */
-  height: auto; /* 이미지 비율 유지 */
-  border-radius: 8px 8px 0 0; /* 이미지 상단 모서리 둥글게 설정 */
+  width: 150px; /* 이미지 너비 고정 */
+  height: 150px; /* 이미지 높이 고정 */
+  object-fit: cover; /* 이미지 비율 유지 및 영역에 맞추기 */
+  border-radius: 8px 8px 0 0;
 }
 
 .card h3 {
@@ -111,5 +126,33 @@ export default {
   border-radius: 4px; /* 버튼 모서리 둥글게 설정 */
   background-color: #007bff; /* 버튼 배경 색상 설정 */
   color: white; /* 버튼 텍스트 색상 설정 */
+}
+
+.card-link {
+  text-decoration: none; /* 링크 기본 스타일 제거 */
+}
+
+.like-icon {
+  width: 16px;  /* 기존 크기보다 작게 조정 */
+  height: 16px; /* 기존 크기보다 작게 조정 */
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+}
+.like-icon {
+  width: 20px;  /* 하트 아이콘 크기 조정 */
+  height: 20px;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: transform 0.3s ease;
+}
+
+.like-icon:hover {
+  transform: scale(1.2);
+}
+
+.like-count {
+  font-size: 18px; /* 숫자 폰트 크기 조정 */
+  font-weight: bold; /* 숫자 폰트 굵게 */
+  color: #333; /* 숫자 색상 설정 */
 }
 </style>

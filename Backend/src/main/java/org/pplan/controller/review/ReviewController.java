@@ -2,14 +2,14 @@ package org.pplan.controller.review;
 
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
+import org.pplan.service.dto.myPage.MyPageDTO;
 import org.pplan.service.dto.review.ReviewDTO;
 import org.pplan.service.dto.review.ReviewImageDTO;
+import org.pplan.service.dto.review.ReviewListDTO;
 import org.pplan.service.review.ReviewService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -72,7 +72,7 @@ public class ReviewController {
      * @return 리뷰 DTO 리스트
      */
     @GetMapping("/review/list")
-    public List<ReviewDTO> reviewList() {
+    public List<ReviewListDTO> reviewList() {
         return reviewService.reviewList();
     }
 
@@ -140,5 +140,11 @@ public class ReviewController {
     @DeleteMapping("/review/{id}")
     public void delete(@PathVariable Long id) {
         reviewService.delete(reviewService.delete(id));
+    }
+
+    @GetMapping("/myPage/myLikeReview")
+    public List<MyPageDTO> myPageDTOList(@RequestParam String userEmail){
+
+        return reviewService.getMyLikeReview(userEmail);
     }
 }
