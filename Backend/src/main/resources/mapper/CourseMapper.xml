@@ -4,31 +4,86 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     <mapper namespace="org.pplan.repository.mapper.CourseMapper">
 
-<!--    <insert id="insertCourse" parameterType="org.pplan.service.dto.CourseDTO">-->
+<!--    <insert id="insertCourse" parameterType="org.pplan.service.dto.Course.CourseDTO">-->
 <!--        INSERT INTO t_course (review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id)-->
 <!--        VALUES (#{reviewCheck}, #{placeDTO1}, #{placeDTO2}, #{placeDTO3}, #{placeDTO4}, #{placeDTO5}, #{userEmail}, #{userId})-->
 <!--    </insert>-->
 
-    <insert id="insertCourse" parameterType="org.pplan.service.dto.CourseDTO">
+    <insert id="insertCourse" parameterType="org.pplan.service.dto.Course.CourseDTO">
         INSERT INTO t_course (
         review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id
         )
         VALUES (
         #{reviewCheck},
-        PLACE(#{placeDTO1.locationName}, #{placeDTO1.address}),
-        PLACE(#{placeDTO2.locationName}, #{placeDTO2.address}),
-        PLACE(#{placeDTO3.locationName}, #{placeDTO3.address}),
-        PLACE(#{placeDTO4.locationName}, #{placeDTO4.address}),
-        PLACE(#{placeDTO5.locationName}, #{placeDTO5.address}),
+        PLACE(#{placeDTO1.locationName}, #{placeDTO1.address}, #{placeDTO1.category}, #{placeDTO1.business}),
+        PLACE(#{placeDTO2.locationName}, #{placeDTO2.address}, #{placeDTO2.category}, #{placeDTO2.business}),
+        PLACE(#{placeDTO3.locationName}, #{placeDTO3.address}, #{placeDTO3.category}, #{placeDTO3.business}),
+        PLACE(#{placeDTO4.locationName}, #{placeDTO4.address}, #{placeDTO4.category}, #{placeDTO4.business}),
+        PLACE(#{placeDTO5.locationName}, #{placeDTO5.address}, #{placeDTO5.category}, #{placeDTO5.business}),
         #{userEmail},
         #{userId}
         )
     </insert>
 
-
-    <select id="findById" parameterType="long" resultType="org.pplan.service.dto.CourseDTO">
-        SELECT * FROM t_course WHERE id = #{id}
+    <select id="findById" parameterType="long" resultMap="CourseResultMap">
+        SELECT
+        t.review_check AS reviewCheck,
+        t.t_user_email AS userEmail,
+        t.t_user_id AS userId,
+        t.place1.location_name AS place1LocationName,
+        t.place1.address AS place1Address,
+        t.place1.category AS place1Category,
+        t.place1.business AS place1Business,
+        t.place2.location_name AS place2LocationName,
+        t.place2.address AS place2Address,
+        t.place2.category AS place2Category,
+        t.place2.business AS place2Business,
+        t.place3.location_name AS place3LocationName,
+        t.place3.address AS place3Address,
+        t.place3.category AS place3Category,
+        t.place3.business AS place3Business,
+        t.place4.location_name AS place4LocationName,
+        t.place4.address AS place4Address,
+        t.place4.category AS place4Category,
+        t.place4.business AS place4Business,
+        t.place5.location_name AS place5LocationName,
+        t.place5.address AS place5Address,
+        t.place5.category AS place5Category,
+        t.place5.business AS place5Business
+        FROM
+        t_course t
+        WHERE
+        t.t_user_id = #{id}
     </select>
 
+    <resultMap id="CourseResultMap" type="org.pplan.service.dto.Course.CourseDTO">
+
+
+        <!-- PlaceDTO 필드 매핑 -->
+        <result property="placeDTO1.locationName" column="place1LocationName"/>
+        <result property="placeDTO1.address" column="place1Address"/>
+        <result property="placeDTO1.category" column="place1Category"/>
+        <result property="placeDTO1.business" column="place1Business"/>
+
+        <result property="placeDTO2.locationName" column="place2LocationName"/>
+        <result property="placeDTO2.address" column="place2Address"/>
+        <result property="placeDTO2.category" column="place2Category"/>
+        <result property="placeDTO2.business" column="place2Business"/>
+
+        <result property="placeDTO3.locationName" column="place3LocationName"/>
+        <result property="placeDTO3.address" column="place3Address"/>
+        <result property="placeDTO3.category" column="place3Category"/>
+        <result property="placeDTO3.business" column="place3Business"/>
+
+        <result property="placeDTO4.locationName" column="place4LocationName"/>
+        <result property="placeDTO4.address" column="place4Address"/>
+        <result property="placeDTO4.category" column="place4Category"/>
+        <result property="placeDTO4.business" column="place4Business"/>
+
+        <result property="placeDTO5.locationName" column="place5LocationName"/>
+        <result property="placeDTO5.address" column="place5Address"/>
+        <result property="placeDTO5.category" column="place5Category"/>
+        <result property="placeDTO5.business" column="place5Business"/>
+    </resultMap>
 </mapper>
 
