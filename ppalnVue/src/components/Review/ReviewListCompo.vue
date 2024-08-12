@@ -49,18 +49,43 @@ export default {
       currentPage: 0, // 현재 페이지 번호
     };
   },
+  computed: {
+    userEmail() {
+      return this.$store.getters.getUserEmail; // Vuex 스토어에서 userEmail을 가져옴
+    }
+  },
   created() {
+    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화합니다.
     this.fetchCards(); // 컴포넌트가 생성될 때 카드 데이터를 가져옴
   },
   methods: {
     async fetchCards() {
+      // Vuex 스토어에서 인증 상태를 확인
+      if (!this.$store.getters.isAuthenticated) {
+        // 인증되지 않았으면 로그인 페이지로 리다이렉트
+        this.$router.push('/login');
+        return;
+      }
+
+      console.log(this.userEmail);
+
       try {
-        // 서버에서 카드 데이터 가져오기
-        const response = await this.$axios.get("/review/list");
+        // 서버에서 카드 데이터 가져오기, JWT 토큰을 Authorization 헤더에 포함
+        const response = await this.$axios.get("/review/list", {
+          headers: {
+            'Authorization': `Bearer ${this.$store.state.token}`
+          }
+        });
         this.cards = response.data; // 서버에서 가져온 카드 데이터를 저장
         this.loadMore(); // 초기 로드 시 카드 일부를 화면에 표시
       } catch (error) {
         console.error('카드 데이터를 가져오는 중 오류 발생:', error);
+
+        if (error.response && error.response.status === 401) {
+          // 401 오류가 발생하면 로그아웃하고 로그인 페이지로 리다이렉트
+          this.$store.dispatch('logout');
+          this.$router.push('/login');
+        }
       }
     },
     loadMore() {
