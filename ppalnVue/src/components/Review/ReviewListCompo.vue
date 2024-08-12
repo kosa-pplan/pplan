@@ -61,11 +61,11 @@ export default {
   methods: {
     async fetchCards() {
       // Vuex 스토어에서 인증 상태를 확인
-      if (!this.$store.getters.isAuthenticated) {
-        // 인증되지 않았으면 로그인 페이지로 리다이렉트
-        this.$router.push('/login');
-        return;
-      }
+      // if (!this.$store.getters.isAuthenticated) {
+      //   // 인증되지 않았으면 로그인 페이지로 리다이렉트
+      //   this.$router.push('/login');
+      //   return;
+      // }
 
       console.log(this.userEmail);
 
