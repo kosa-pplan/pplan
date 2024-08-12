@@ -8,13 +8,16 @@ export default {
   components: { RightCheckList, CenterPlaceList, LeftPlaceChoice, LeftCategorySection },
   data() {
     return {
-      selectedColor: '' // 선택된 색상을 저장
-
+      selectedColor: '', // 선택된 색상을 저장
+      selectedCategory: '맛집'
     };
   },
   methods: {
     updateSelectedColor(color) {
       this.selectedColor = color; // selectedColor 상태 업데이트
+    },
+    updateSelectedCategory(category) {
+      this.selectedCategory = category; // 선택된 카테고리 업데이트
     }
   }
 };
@@ -24,7 +27,7 @@ export default {
   <div class="middle_main">
     <div class="left">
       <LeftPlaceChoice @colorSelected="updateSelectedColor"/>
-      <LeftCategorySection/>
+      <LeftCategorySection @categorySelected="updateSelectedCategory"/>
     </div>
     <div class="center">
       <CenterPlaceList :selectedColor="selectedColor"/>

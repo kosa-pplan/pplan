@@ -1,71 +1,85 @@
 <script>
+import axios from 'axios';
+import {mapState} from "vuex";
+
 export default {
   name: 'CenterPaceList',
-  props: {
-    selectedColor: String
-  },
 
   data() {
     return {
-      boxes: new Array(20).fill(null),
-      places:{
-        blue:[{name:'서울숲',x: 37.544579, y: 127.037697 }, {name: '2'}, '3', '4', '5', '6', '7', '8', '9', '10','11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
-        pink:[{ name: '이태원', location:'서울특별시 종로구 혜화동1' },
-          { name: '홍대', location:'서울특별시 종로구 혜화동2' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동3' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동4' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동5' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동6' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동7' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동8' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동9' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동10' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동11' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동12' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동13' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동14' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동15' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동16' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동17' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동18' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동19' },
-          { name: '가로수길', location:'서울특별시 종로구 혜화동20' },
-        ],
-      },
-      showDice: false, // to control dice visibility
+      boxes: new Array(20).fill({ name: '' }),
+      places: [], // 가져온 장소 데이터를 저장
+      showDice: false,
       dice1: '',
       dice2: '',
       dice3: '',
       dice4: '',
-      selectedIndex: null
+      selectedIndex: null,
+      maxfive : false,
+      intervalid : null, //칸 애니메이션 효과 관리 변수
     };
   },
   watch: {
+    // 선택된 색상이 변경될 때마다 fetchPlaces를 호출
     selectedColor(newColor) {
       if (newColor) {
-        this.showDice = true; // 색상이 선택되면 주사위 보이도록 설정
+        this.showDice = true;
+        this.fetchPlaces();
+      }
+    },
+    // 선택된 카테고리가 변경될 때마다 fetchPlaces를 호출
+    selectedCategory(newCategory) {
+      if (newCategory) {
+        this.fetchPlaces();
+      }
+    },
+    // Vuex 스토어의 items 배열을 감시 -> 5개 받은 후 삭제했을 경우를 위함
+    '$store.state.items'(newItems) {
+      if (newItems.length < 5) {
+        this.maxfive = false;
       }
     }
   },
   methods: {
-    rollDice() { // 'dice-num' 클래스를 가진 모든 요소를 선택
-      const diceNums = document.querySelectorAll('.dice-num'); // 각 주사위 요소를 반복
-      let sum = 0; // 주사위 합산을 위함
-      diceNums.forEach((dice, index) => { // 0부터 5까지의 랜덤 숫자 생성
-        const randomNum = Math.floor(Math.random() * 6); // 랜덤 숫자에 따라 주사위 눈을 설정
-        sum += randomNum; // 1부터 6까지의 숫자로 변경하여 합산
+    // API 호출을 통해 장소 데이터를 가져오는 메서드
+    async fetchPlaces() {
+      try {
+        const category = this.selectedCategory;
+        const color = this.selectedColor;
+        console.log('Fetching places for:', category, color); // 확인용
+        const response = await axios.get(`http://localhost:8080/api/games/${category}/${color}`);
+        this.places = response.data;
 
+        // 가져온 데이터를 boxes에 바인딩
+        this.boxes = this.places.map(place => {
+          if (place && place.location_name) {
+            return { name: place.location_name };
+          } else {
+            return { name: 'Unknown' };
+          }
+        });
+      } catch (error) {
+        console.error('해당 장소 가져오는데 실패함:', error);
+      }
+    },
+    rollDice() {
+      if(this.maxfive) return;
+
+      const diceNums = document.querySelectorAll('.dice-num');
+      let sum = 0;
+      diceNums.forEach((dice, index) => {
+        const randomNum = Math.floor(Math.random() * 6);
+        sum += randomNum;
         dice.innerHTML = this.getDiceFace(randomNum);
-        // 각 주사위 숫자를 data 속성에 저장
         this[`dice${index + 1}`] = randomNum + 1;
       });
       console.log(`sum: ${sum}`);
-      this.useDiceSumIndex(sum);
+      this.animateSelection(sum);
     },
     getDiceFace(num) {
       const dot = '●';
       const faces = [
-        '', // 0점
+        '',
         dot,
         dot + ' ' + dot,
         dot + ' ' + dot + ' ' + dot,
@@ -74,52 +88,103 @@ export default {
       ];
       return faces[num];
     },
-    useDiceSumIndex(sum) {
-      const index = (sum % this.boxes.length)-1; // 주사위 합에 따라 인덱스 계산
-      this.selectedIndex = index; // 해당 인덱스의 박스 클릭 처리
-      this.highlightSelectedBox(index);
+    animateSelection(sum) {
+      let currentIndex = this.selectedIndex !== null ? this.selectedIndex : 0;
+      const targetIndex = (currentIndex + sum) % this.boxes.length;
+
+      if (this.intervalId) clearInterval(this.intervalId);
+
+      this.intervalId = setInterval(() => {
+        this.selectedIndex = currentIndex;
+
+        currentIndex++;
+        if (currentIndex >= this.boxes.length) currentIndex = 0;
+
+        if (currentIndex === targetIndex) {
+          clearInterval(this.intervalId);
+          this.highlightSelectedBox(targetIndex);
+        }
+      }, 200); // 200ms 간격으로 애니메이션
     },
     highlightSelectedBox(index) {
+      if (this.maxfive) {
+        return;
+      }
       this.selectedIndex = index;
       const place = this.placeSelectedColor[index];
       if (place) {
         const newItem = {
           name: place.name,
-          location: place.location,
+          address: place.location,
+          category:place.category,
+          business:place.business
         };
+        console.log(newItem);
 
-        // 현재 저장소의 항목 수를 확인합니다.
-        const currentItems = this.$store.state.items; // items는 저장소의 항목 리스트라고 가정합니다.
-        if (currentItems.length < 5) {
-          this.$store.dispatch('addItem', newItem); // Vuex 액션을 호출하여 아이템을 추가합니다
-          console.log(`Selected ${place.name} with ${place.location}`);
-          this.$emit('placeSelected', place);
+      if (index >= 0 && index < this.placeSelectedColor.length) {
+        const place = this.placeSelectedColor[index];
+
+        // name, address, business 필드 로그 확인
+        console.log(`Selected Place:`, place);
+        if (place && place.location_name && place.address && place.business) {
+          const newItem = {
+            location_name: place.location_name,
+            address: place.address,
+            business: place.business,
+          };
+
+          const currentItems = this.$store.state.items;
+          if (currentItems.length < 5) {
+            this.$store.dispatch('addItem', newItem);
+            console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
+            this.$emit('placeSelected', place);
+
+            if (currentItems.length + 1 == 5) {
+              this.maxfive = true;
+            }
+          } else {
+            console.log('Item limit reached.');
+            alert('최대 5개까지 선택 가능합니다.');
+            this.maxfive = true;
+          }
         } else {
-          console.log('Item limit reached.');
-          alert('최대 5개까지 선택 가능합니다.');
+          console.log(`No place information available for box ${index + 1}`);
         }
       } else {
-        console.log(`No place information available for box ${index + 1}`);
+        console.log(`Index ${index} is out of bounds.`);
       }
     }
   },
-  computed :{
-    placeSelectedColor(){
-      return this.places[this.selectedColor]|| [];
+    removeItem(index) {
+      this.$store.dispatch('removeItem', index);
+      if (this.$store.state.items.length < 5) {
+        this.maxfive = false; // 아이템이 5개 미만이면 maxfive를 false로 설정
+      }
+    }
+  },
+  computed: {
+    ...mapState(['selectedColor', 'selectedCategory']),
+    placeSelectedColor() {
+      // this.places 배열에 값이 정상적으로 들어 있는지 확인
+      console.log(this.places);
+      return this.places || [];
     }
   }
 };
 </script>
 
+
 <template>
   <div class="place-container">
     <div class="map-container">
-      <div v-for="(box, index) in boxes" :key="index" :class="['clickable-box', { selected: selectedIndex === index }]">
-        <span v-if="placeSelectedColor[index]">{{ placeSelectedColor[index].name }}</span>
+      <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
+      <div v-for="(box, index) in boxes" :key="index"
+           :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
+        <span v-if="box.name">{{ box.name }}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
 
-      <!-- 주사위 공간 -->
+      <!-- 주사위 버튼과 주사위 숫자 표시 -->
       <div v-if="showDice" class="dice-button-container">
         <div class="dice-container">
           <div class="dice-num">{{ dice1 }}</div>
@@ -127,11 +192,12 @@ export default {
           <div class="dice-num">{{ dice3 }}</div>
           <div class="dice-num">{{ dice4 }}</div>
         </div>
-        <button class="RollDice-btn" @click="rollDice">Roll Dice</button>
+        <button class="RollDice-btn" @click="rollDice" :disabled="maxfive">Roll Dice</button>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .place-container {

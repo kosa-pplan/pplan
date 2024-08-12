@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.pplan.repository.mapper.GameMapper">
+
+    <!-- 색상(주소)과 카테고리로 게임 데이터를 조회하는 쿼리 -->
+    <select id="getGamesByCategoryAndColor" parameterType="map" resultType="org.pplan.service.dto.GameDTO">
+        SELECT * FROM t_location
+        WHERE category = #{category}
+        AND (
+        <foreach item="region" index="index" collection="regions" open="" separator="OR" close="">
+            address LIKE '%' || #{region} || '%'
+        </foreach>
+        )
+    </select>
+
+
+    <!-- ID로 게임 데이터를 조회하는 쿼리 -->
+    <select id="getGameById" parameterType="long" resultType="org.pplan.service.dto.GameDTO">
+        SELECT * FROM t_location WHERE id = #{id}
+    </select>
+
+    <!-- 카테고리로 게임 데이터를 조회하는 쿼리 -->
+    <select id="getGameByCategory" parameterType="string" resultType="org.pplan.service.dto.GameDTO">
+        SELECT * FROM t_location WHERE category = #{category}
+    </select>
+
+    <!-- 모든 게임 데이터를 조회하는 쿼리 -->
+    <select id="getAll" resultType="org.pplan.service.dto.GameDTO">
+        SELECT * FROM t_location
+    </select>
+
+    <!-- 새로운 게임 데이터를 삽입하는 쿼리 -->
+    <insert id="insertLocation" parameterType="org.pplan.service.dto.GameDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_location (category, location_name, latitude, longitude, address, food_menu)
+        VALUES (#{category}, #{locationName}, #{latitude}, #{longitude}, #{address}, #{foodMenu})
+    </insert>
+
+    <!-- 기존 게임 데이터를 업데이트하는 쿼리 -->
+    <update id="updateLocation" parameterType="org.pplan.service.dto.GameDTO">
+        UPDATE t_location
+        SET category = #{category},
+            location_name = #{locationName},
+            latitude = #{latitude},
+            longitude = #{longitude},
+            address = #{address},
+            food_menu = #{foodMenu}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 게임 데이터를 삭제하는 쿼리 -->
+    <delete id="deleteLocation" parameterType="long">
+        DELETE FROM t_location WHERE id = #{id}
+    </delete>
+
+</mapper>
