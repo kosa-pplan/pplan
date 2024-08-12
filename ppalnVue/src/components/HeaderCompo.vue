@@ -12,10 +12,13 @@ export default {
       console.log("click");
       localStorage.removeItem('token');
       this.isLoggedIn = false;  // 반응형 로그인 상태 업데이트
-      this.$router.push('/login');  // 로그인 페이지로 리다이렉트
+      window.location.href = '/'; // '/' 경로로 이동하면서 새로고침
     },
     handleLoginSuccess() {
       this.isLoggedIn = true;  // 반응형 로그인 상태 업데이트
+    },
+    goToHome() {
+      window.location.href = '/'; // '/' 경로로 이동하면서 새로고침
     }
   },
   created() {
@@ -31,8 +34,7 @@ export default {
 
 <template>
   <div class="header">
-    <router-link to="/"><img src="@/assets/logo.png" alt="logo" class="logo"/>
-    </router-link>
+    <img @click="goToHome" src="@/assets/logo.png" alt="logo" class="logo"/>
     <div class="nav-button">
       <router-link to="/review" class="board-button">게시판</router-link>
 
@@ -60,6 +62,10 @@ export default {
   position: absolute;
   top : 0;
   left: 0;
+}
+
+.logo:hover {
+  cursor: pointer;
 }
 
 .nav-button {

@@ -9,13 +9,22 @@ export default {
     };
   },
   computed:{
-    ...mapState(['selectedColor']) // Vuex에서 선택된 색상 가져오기
+    ...mapState(['selectedColor']), // Vuex에서 선택된 색상 가져오기
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated; // Vuex에서 인증 상태 가져오기
+    }
   },
   methods: {
     ...mapActions(['updateColor']), // Vuex 액션을 매핑하여 사용
 
     openModal() {
-      this.isModalOpen = true;
+      if (this.isAuthenticated) {
+        // 로그인 되어 있으면 모달을 열기
+        this.isModalOpen = true;
+      } else {
+        // 로그인되지 않았으면 로그인 페이지로 리다이렉트
+        this.$router.push('/login');
+      }
     },
     closeModal() {
       this.isModalOpen = false;

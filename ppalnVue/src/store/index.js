@@ -1,6 +1,7 @@
 // Vue와 Vuex를 가져옵니다.
 import Vue from "vue";
 import Vuex from "vuex";
+import { getToken, decodeJWT } from '@/utils/auth'; // JWT 관련 유틸리티 함수 추가
 
 Vue.use(Vuex);
 
@@ -13,6 +14,8 @@ const store = new Vuex.Store({
         nextIdx: 1,
         selectedColor : '', //ㅊㄱ
         selectedCategory : '맛집', //ㅊㄱ
+        token: getToken(), // 초기 상태에서 JWT 토큰을 로컬 스토리지에서 가져옴
+        userEmail: null, // JWT 토큰에서 추출한 사용자 이메일을 저장할 변수
       },
       mutations: {
         ADD_ITEM(state, { name,address='',business="" ,category=""}) {
@@ -35,6 +38,14 @@ const store = new Vuex.Store({
         },
         setCategory(state, category) {
           state.selectedCategory = category; // ㅊㄱ
+        },
+        setToken(state, token) {
+          state.token = token;
+          state.userEmail = token ? decodeJWT(token).sub : null; // JWT 토큰에서 이메일을 추출하여 상태에 저장
+        },
+        clearAuth(state) {
+            state.token = null;
+            state.userEmail = null;
         }
       },
       actions: {
@@ -52,6 +63,14 @@ const store = new Vuex.Store({
         },
         updateCategory({ commit }, category) {
           commit('setCategory', category); // ㅊㄱ
+        },
+        initializeAuth({ commit }) {
+          const token = getToken();
+          commit('setToken', token); // JWT 토큰을 초기화하고 상태에 설정
+        },
+        logout({ commit }) {
+            commit('clearAuth'); // 인증 정보를 초기화 (로그아웃)
+            localStorage.removeItem('token'); // 로컬 스토리지에서 토큰 제거
         }
       },
       getters: {
@@ -61,6 +80,8 @@ const store = new Vuex.Store({
         },
         selectedColor: state => state.selectedColor,
         selectedCategory: state => state.selectedCategory, //ㅊㄱ
+        isAuthenticated: state => !!state.token, // 사용자가 인증되었는지 여부를 반환
+        getUserEmail: state => state.userEmail, // JWT 토큰에서 추출한 사용자 이메일을 반환
       }
 });
 
