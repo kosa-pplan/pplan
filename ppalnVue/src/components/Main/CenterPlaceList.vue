@@ -121,7 +121,7 @@ export default {
           const newItem = {
             location_name: place.location_name,
             address: place.address,
-            business : place.business,
+            business: place.business,
           };
 
           const currentItems = this.$store.state.items;
@@ -130,7 +130,7 @@ export default {
             console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
             this.$emit('placeSelected', place);
 
-            if(currentItems.length + 1 == 5){
+            if (currentItems.length + 1 == 5) {
               this.maxfive = true;
             }
           } else {
@@ -168,8 +168,9 @@ export default {
   <div class="place-container">
     <div class="map-container">
       <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
-      <div v-for="(box, index) in boxes" :key="index" :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
-        <span v-if="box.name">{{box.name}}</span>
+      <div v-for="(box, index) in boxes" :key="index"
+           :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
+        <span v-if="box.name">{{ box.name }}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
 
