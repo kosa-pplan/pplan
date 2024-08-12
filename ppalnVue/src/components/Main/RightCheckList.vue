@@ -100,61 +100,6 @@ export default {
       this.showModal = true;
     },
     async handleButtonClick() {
-
-<<<<<<< HEAD
-      //불러오기 테스트
-      // try {
-      //   const response = await axios.get('http://localhost:8080/api/course', {
-=======
-    //주소 불러와서 경로 찍기
-    // const testbuttons = {}
-    //   // user id 불러오기 테스트
-    //   try {
-    //     const response = await axios.get('http://localhost:8080/api/course/userid', {
-    //       params: { id: 123 } // 예시로 ID 1을 사용
-    //     });
-    //     const course = response.data;
-
-    //     for(let i =0;i<5;i++){
-    //     let propertyName = `placeDTO${i + 1}`;
-    
-    // // Access the property using bracket notation
-    // if (course[0][propertyName]!=null) {
-    //   console.log("dkdkdkdk")
-    //     // Your logic here
-    //     testbuttons[i] = course[0][propertyName]
-    // }
-    //   }
-        
-    //   } catch (error) {
-    //     console.error('Error fetching course data:', error);
-    //   }
-
-      
-    //   console.log(testbuttons)
-    //   this.directions = testbuttons
-
-
-
-      ////////////////////////////////////////////////////////////////////////////////////////
-
-
-      //좋아요 누른거 가져오기
-      // try {
-      //   const response = await axios.get('http://localhost:8080/api/course/all', {
->>>>>>> da40f03c00acbd91cb54244557bad64508cbd95c
-      //     params: { id: 123 } // 예시로 ID 1을 사용
-      //   });
-      //   const course = response.data;
-      //   console.log(course)
-      // } catch (error) {
-      //   console.error('Error fetching course data:', error);
-      // }
-
-<<<<<<< HEAD
-=======
-      console.log(this.localButtons)
->>>>>>> da40f03c00acbd91cb54244557bad64508cbd95c
       if(this.localButtons.length<2){
       console.log()
         alert("경로를 더 추가해주세요")
