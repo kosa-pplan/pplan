@@ -97,13 +97,13 @@ export default {
       this.intervalId = setInterval(() => {
         this.selectedIndex = currentIndex;
 
-        currentIndex++;
-        if (currentIndex >= this.boxes.length) currentIndex = 0;
-
         if (currentIndex === targetIndex) {
           clearInterval(this.intervalId);
           this.highlightSelectedBox(targetIndex);
         }
+
+        currentIndex++;
+        if (currentIndex >= this.boxes.length) currentIndex = 0;
       }, 200); // 200ms 간격으로 애니메이션
     },
     highlightSelectedBox(index) {
@@ -118,19 +118,21 @@ export default {
         // name, address, business 필드 로그 확인
         console.log(`Selected Place:`, place);
         if (place && place.location_name && place.address && place.business) {
-          const newItem = {
-            location_name: place.location_name,
-            address: place.address,
-            business: place.business,
-          };
-
           const currentItems = this.$store.state.items;
+
+          // 현재 아이템이 5개 미만일 때만 추가
           if (currentItems.length < 5) {
+            const newItem = {
+              location_name: place.location_name,
+              address: place.address,
+              business: place.business,
+            };
+
             this.$store.dispatch('addItem', newItem);
             console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
             this.$emit('placeSelected', place);
 
-            if (currentItems.length + 1 == 5) {
+            if(currentItems.length + 1 == 5){
               this.maxfive = true;
             }
           } else {
@@ -168,9 +170,8 @@ export default {
   <div class="place-container">
     <div class="map-container">
       <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
-      <div v-for="(box, index) in boxes" :key="index"
-           :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
-        <span v-if="box.name">{{ box.name }}</span>
+      <div v-for="(box, index) in boxes" :key="index" :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
+        <span v-if="box.name">{{box.name}}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
 

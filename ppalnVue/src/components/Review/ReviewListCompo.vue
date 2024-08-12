@@ -56,7 +56,7 @@ export default {
     async fetchCards() {
       try {
         // 서버에서 카드 데이터 가져오기
-        const response = await this.$axios.get(this.$serverUrl + "/review/list");
+        const response = await this.$axios.get("/review/list"); // 상대 경로만 사용
         this.cards = response.data; // 서버에서 가져온 카드 데이터를 저장
         this.loadMore(); // 초기 로드 시 카드 일부를 화면에 표시
       } catch (error) {
