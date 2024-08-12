@@ -47,20 +47,56 @@ export default {
       displayedCards: [], // 현재 화면에 표시될 카드들
       cardsToShow: 6, // 한 번에 보여줄 카드 수
       currentPage: 0, // 현재 페이지 번호
+      userEmail: '', // 로그인한 사용자의 이메일을 저장할 변수 (JWT에서 추출)
     };
   },
   created() {
-    this.fetchCards(); // 컴포넌트가 생성될 때 카드 데이터를 가져옴
+    this.checkLoginAndFetchCards(); // 컴포넌트가 생성될 때 로그인 상태를 확인하고 카드 데이터를 가져옴
   },
   methods: {
-    async fetchCards() {
+    // JWT 토큰을 디코딩하여 페이로드에서 정보를 추출하는 메서드
+    decodeJWT(token) {
+      // JWT의 페이로드 부분을 디코딩
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    },
+    async checkLoginAndFetchCards() {
+      // 로컬 스토리지에서 JWT 토큰을 가져옴
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        // 토큰이 없으면 로그인 페이지로 리다이렉트
+        this.$router.push('/login');
+        return;
+      }
+
+      // JWT 토큰에서 이메일을 추출하여 변수에 저장
+      const decodedToken = this.decodeJWT(token);
+      this.userEmail = decodedToken.sub; // JWT 토큰에서 sub 클레임을 이메일로 가정
+      console.log(this.userEmail);
+
       try {
-        // 서버에서 카드 데이터 가져오기
-        const response = await this.$axios.get(this.$serverUrl + "/review/list");
-        this.cards = response.data; // 서버에서 가져온 카드 데이터를 저장
+        // 서버에 카드 데이터를 요청할 때 JWT 토큰을 Authorization 헤더에 포함
+        const response = await this.$axios.get(this.$serverUrl + "/review/list", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // 서버에서 가져온 카드 데이터를 저장
+        this.cards = response.data;
         this.loadMore(); // 초기 로드 시 카드 일부를 화면에 표시
       } catch (error) {
         console.error('카드 데이터를 가져오는 중 오류 발생:', error);
+
+        if (error.response && error.response.status === 401) {
+          // 401 오류가 발생하면 로그인 페이지로 리다이렉트
+          this.$router.push('/login');
+        }
       }
     },
     loadMore() {
@@ -68,6 +104,7 @@ export default {
       const start = this.currentPage * this.cardsToShow;
       const end = start + this.cardsToShow;
       const nextCards = this.cards.slice(start, end);
+
       if (nextCards.length > 0) {
         // 새 카드를 기존 카드 배열에 추가
         this.displayedCards = this.displayedCards.concat(nextCards);
@@ -77,6 +114,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .page-container {
