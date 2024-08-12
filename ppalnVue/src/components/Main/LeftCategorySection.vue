@@ -1,4 +1,6 @@
 <script>
+import {mapActions} from "vuex";
+
 export default {
   data() {
     return {
@@ -8,7 +10,15 @@ export default {
         { text: "카페" }
       ],
       val_sel: "맛집"
+    };
+  },
+  watch: {
+    val_sel(newCategory) {
+      this.updateCategory(newCategory); // Vuex 스토어에 선택된 카테고리를 업데이트
     }
+  },
+  methods :{
+    ...mapActions(['updateCategory']) // Vuex 액션을 매핑하여 사용
   }
 }
 </script>

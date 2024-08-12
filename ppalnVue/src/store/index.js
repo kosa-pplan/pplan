@@ -10,23 +10,31 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         items: [],
-        nextIdx: 1
+        nextIdx: 1,
+        selectedColor : '', //ㅊㄱ
+        selectedCategory : '맛집', //ㅊㄱ
       },
       mutations: {
-        ADD_ITEM(state, { name, x = 0, y = 0,address='' }) {
-            state.items.push({
-              name: name,
-              x: x,
-              y: y,
-              address: address,
-              idx: state.nextIdx++
-            });
-          },
+        ADD_ITEM(state, { name,address='',business="" ,category=""}) {
+          state.items.push({
+            name: name,
+            address: address,
+            business: business,
+            category:category,
+            idx: state.nextIdx++
+          });
+        },
         DELETE_ITEM(state, id) {
           state.items = state.items.filter(item => item.idx !== id);
         },
         UPDATE_ITEMS(state, newItems) {
           state.items = newItems;
+        },
+        setColor(state, color) {
+          state.selectedColor = color; // ㅊㄱ
+        },
+        setCategory(state, category) {
+          state.selectedCategory = category; // ㅊㄱ
         }
       },
       actions: {
@@ -38,15 +46,26 @@ const store = new Vuex.Store({
         },
         updateItems({ commit }, newItems) {
           commit('UPDATE_ITEMS', newItems);
+        },
+        updateColor({ commit }, color) {
+          commit('setColor', color); // ㅊㄱ
+        },
+        updateCategory({ commit }, category) {
+          commit('setCategory', category); // ㅊㄱ
         }
       },
       getters: {
-        items: state => state.items
+        items: state => state.items,
+        filteredItems: state => {
+          return state.items.filter(item => item.category === state.selectedCategory);
+        },
+        selectedColor: state => state.selectedColor,
+        selectedCategory: state => state.selectedCategory, //ㅊㄱ
       }
 });
 
 // 스토어의 초기 상태를 콘솔에 출력하여 스토어가 올바르게 생성되었는지 확인합니다.
 // 여기서는 'countxs' 모듈의 초기 상태를 출력합니다.
-console.log('index.js', store.state.countxs);
+console.log('index.js', store.state.items);
 
 export default store;

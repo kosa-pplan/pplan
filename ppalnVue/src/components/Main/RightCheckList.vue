@@ -20,7 +20,7 @@
     <!-- 경로 보기 모달 컴포넌트 -->
     <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
         <h2>경로</h2>
-        <MapModalCompo :message="directions"/>
+        <MapModalCompo :message="directions" @close="showModal = false, modalType=''"/>
     </ModalCompo>
     <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
         <h2>버튼 정보</h2>
@@ -38,6 +38,9 @@ import draggable from 'vuedraggable';
 import ModalCompo from './ModalCompo.vue';
 import MapModalCompo from './MapModalCompo.vue';
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; // 추가된 모달 컴포넌트
+
+
+//import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
 
 import axios from 'axios';
 
@@ -77,6 +80,7 @@ export default {
     onDragEnd() {
       // 드래그가 끝난 후 버튼 순서를 Vuex 스토어에 업데이트
       this.localButtons = this.localButtons.slice(); // 트리거링하기 위해 배열을 새로 할당
+      console.log(this.localButtons);
     },
     confirmDelete(id) {
       this.buttonToDelete = id;
@@ -92,115 +96,45 @@ export default {
     removeButton(id) {
       this.$store.dispatch('deleteItem', id); // Vuex 액션을 호출하여 아이템을 삭제합니다
     },
-    //도로명 주소 위경도 변환
-    async convertAddressToCoordinates(address) {
-      const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
-      const REST_API_KEY = process.env.VUE_APP_API_key; // 실제 API 키로 변경
-
-      try {
-        const response = await axios.get(API_URL, {
-          params: {
-            query: address,
-          },
-          headers: {
-            Authorization: `KakaoAK ${REST_API_KEY}`,
-          },
-        });
-
-        // 응답 데이터에서 좌표를 추출
-        const { x, y } = response.data.documents[0].address;
-
-        return { lat: parseFloat(y), lon: parseFloat(x) };
-      } catch (error) {
-        console.error('Error fetching coordinates:', error);
-        throw error;
-      }
-    },
-
-    async convertAllAddressesToCoordinates() {
-      try {
-        const promises = this.localButtons.map(button =>
-          this.convertAddressToCoordinates(button.address).then(converted => ({
-            ...button,
-            lat: converted.lat,
-            lon: converted.lon
-          }))
-        );
-
-        const updatedButtons = await Promise.all(promises);
-
-        // 변환된 위도와 경도를 console.log로 출력
-        // updatedButtons.forEach(button => {
-        //   console.log(`Button ID: ${button.idx}, Name: ${button.name}`);
-        //   console.log(`Latitude: ${button.lat}, Longitude: ${button.lon}`);
-        // });
-
-        // 변환된 좌표로 localButtons 업데이트
-        this.localButtons = updatedButtons;
-
-      } catch (error) {
-        console.error('Error converting all addresses to coordinates:', error);
-      }
-    },
-
-    //경로 검색
-    async fetchDirections() {
-
-      const API_URL = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
-      const REST_API_KEY = process.env.VUE_APP_API_key; // 여기에 실제 API 키를 입력하세요
-      
-      try {
-        const response = await axios.post(
-          API_URL,
-          {
-            origin: {
-              x: this.localButtons[0].lon,
-              y: this.localButtons[0].lat,
-            },
-            destination: {
-              x: this.localButtons[this.localButtons.length - 1].lon,
-              y: this.localButtons[this.localButtons.length - 1].lat,
-            },
-            waypoints: this.localButtons.slice(1, -1).map(button => ({
-              name: button.name,
-              x: button.lon,
-              y: button.lat,
-            })),
-            priority: 'RECOMMEND',
-            car_fuel: 'GASOLINE',
-            car_hipass: false,
-            alternatives: false,
-            road_details: false,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `KakaoAK ${REST_API_KEY}`,
-            },
-          },
-        );
-        this.directions = JSON.stringify(response.data, null, 2);
-        // console.log(JSON.stringify(response.data, null, 2))
-      } catch (error) {
-        console.error('Error fetching directions:', error);
-      }
-    },
     openModal(button) {
       this.selectedButton = button;
       this.modalType = 'button'; // 버튼 클릭 모달을 열기 위해 modalType 설정
       this.showModal = true;
     },
     async handleButtonClick() {
-      if(this.localButtons.length<2){
-      console.log()
-        alert("경로 추가해주세요")
-        console.log(process.env.VUE_APP_API_key)
-      }else{
-        await this.convertAllAddressesToCoordinates();
-        await this.fetchDirections();
-      this.modalType = 'directions';
-        this.showModal = true;
+
+      //불러오기 테스트
+      try {
+        const response = await axios.get('http://localhost:8080/api/course', {
+          params: { id: 123 } // 예시로 ID 1을 사용
+        });
+        const course = response.data;
+        console.log(course)
+      } catch (error) {
+        console.error('Error fetching course data:', error);
       }
+
+      // if(this.localButtons.length<2){
+      // console.log()
+      //   alert("경로를 더 추가해주세요")
+      // }else{
+      //   const updatedButtons = await convertAllAddressesToCoordinates(this.localButtons);
+      //   console.log(updatedButtons)
+      //   if(updatedButtons==="주소변환 실패"){
+      //     alert("주소가 잘못되었습니다")
+      //   }else{
+      //     this.localButtons = updatedButtons;
+      //     this.directions = await fetchDirections(this.localButtons);
+      //     console.log(this.directions)
+      //     if(this.directions==="경로 찾기 실패"){
+      //       alert("경로 찾기 실패")
+      //     }else{
+      //       this.modalType = 'directions';
+      //       this.showModal = true;
+      //     }
+      //   }
+      // }
+
     },
   },
 };

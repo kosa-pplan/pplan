@@ -1,13 +1,19 @@
 <script>
+import {mapActions, mapState} from "vuex";
+
 export default {
   data(){
     return {
       isModalOpen: false,
-      selectedColor: '',
       colors: ['blue', 'pink', 'green', 'orange', 'purple'],
     };
   },
+  computed:{
+    ...mapState(['selectedColor']) // Vuex에서 선택된 색상 가져오기
+  },
   methods: {
+    ...mapActions(['updateColor']), // Vuex 액션을 매핑하여 사용
+
     openModal() {
       this.isModalOpen = true;
     },
@@ -16,10 +22,10 @@ export default {
     },
     chooseRandomColor() {
       const randomIndex = Math.floor(Math.random() * this.colors.length);
-      this.selectedColor = this.colors[randomIndex];
+      const color = this.colors[randomIndex];
+      this.updateColor(color);
     },
     selectColor() {
-      this.$emit('colorSelected', this.selectedColor); // 선택된 색상을 부모 컴포넌트로 전달
       this.closeModal();
     }
   }
