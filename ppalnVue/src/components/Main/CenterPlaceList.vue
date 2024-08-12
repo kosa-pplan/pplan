@@ -15,7 +15,6 @@ export default {
       dice3: '',
       dice4: '',
       selectedIndex: null,
-      maxfive : false,
       intervalid : null, //칸 애니메이션 효과 관리 변수
     };
   },
@@ -31,12 +30,6 @@ export default {
     selectedCategory(newCategory) {
       if (newCategory) {
         this.fetchPlaces();
-      }
-    },
-    // Vuex 스토어의 items 배열을 감시 -> 5개 받은 후 삭제했을 경우를 위함
-    '$store.state.items'(newItems) {
-      if (newItems.length < 5) {
-        this.maxfive = false;
       }
     }
   },
@@ -63,8 +56,10 @@ export default {
       }
     },
     rollDice() {
-      if(this.maxfive) return;
-
+      if(this.$store.state.items.length >= 5) {
+        alert('최대 5개까지 선택 가능합니다.');
+        return;
+      }
       const diceNums = document.querySelectorAll('.dice-num');
       let sum = 0;
       diceNums.forEach((dice, index) => {
@@ -90,26 +85,24 @@ export default {
     },
     animateSelection(sum) {
       let currentIndex = this.selectedIndex !== null ? this.selectedIndex : 0;
-      const targetIndex = (currentIndex + sum) % this.boxes.length;
+      currentIndex = (currentIndex + 1) % this.boxes.length;
+      const targetIndex = (currentIndex + sum - 1) % this.boxes.length;
 
       if (this.intervalId) clearInterval(this.intervalId);
 
       this.intervalId = setInterval(() => {
         this.selectedIndex = currentIndex;
 
-        currentIndex++;
-        if (currentIndex >= this.boxes.length) currentIndex = 0;
-
         if (currentIndex === targetIndex) {
           clearInterval(this.intervalId);
           this.highlightSelectedBox(targetIndex);
         }
+        currentIndex++;
+        if (currentIndex >= this.boxes.length) currentIndex = 0;
+
       }, 200); // 200ms 간격으로 애니메이션
     },
     highlightSelectedBox(index) {
-      if (this.maxfive) {
-        return;
-      }
       this.selectedIndex = index;
 
       if (index >= 0 && index < this.placeSelectedColor.length) {
@@ -119,25 +112,29 @@ export default {
         console.log(`Selected Place:`, place);
         if (place && place.location_name && place.address && place.business) {
           const newItem = {
-            location_name: place.location_name,
+            name: place.location_name,
             address: place.address,
             business: place.business,
+            category: place.category
           };
 
           const currentItems = this.$store.state.items;
+          const isDuplicate = currentItems.some(item => {return item.name === newItem.name;});
+
+          if (isDuplicate) {  // 동일한 location_name일 경우 알림창 및 주사위 돌리기 차단
+            alert('같은 장소가 나왔습니다. 다시 한번 주사위를 돌려주세요');
+            return;
+          }
+
           if (currentItems.length < 5) {
             this.$store.dispatch('addItem', newItem);
             console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
             this.$emit('placeSelected', place);
-
-            if (currentItems.length + 1 == 5) {
-              this.maxfive = true;
-            }
           } else {
             console.log('Item limit reached.');
             alert('최대 5개까지 선택 가능합니다.');
-            this.maxfive = true;
           }
+
         } else {
           console.log(`No place information available for box ${index + 1}`);
         }
@@ -147,9 +144,6 @@ export default {
     },
     removeItem(index) {
       this.$store.dispatch('removeItem', index);
-      if (this.$store.state.items.length < 5) {
-        this.maxfive = false; // 아이템이 5개 미만이면 maxfive를 false로 설정
-      }
     }
   },
   computed: {
@@ -163,13 +157,12 @@ export default {
 };
 </script>
 
-
 <template>
   <div class="place-container">
     <div class="map-container">
       <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
       <div v-for="(box, index) in boxes" :key="index"
-           :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
+           :class="['clickable-box', { selected: selectedIndex === index}]">
         <span v-if="box.name">{{ box.name }}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
@@ -182,12 +175,11 @@ export default {
           <div class="dice-num">{{ dice3 }}</div>
           <div class="dice-num">{{ dice4 }}</div>
         </div>
-        <button class="RollDice-btn" @click="rollDice" :disabled="maxfive">Roll Dice</button>
+        <button class="RollDice-btn" @click="rollDice">Roll Dice</button>
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .place-container {

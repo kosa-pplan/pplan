@@ -8,12 +8,11 @@
         SELECT * FROM t_location
         WHERE category = #{category}
         AND (
-        <foreach item="region" index="index" collection="regions" open="" separator="OR" close="">
+        <foreach item="region" index="index" collection="regions" open="(" separator=") OR (" close=")">
             address LIKE '%' || #{region} || '%'
         </foreach>
         )
     </select>
-
 
     <!-- ID로 게임 데이터를 조회하는 쿼리 -->
     <select id="getGameById" parameterType="long" resultType="org.pplan.service.dto.GameDTO">
@@ -32,19 +31,18 @@
 
     <!-- 새로운 게임 데이터를 삽입하는 쿼리 -->
     <insert id="insertLocation" parameterType="org.pplan.service.dto.GameDTO" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO t_location (category, location_name, latitude, longitude, address, food_menu)
-        VALUES (#{category}, #{locationName}, #{latitude}, #{longitude}, #{address}, #{foodMenu})
+        INSERT INTO t_location (category, location_name, address, food_menu)
+        VALUES (#{category}, #{location_name}, #{address}, #{business})
     </insert>
+
 
     <!-- 기존 게임 데이터를 업데이트하는 쿼리 -->
     <update id="updateLocation" parameterType="org.pplan.service.dto.GameDTO">
         UPDATE t_location
         SET category = #{category},
             location_name = #{locationName},
-            latitude = #{latitude},
-            longitude = #{longitude},
             address = #{address},
-            food_menu = #{foodMenu}
+            business = #{business},
         WHERE id = #{id}
     </update>
 

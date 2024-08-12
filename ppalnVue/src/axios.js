@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // 전역 Axios 설정
-axios.defaults.baseURL = '//localhost:8080';
+axios.defaults.baseURL = '//localhost:8080'
 
 // 모든 요청에 JWT 토큰을 추가하는 인터셉터
 axios.interceptors.request.use(config => {
