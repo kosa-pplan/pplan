@@ -119,7 +119,8 @@ export default {
         console.log(`Selected Place:`, place);
         if (place && place.location_name && place.address && place.business) {
           const newItem = {
-            location_name: place.location_name,
+            name: place.location_name,
+            category: place.category,
             address: place.address,
             business: place.business,
           };
