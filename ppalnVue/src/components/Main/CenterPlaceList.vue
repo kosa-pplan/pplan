@@ -52,8 +52,8 @@ export default {
 
         // 가져온 데이터를 boxes에 바인딩
         this.boxes = this.places.map(place => {
-          if (place && place.location_name) {
-            return { name: place.location_name };
+          if (place && place.name) {
+            return { name: place.name };
           } else {
             return { name: 'Unknown' };
           }
@@ -90,9 +90,8 @@ export default {
     },
     animateSelection(sum) {
       let currentIndex = this.selectedIndex !== null ? this.selectedIndex : 0;
-      // 현재 위치에서 1칸 다음 위치부터 카운트 시작
       currentIndex = (currentIndex + 1) % this.boxes.length;
-      const targetIndex = (currentIndex + sum -1) % this.boxes.length;
+      const targetIndex = (currentIndex + sum - 1) % this.boxes.length;
 
       if (this.intervalId) clearInterval(this.intervalId);
 
@@ -103,9 +102,9 @@ export default {
           clearInterval(this.intervalId);
           this.highlightSelectedBox(targetIndex);
         }
-
         currentIndex++;
         if (currentIndex >= this.boxes.length) currentIndex = 0;
+
       }, 200); // 200ms 간격으로 애니메이션
     },
     highlightSelectedBox(index) {
@@ -114,28 +113,32 @@ export default {
       }
       this.selectedIndex = index;
 
-      if (index >= 0 && index < this.placeSelectedColor.length) {
-        const place = this.placeSelectedColor[index];
-
         // name, address, business 필드 로그 확인
         console.log(`Selected Place:`, place);
         if (place && place.location_name && place.address && place.business) {
+          const newItem = {
+            name: place.location_name,
+            address: place.address,
+            business: place.business,
+            category: place.category
+          };
+
           const currentItems = this.$store.state.items;
+          const isDuplicate = currentItems.some(item => {
+            console.log('Comparing:', item.name, 'with', newItem.name);
+            return item.name === newItem.name;
+          });
+          if (isDuplicate) {  // Check for duplicate location_name
+            alert('같은 장소가 나왔습니다. 다시 한번 주사위를 돌려주세요');
+            return;
+          }
 
-          // 현재 아이템이 5개 미만일 때만 추가
           if (currentItems.length < 5) {
-            const newItem = {
-              catergory : place.catergory,
-              name: place.location_name,
-              address: place.address,
-              business: place.business,
-            };
-
             this.$store.dispatch('addItem', newItem);
             console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
             this.$emit('placeSelected', place);
 
-            if(currentItems.length + 1 == 5){
+            if (currentItems.length + 1 === 5) {
               this.maxfive = true;
             }
           } else {
@@ -173,8 +176,9 @@ export default {
   <div class="place-container">
     <div class="map-container">
       <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
-      <div v-for="(box, index) in boxes" :key="index" :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
-        <span v-if="box.name">{{box.name}}</span>
+      <div v-for="(box, index) in boxes" :key="index"
+           :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
+        <span v-if="box.name">{{ box.name }}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
 
