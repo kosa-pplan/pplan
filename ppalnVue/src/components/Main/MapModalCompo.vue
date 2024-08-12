@@ -1,12 +1,19 @@
 <template>
   <div>
+    <div>
+      <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
+      출발지
+      <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
+      도착지
+      <img src="@/assets/blackmarker.png" alt="blackmarker" style="width: 28px; height: 40px;">
+      경유지
+    </div>
     <div id="map" style="width: 100%; height: 400px;">
       <!-- 지도는 이 div에 렌더링 됩니다. -->
     </div>
     <div>
       <button @click="saveMap">저장</button>
     </div>
-
     <!-- 확인 모달 컴포넌트 -->
     <SaveConfirmModal v-if="showConfirmModal" @confirm="handleSave" @close="showConfirmModal = false" />
   </div>
@@ -24,7 +31,10 @@ export default {
     return {
       map: null,
       jsonData: null,
-      showConfirmModal: false // 저장 확인 모달 표시 여부
+      showConfirmModal: false, // 저장 확인 모달 표시 여부
+      startIcon: require('@/assets/redmarker.png'), // 출발지 아이콘 이미지 경로
+      endIcon: require('@/assets/bluemarker.png'), // 경유지 아이콘 이미지 경로
+      waypointsIcon: require('@/assets/blackmarker.png') // 목적지 아이콘 이미지 경로
     };
   },
   props: {
@@ -64,18 +74,21 @@ export default {
       let newArray = this.localButtons.map(button => {
         return {
           name: button.name,
-          address: button.address
+          address: button.address,
+          category: button.category,
+          business: button.business
         };
       });
       console.log(newArray);
 
-      axios.post('http://localhost:8080/api/test', newArray, {
+      axios.post('http://localhost:8080/api/course/save', newArray, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
       .then(response => {
         this.$emit('close');
+        this.showConfirmModal = false; // 모달 닫기
         console.log(response.data);
       })
       .catch(error => {
@@ -142,25 +155,29 @@ export default {
 
         polyline.setMap(this.map);
 
+        console.log(this.localButtons[0].name)
         // 출발지와 목적지에 마커 추가
         new kakao.maps.Marker({
           map: this.map,
           position: linePath[0],
-          title: '출발지',
+          title: this.localButtons[0].name,
+          image: new kakao.maps.MarkerImage(this.startIcon, new kakao.maps.Size(28, 40)) // 출발지 아이콘 설정
         });
 
         new kakao.maps.Marker({
           map: this.map,
           position: linePath[linePath.length - 1],
-          title: '목적지',
-        });
+          title: this.localButtons[this.localButtons.length-1].name,
+          image: new kakao.maps.MarkerImage(this.endIcon, new kakao.maps.Size(28, 40)) // 도착지 아이콘 설정
+        })
 
         // Waypoint에만 마커 추가
         waypoints.forEach((point, index) => {
           new kakao.maps.Marker({
             map: this.map,
             position: point,
-            title: `경유지 ${index + 1}`,
+            title: this.localButtons[index+1].name,
+            image: new kakao.maps.MarkerImage(this.waypointsIcon, new kakao.maps.Size(28, 40)), // 출발지 아이콘 설정
             clickable: true // 마커 클릭 가능하도록 설정 (선택 사항)
           });
         });
@@ -177,7 +194,6 @@ export default {
     },
     handleSave() {
       this.sendData();
-      this.showConfirmModal = false; // 모달 닫기
     }
   }
 }

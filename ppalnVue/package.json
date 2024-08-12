@@ -11,6 +11,7 @@
     "axios": "^1.7.2",
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
+    "dompurify": "^3.1.6",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "html2canvas": "^1.4.1",

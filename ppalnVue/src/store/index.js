@@ -13,12 +13,12 @@ const store = new Vuex.Store({
         nextIdx: 1
       },
       mutations: {
-        ADD_ITEM(state, { name, x = 0, y = 0,address='' }) {
+        ADD_ITEM(state, { name,address='',business="" ,category=""}) {
             state.items.push({
               name: name,
-              x: x,
-              y: y,
               address: address,
+              business: business,
+              category:category,
               idx: state.nextIdx++
             });
           },
