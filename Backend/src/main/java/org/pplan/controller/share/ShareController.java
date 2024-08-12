@@ -23,7 +23,6 @@ public class ShareController {
         System.out.println(userId);
         System.out.println(reviewId);
         ShareDTO shareDTO = new ShareDTO();
-        shareDTO.setUserId(userId);
         shareDTO.setReviewId(reviewId);
         return shareService.checkLikeCount(shareDTO);
     }
