@@ -24,12 +24,21 @@ public class CourseRestController {
 //        return courseService.getCourseById(id); // 서비스에서 CourseDTO를 반환
 //    }
 
-    @GetMapping("/api/course")
+    @GetMapping("/api/course/userid")
     @CrossOrigin
-    public List<CourseDTO> getCoursesById(Long id) {
-        // 데이터베이스에서 ID로 Course 정보를 가져오는 로직
-        System.out.println(courseService.getCoursesById(id));
-        return courseService.getCoursesById(id);
+    public List<CourseDTO> getCoursesById(String email) {
+        // 데이터베이스에서 ID로 내가 저장한 ourse 정보를 가져오는 로직
+        System.out.println(email);
+        System.out.println(courseService.getCoursesById(email));
+        return courseService.getCoursesById(email);
+    }
+
+    @GetMapping("/api/course/all")
+    @CrossOrigin
+    public List<CourseDTO> getAllCourses(String email) {
+        // 데이터베이스에서 ID로 좋아요 누른 Course 정보를 가져오는 로직
+        System.out.println(courseService.getAllCourses(email));
+        return courseService.getAllCourses(email);
     }
 
 
@@ -104,6 +113,7 @@ public class CourseRestController {
         // Set static user information
         courseDTO.setUserEmail("test@gmail.com");
         courseDTO.setUserId(789L); // Example user ID
+        courseDTO.setTitle(data.get(0).get("title"));
 
         System.out.println("변환테스트: " + courseDTO);
 

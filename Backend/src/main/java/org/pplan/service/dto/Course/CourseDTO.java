@@ -12,11 +12,12 @@ public class CourseDTO {
     private PlaceDTO placeDTO5;
     private String userEmail;
     private Long userId;
+    private String title;
 
     // Constructors
     public CourseDTO() {}
 
-    public CourseDTO(String reviewCheck, PlaceDTO placeDTO1, PlaceDTO placeDTO2, PlaceDTO placeDTO3, PlaceDTO placeDTO4, PlaceDTO placeDTO5, String userEmail, Long userId) {
+    public CourseDTO(String reviewCheck, PlaceDTO placeDTO1, PlaceDTO placeDTO2, PlaceDTO placeDTO3, PlaceDTO placeDTO4, PlaceDTO placeDTO5, String userEmail, Long userId, String title) {
         this.reviewCheck = reviewCheck;
         this.placeDTO1 = placeDTO1;
         this.placeDTO2 = placeDTO2;
@@ -25,6 +26,8 @@ public class CourseDTO {
         this.placeDTO5 = placeDTO5;
         this.userEmail = userEmail;
         this.userId = userId;
+        this.title = title;
+
     }
     @Override
     public String toString() {
@@ -36,7 +39,8 @@ public class CourseDTO {
                 ", placeDTO4=" + placeDTO4 + '\'' +
                 ", placeDTO5=" + placeDTO5 + '\'' +
                 ", userEmail='" + userEmail + '\'' +
-                ", userId=" + userId +
+                ", userId=" + userId + '\'' +
+                ", title=" +
                 '}';
     }
 }
