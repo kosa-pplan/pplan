@@ -8,26 +8,26 @@
     <select id="checkLike" parameterType="org.pplan.service.dto.share.ShareDTO" resultType="int">
         SELECT ID
         FROM T_Share
-        WHERE T_REVIEW_ID = #{reviewId} AND T_USER_ID = #{userId}
+        WHERE T_REVIEW_ID = #{reviewId} AND T_USER_EMAIL = #{userEmail}
     </select>
 
     <!-- boolean 좋아요 여부 확인 -->
     <select id="checkedLikeCount" parameterType="org.pplan.service.dto.share.ShareDTO" resultType="int">
         SELECT COUNT(*)
         FROM T_Share
-        WHERE T_REVIEW_ID = #{reviewId} AND T_USER_ID = #{userId}
+        WHERE T_REVIEW_ID = #{reviewId} AND T_USER_EMAIL = #{userEmail}
     </select>
 
     <!--좋아요 추가-->
     <insert id="addLike" parameterType="org.pplan.service.dto.share.ShareDTO">
         INSERT INTO T_Share (T_REVIEW_ID, T_USER_EMAIL, T_USER_ID)
-        VALUES (#{reviewId}, #{userEmail}, #{userId})
+        VALUES (#{reviewId}, #{userEmail},(SELECT id FROM T_User WHERE EMAIL = #{userEmail}))
     </insert>
 
     <!--좋아요 삭제-->
     <delete id="removeLike" parameterType="org.pplan.service.dto.share.ShareDTO">
         DELETE FROM T_Share
-        WHERE T_REVIEW_ID = #{reviewId} AND T_USER_ID = #{userId}
+        WHERE T_REVIEW_ID = #{reviewId} AND T_USER_EMAIL = #{userEmail}
     </delete>
 
     <!--좋아요 갯수 조회-->

@@ -12,6 +12,7 @@ public interface ReviewMapper {
 
     List<MyPageDTO> getMyLikeReview(String userEmail);
 
+    void updateYesCourseStatus(long courseId);
 
     void insertReview(ReviewDTO reviewDTO);
 

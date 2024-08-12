@@ -7,10 +7,13 @@ import org.pplan.service.dto.myPage.MyPageDTO;
 import org.pplan.service.dto.review.ReviewDTO;
 import org.pplan.service.dto.review.ReviewImageDTO;
 import org.pplan.service.dto.review.ReviewListDTO;
-import org.springframework.beans.factory.annotation.Value;
+import org.pplan.service.image.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,10 +21,8 @@ import java.util.List;
 @Log4j2
 public class ReviewService {
 
-    public final ReviewMapper reviewMapper;
-
-    @Value("${image.upload-dir}")
-    private String uploadDir;
+    private final ReviewMapper reviewMapper;
+    private final ImageService imageService;
 
     @Transactional
     public ReviewDTO saveReview(ReviewDTO reviewDTO) {
@@ -31,7 +32,13 @@ public class ReviewService {
         Long reviewId = reviewDTO.getId();
 
         // 이미지 저장
-        List<ReviewImageDTO> imageDTOList = reviewDTO.getReviewImageDTOList();
+        saveReviewImages(reviewDTO.getReviewImageDTOList(), reviewId);
+
+        reviewMapper.updateYesCourseStatus(reviewDTO.getCourseId());
+        return reviewDTO;
+    }
+
+    private void saveReviewImages(List<ReviewImageDTO> imageDTOList, Long reviewId) {
         for (ReviewImageDTO imageDTO : imageDTOList) {
             reviewMapper.insertReviewImage(
                     imageDTO.getUrlPath(),
@@ -39,31 +46,46 @@ public class ReviewService {
                     reviewId
             );
         }
-        // 저장된 리뷰와 이미지를 포함하여 DTO를 반환
-        return reviewDTO;
     }
 
     public List<ReviewListDTO> reviewList() {
-        List<ReviewListDTO> reviews = reviewMapper.reviewList();
-
-        return reviews;
+        return reviewMapper.reviewList();
     }
 
     public ReviewDTO getReview(long id) {
         return reviewMapper.getReview(id);
     }
 
-    public long update(ReviewDTO reviewRequestDTO) {
-
-        return reviewMapper.reviewUpdate(reviewRequestDTO);
+    @Transactional
+    public void update(ReviewDTO reviewDTO) {
+        long rowsAffected = reviewMapper.reviewUpdate(reviewDTO);
+        if (rowsAffected == 0) {
+            throw new IllegalArgumentException("Review not found or update failed.");
+        }
     }
 
-    public long delete(long id) {
-        log.info("delete.............");
-        return reviewMapper.reviewDelete(id);
+    @Transactional
+    public void delete(long id) {
+        log.info("Deleting review with id: {}", id);
+        long rowsAffected = reviewMapper.reviewDelete(id);
+        if (rowsAffected == 0) {
+            throw new IllegalArgumentException("Review not found or delete failed.");
+        }
     }
 
     public List<MyPageDTO> getMyLikeReview(String userEmail) {
         return reviewMapper.getMyLikeReview(userEmail);
+    }
+
+    public List<ReviewImageDTO> processImages(MultipartFile[] images) throws IOException {
+        List<ReviewImageDTO> reviewImageDTOList = new ArrayList<>();
+        for (MultipartFile image : images) {
+            String[] processedImageData = imageService.processImage(image);
+            ReviewImageDTO reviewImageDTO = new ReviewImageDTO();
+            reviewImageDTO.setUrlPath(processedImageData[0]);
+            reviewImageDTO.setSUrlPath(processedImageData[1]);
+            reviewImageDTOList.add(reviewImageDTO);
+        }
+        return reviewImageDTOList;
     }
 }

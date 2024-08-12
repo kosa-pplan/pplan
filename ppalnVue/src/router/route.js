@@ -22,7 +22,7 @@ export default [
                 component: reviewListCompo,
             },
             {
-                path: '/review/write',
+                path: '/review/write/:courseId',
                 component: reviewWriteCompo,
             },
             {
