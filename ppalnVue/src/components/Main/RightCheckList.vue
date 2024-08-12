@@ -42,8 +42,6 @@ import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; // 추가된 모달 �
 
 import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
 
-
-
 export default {
   components: {
     draggable,
@@ -102,18 +100,6 @@ export default {
       this.showModal = true;
     },
     async handleButtonClick() {
-
-      //불러오기 테스트
-      // try {
-      //   const response = await axios.get('http://localhost:8080/api/course', {
-      //     params: { id: 123 } // 예시로 ID 1을 사용
-      //   });
-      //   const course = response.data;
-      //   console.log(course)
-      // } catch (error) {
-      //   console.error('Error fetching course data:', error);
-      // }
-
       if(this.localButtons.length<2){
       console.log()
         alert("경로를 더 추가해주세요")

@@ -13,5 +13,7 @@ public interface CourseMapper {
 
     //CourseDTO findById(@Param("id") int id);
 
-    List<CourseDTO> findById(Long id);
+    List<CourseDTO> findById(String email);
+
+    List<CourseDTO> findAllCourses(String email);
 }

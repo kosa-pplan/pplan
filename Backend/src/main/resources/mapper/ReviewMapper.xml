@@ -32,8 +32,8 @@
     <!-- 리뷰 저장 -->
     <insert id="insertReview" parameterType="org.pplan.service.dto.review.ReviewDTO" useGeneratedKeys="true"
             keyProperty="id" keyColumn="ID">
-        INSERT INTO T_REVIEW (TITLE, CONTENTS)
-        VALUES (#{title}, #{contents})
+        INSERT INTO T_REVIEW (TITLE, CONTENTS, T_COURSE_ID)
+        VALUES (#{title}, #{contents}, #{courseId})
     </insert>
 
     <!-- 이미지 저장 -->
@@ -41,6 +41,14 @@
         INSERT INTO T_REVIEW_IMAGE (URL_PATH, S_URL_PATH, T_REVIEW_ID)
         VALUES (#{urlPath}, #{sUrlPath}, #{reviewId})
     </insert>
+
+    <!--Update CourseId-->
+    <update id="updateYesCourseStatus">
+        UPDATE T_COURSE Set
+            REVIEW_CHECK ='YES'
+        where ID = #{courseId}
+    </update>
+
 
     <select id="reviewList" resultMap="reviewResultListMap">
         SELECT
@@ -99,6 +107,7 @@
         from T_REVIEW
         where id = #{id}
     </delete>
+
 
     <select id="getMyLikeReview" parameterType="string" resultType="org.pplan.service.dto.myPage.MyPageDTO">
     -- 특정 사용자가 좋아요한 리뷰를 조회하는 쿼리 예제

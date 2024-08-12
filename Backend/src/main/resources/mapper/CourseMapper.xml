@@ -11,7 +11,7 @@
 
     <insert id="insertCourse" parameterType="org.pplan.service.dto.Course.CourseDTO">
         INSERT INTO t_course (
-        review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id
+        review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id, t_title
         )
         VALUES (
         #{reviewCheck},
@@ -21,15 +21,17 @@
         PLACE(#{placeDTO4.locationName}, #{placeDTO4.address}, #{placeDTO4.category}, #{placeDTO4.business}),
         PLACE(#{placeDTO5.locationName}, #{placeDTO5.address}, #{placeDTO5.category}, #{placeDTO5.business}),
         #{userEmail},
-        #{userId}
+        #{userId},
+        #{title}
         )
     </insert>
 
-    <select id="findById" parameterType="long" resultMap="CourseResultMap">
+    <select id="findById" parameterType="String" resultMap="CourseResultMap">
         SELECT
         t.review_check AS reviewCheck,
         t.t_user_email AS userEmail,
         t.t_user_id AS userId,
+        t.t_title AS title,
         t.place1.location_name AS place1LocationName,
         t.place1.address AS place1Address,
         t.place1.category AS place1Category,
@@ -53,7 +55,7 @@
         FROM
         t_course t
         WHERE
-        t.t_user_id = #{id}
+        t.t_user_email = #{email}
     </select>
 
     <resultMap id="CourseResultMap" type="org.pplan.service.dto.Course.CourseDTO">
@@ -85,5 +87,43 @@
         <result property="placeDTO5.category" column="place5Category"/>
         <result property="placeDTO5.business" column="place5Business"/>
     </resultMap>
+
+    <select id="findAllCourses" parameterType="String" resultMap="CourseResultMap">
+        SELECT
+        t.review_check AS reviewCheck,
+        t.t_user_email AS userEmail,
+        t.t_user_id AS userId,
+        t.t_title AS title,
+        t.place1.location_name AS place1LocationName,
+        t.place1.address AS place1Address,
+        t.place1.category AS place1Category,
+        t.place1.business AS place1Business,
+        t.place2.location_name AS place2LocationName,
+        t.place2.address AS place2Address,
+        t.place2.category AS place2Category,
+        t.place2.business AS place2Business,
+        t.place3.location_name AS place3LocationName,
+        t.place3.address AS place3Address,
+        t.place3.category AS place3Category,
+        t.place3.business AS place3Business,
+        t.place4.location_name AS place4LocationName,
+        t.place4.address AS place4Address,
+        t.place4.category AS place4Category,
+        t.place4.business AS place4Business,
+        t.place5.location_name AS place5LocationName,
+        t.place5.address AS place5Address,
+        t.place5.category AS place5Category,
+        t.place5.business AS place5Business
+        FROM
+        t_course t
+        WHERE
+        t.id IN (
+        SELECT t_review.t_course_id
+        FROM t_share
+        JOIN t_review ON t_share.t_review_id = t_review.id
+        WHERE t_share.T_USER_EMAIL = #{email}
+        )
+    </select>
+
 </mapper>
 

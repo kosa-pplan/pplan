@@ -25,8 +25,12 @@ public class CourseService {
 //    }
 
     // 특정 ID로 여러 CourseDTO 항목을 반환하는 메소드
-    public List<CourseDTO> getCoursesById(Long id) {
-        return courseMapper.findById(id);
+    public List<CourseDTO> getCoursesById(String email) {
+        return courseMapper.findById(email);
+    }
+
+    public List<CourseDTO> getAllCourses(String email) {
+        return courseMapper.findAllCourses(email);
     }
 
 }

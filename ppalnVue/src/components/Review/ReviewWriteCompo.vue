@@ -48,12 +48,14 @@ export default {
           }
         }
       },
-      images: []
+      images: [],
+      courseId: '' // courseId를 URL 파라미터에서 가져올 예정
     };
   },
   methods: {
     fnSave() {
       const formData = new FormData();
+      formData.append('courseId', this.courseId);
       formData.append('title', this.title);
       formData.append('contents', this.content);
 
@@ -75,6 +77,8 @@ export default {
           })
           .catch(error => {
             console.error('저장 실패:', error);
+            console.log('course',this.courseId);
+
             alert('저장실패');
           });
     },
@@ -83,7 +87,11 @@ export default {
     },
     handleFileChange(event) {
       this.images = Array.from(event.target.files);
-    }
+    },
+  },
+  async created() {
+    // URL 파라미터에서 courseId를 가져와서 설정합니다
+    this.courseId = this.$route.params.courseId || '';
   }
 };
 </script>

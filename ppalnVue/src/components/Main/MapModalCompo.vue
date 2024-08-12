@@ -23,6 +23,8 @@
 import axios from 'axios';
 import SaveConfirmModal from './SaveConfirmModal.vue'; // 추가된 모달 컴포넌트
 
+import {drawRoute } from '@/services/mapService'
+
 export default {
   components: {
     SaveConfirmModal
@@ -70,17 +72,18 @@ export default {
     }
   },
   methods: {
-    sendData() {
+    sendData(title) {
       let newArray = this.localButtons.map(button => {
         return {
           name: button.name,
           address: button.address,
           category: button.category,
-          business: button.business
+          business: button.business,
+          title:title
         };
       });
       console.log(newArray);
-
+      
       axios.post('http://localhost:8080/api/course/save', newArray, {
         headers: {
           'Content-Type': 'application/json'
@@ -102,98 +105,99 @@ export default {
         level: 5,
       };
       this.map = new kakao.maps.Map(container, options);
-      this.drawRoute();
+      drawRoute(this.map, this.jsonData, this.localButtons, this.startIcon, this.endIcon, this.waypointsIcon);
     },
-    extractLatLngFromJson(jsonData) {
-      const linePaths = [];
-      if (jsonData && jsonData.routes) {
-        jsonData.routes.forEach((route) => {
-          route.sections.forEach((section) => {
-            section.roads.forEach((road) => {
-              for (let i = 0; i < road.vertexes.length; i += 2) {
-                const lat = road.vertexes[i + 1];
-                const lng = road.vertexes[i];
-                linePaths.push(new kakao.maps.LatLng(lat, lng));
-              }
-            });
-          });
-        });
-      } else {
-        console.error('JSON 데이터가 올바르지 않습니다.');
-      }
-      return linePaths;
-    },
-    extractWaypointsFromJson(jsonData) {
-      const waypoints = [];
-      if (jsonData && jsonData.routes) {
-        jsonData.routes.forEach((route) => {
-          if (route.summary.waypoints) {
-            route.summary.waypoints.forEach((point) => {
-              const lat = point.y; // 위도
-              const lng = point.x; // 경도
-              waypoints.push(new kakao.maps.LatLng(lat, lng));
-            });
-          }
-        });
-      } else {
-        console.error('JSON 데이터에 waypoints가 없습니다.');
-      }
-      return waypoints;
-    },
-    async drawRoute() {
-      const linePath = this.extractLatLngFromJson(this.jsonData); // jsonData를 전달
-      const waypoints = this.extractWaypointsFromJson(this.jsonData); // jsonData를 전달
+    // extractLatLngFromJson(jsonData) {
+    //   const linePaths = [];
+    //   if (jsonData && jsonData.routes) {
+    //     jsonData.routes.forEach((route) => {
+    //       route.sections.forEach((section) => {
+    //         section.roads.forEach((road) => {
+    //           for (let i = 0; i < road.vertexes.length; i += 2) {
+    //             const lat = road.vertexes[i + 1];
+    //             const lng = road.vertexes[i];
+    //             linePaths.push(new kakao.maps.LatLng(lat, lng));
+    //           }
+    //         });
+    //       });
+    //     });
+    //   } else {
+    //     console.error('JSON 데이터가 올바르지 않습니다.');
+    //   }
+    //   return linePaths;
+    // },
+    // extractWaypointsFromJson(jsonData) {
+    //   const waypoints = [];
+    //   if (jsonData && jsonData.routes) {
+    //     jsonData.routes.forEach((route) => {
+    //       if (route.summary.waypoints) {
+    //         route.summary.waypoints.forEach((point) => {
+    //           const lat = point.y; // 위도
+    //           const lng = point.x; // 경도
+    //           waypoints.push(new kakao.maps.LatLng(lat, lng));
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     console.error('JSON 데이터에 waypoints가 없습니다.');
+    //   }
+    //   return waypoints;
+    // },
+    // async drawRoute() {
+    //   const linePath = this.extractLatLngFromJson(this.jsonData); // jsonData를 전달
+    //   const waypoints = this.extractWaypointsFromJson(this.jsonData); // jsonData를 전달
 
-      if (linePath.length > 0) { 
-        const polyline = new kakao.maps.Polyline({
-          path: linePath,
-          strokeWeight: 5,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0.7,
-          strokeStyle: 'solid',
-        });
+    //   if (linePath.length > 0) { 
+    //     const polyline = new kakao.maps.Polyline({
+    //       path: linePath,
+    //       strokeWeight: 5,
+    //       strokeColor: '#FF0000',
+    //       strokeOpacity: 0.7,
+    //       strokeStyle: 'solid',
+    //     });
 
-        polyline.setMap(this.map);
+    //     polyline.setMap(this.map);
 
-        console.log(this.localButtons[0].name)
-        // 출발지와 목적지에 마커 추가
-        new kakao.maps.Marker({
-          map: this.map,
-          position: linePath[0],
-          title: this.localButtons[0].name,
-          image: new kakao.maps.MarkerImage(this.startIcon, new kakao.maps.Size(28, 40)) // 출발지 아이콘 설정
-        });
+    //     console.log(this.localButtons[0].name)
+    //     // 출발지와 목적지에 마커 추가
+    //     new kakao.maps.Marker({
+    //       map: this.map,
+    //       position: linePath[0],
+    //       title: this.localButtons[0].name,
+    //       image: new kakao.maps.MarkerImage(this.startIcon, new kakao.maps.Size(28, 40)) // 출발지 아이콘 설정
+    //     });
 
-        new kakao.maps.Marker({
-          map: this.map,
-          position: linePath[linePath.length - 1],
-          title: this.localButtons[this.localButtons.length-1].name,
-          image: new kakao.maps.MarkerImage(this.endIcon, new kakao.maps.Size(28, 40)) // 도착지 아이콘 설정
-        })
+    //     new kakao.maps.Marker({
+    //       map: this.map,
+    //       position: linePath[linePath.length - 1],
+    //       title: this.localButtons[this.localButtons.length-1].name,
+    //       image: new kakao.maps.MarkerImage(this.endIcon, new kakao.maps.Size(28, 40)) // 도착지 아이콘 설정
+    //     })
 
-        // Waypoint에만 마커 추가
-        waypoints.forEach((point, index) => {
-          new kakao.maps.Marker({
-            map: this.map,
-            position: point,
-            title: this.localButtons[index+1].name,
-            image: new kakao.maps.MarkerImage(this.waypointsIcon, new kakao.maps.Size(28, 40)), // 출발지 아이콘 설정
-            clickable: true // 마커 클릭 가능하도록 설정 (선택 사항)
-          });
-        });
+    //     // Waypoint에만 마커 추가
+    //     waypoints.forEach((point, index) => {
+    //       new kakao.maps.Marker({
+    //         map: this.map,
+    //         position: point,
+    //         title: this.localButtons[index+1].name,
+    //         image: new kakao.maps.MarkerImage(this.waypointsIcon, new kakao.maps.Size(28, 40)), // 출발지 아이콘 설정
+    //         clickable: true // 마커 클릭 가능하도록 설정 (선택 사항)
+    //       });
+    //     });
 
-        const bounds = new kakao.maps.LatLngBounds();
-        linePath.forEach((point) => bounds.extend(point));
-        this.map.setBounds(bounds);
-      } else {
-        console.error('경로가 정의되지 않았습니다.');
-      }
-    },
+    //     const bounds = new kakao.maps.LatLngBounds();
+    //     linePath.forEach((point) => bounds.extend(point));
+    //     this.map.setBounds(bounds);
+    //   } else {
+    //     console.error('경로가 정의되지 않았습니다.');
+    //   }
+    // },
     saveMap() {
       this.showConfirmModal = true; // 확인 모달 열기
     },
-    handleSave() {
-      this.sendData();
+    handleSave(title) {
+      console.log(title)
+      this.sendData(title);
     }
   }
 }

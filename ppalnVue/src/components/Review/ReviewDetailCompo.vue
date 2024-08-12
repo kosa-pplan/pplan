@@ -4,10 +4,7 @@
       <h1 align="center">{{ title }}</h1>
       <p align="right">기록 일시 {{ regDate }}</p>
       <hr/>
-      <!-- HTML 콘텐츠를 안전하게 렌더링 -->
-      <div v-html="safeContents"></div>
       <div v-if="reviewImageDTOList.length">
-        <h2 align="center">이미지</h2>
         <div class="image-gallery">
           <div v-for="image in reviewImageDTOList" :key="image.imageId" class="image-item">
             <img
@@ -19,6 +16,8 @@
           </div>
         </div>
       </div>
+      <!-- HTML 콘텐츠를 안전하게 렌더링 -->
+      <div v-html="safeContents"></div>
       <!--  비로그인시 좋아요 버튼 안보이게 해야함.-->
       <div>
         <button

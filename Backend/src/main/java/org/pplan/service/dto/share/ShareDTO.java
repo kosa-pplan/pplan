@@ -6,6 +6,5 @@ import lombok.Data;
 public class ShareDTO {
     private long id;
     private long reviewId;
-    private long userId;
     private String userEmail;
 }

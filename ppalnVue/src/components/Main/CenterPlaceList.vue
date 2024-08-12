@@ -15,7 +15,6 @@ export default {
       dice3: '',
       dice4: '',
       selectedIndex: null,
-      maxfive : false,
       intervalid : null, //칸 애니메이션 효과 관리 변수
     };
   },
@@ -32,12 +31,6 @@ export default {
       if (newCategory) {
         this.fetchPlaces();
       }
-    },
-    // Vuex 스토어의 items 배열을 감시 -> 5개 받은 후 삭제했을 경우를 위함
-    '$store.state.items'(newItems) {
-      if (newItems.length < 5) {
-        this.maxfive = false;
-      }
     }
   },
   methods: {
@@ -52,8 +45,8 @@ export default {
 
         // 가져온 데이터를 boxes에 바인딩
         this.boxes = this.places.map(place => {
-          if (place && place.name) {
-            return { name: place.name };
+          if (place && place.location_name) {
+            return { name: place.location_name };
           } else {
             return { name: 'Unknown' };
           }
@@ -63,8 +56,10 @@ export default {
       }
     },
     rollDice() {
-      if(this.maxfive) return;
-
+      if(this.$store.state.items.length >= 5) {
+        alert('최대 5개까지 선택 가능합니다.');
+        return;
+      }
       const diceNums = document.querySelectorAll('.dice-num');
       let sum = 0;
       diceNums.forEach((dice, index) => {
@@ -108,10 +103,10 @@ export default {
       }, 200); // 200ms 간격으로 애니메이션
     },
     highlightSelectedBox(index) {
-      if (this.maxfive) {
-        return;
-      }
       this.selectedIndex = index;
+
+      if (index >= 0 && index < this.placeSelectedColor.length) {
+        const place = this.placeSelectedColor[index];
 
         // name, address, business 필드 로그 확인
         console.log(`Selected Place:`, place);
@@ -124,11 +119,9 @@ export default {
           };
 
           const currentItems = this.$store.state.items;
-          const isDuplicate = currentItems.some(item => {
-            console.log('Comparing:', item.name, 'with', newItem.name);
-            return item.name === newItem.name;
-          });
-          if (isDuplicate) {  // Check for duplicate location_name
+          const isDuplicate = currentItems.some(item => {return item.name === newItem.name;});
+
+          if (isDuplicate) {  // 동일한 location_name일 경우 알림창 및 주사위 돌리기 차단
             alert('같은 장소가 나왔습니다. 다시 한번 주사위를 돌려주세요');
             return;
           }
@@ -137,15 +130,11 @@ export default {
             this.$store.dispatch('addItem', newItem);
             console.log(`Selected ${place.location_name} with ${place.address} and business ${place.business}`);
             this.$emit('placeSelected', place);
-
-            if (currentItems.length + 1 === 5) {
-              this.maxfive = true;
-            }
           } else {
             console.log('Item limit reached.');
             alert('최대 5개까지 선택 가능합니다.');
-            this.maxfive = true;
           }
+
         } else {
           console.log(`No place information available for box ${index + 1}`);
         }
@@ -155,9 +144,6 @@ export default {
     },
     removeItem(index) {
       this.$store.dispatch('removeItem', index);
-      if (this.$store.state.items.length < 5) {
-        this.maxfive = false; // 아이템이 5개 미만이면 maxfive를 false로 설정
-      }
     }
   },
   computed: {
@@ -171,13 +157,12 @@ export default {
 };
 </script>
 
-
 <template>
   <div class="place-container">
     <div class="map-container">
       <!-- boxes 배열의 각 박스에 데이터를 바인딩 -->
       <div v-for="(box, index) in boxes" :key="index"
-           :class="['clickable-box', { selected: selectedIndex === index && !maxfive }]">
+           :class="['clickable-box', { selected: selectedIndex === index}]">
         <span v-if="box.name">{{ box.name }}</span>
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
@@ -190,12 +175,11 @@ export default {
           <div class="dice-num">{{ dice3 }}</div>
           <div class="dice-num">{{ dice4 }}</div>
         </div>
-        <button class="RollDice-btn" @click="rollDice" :disabled="maxfive">Roll Dice</button>
+        <button class="RollDice-btn" @click="rollDice">Roll Dice</button>
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .place-container {

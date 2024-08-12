@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios from "axios";
 
 //주소 입력하면 위경도로 변환
@@ -62,7 +63,7 @@ async function convertAddressToCoordinates(address) {
     }
   }
 
- //경로 그리기
+ //경로 찾기
  export async function fetchDirections(buttons) {
 
     const API_URL = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
@@ -107,3 +108,98 @@ async function convertAddressToCoordinates(address) {
       return "경로 찾기 실패"
     }
   }
+
+//지도 그리기
+ function extractLatLngFromJson(jsonData) {
+      const linePaths = [];
+      if (jsonData && jsonData.routes) {
+        jsonData.routes.forEach((route) => {
+          route.sections.forEach((section) => {
+            section.roads.forEach((road) => {
+              for (let i = 0; i < road.vertexes.length; i += 2) {
+                const lat = road.vertexes[i + 1];
+                const lng = road.vertexes[i];
+                linePaths.push(new kakao.maps.LatLng(lat, lng));
+              }
+            });
+          });
+        });
+      } else {
+        console.error('JSON 데이터가 올바르지 않습니다.');
+      }
+      return linePaths;
+    }
+
+    function extractWaypointsFromJson(jsonData) {
+      const waypoints = [];
+      if (jsonData && jsonData.routes) {
+        jsonData.routes.forEach((route) => {
+          if (route.summary.waypoints) {
+            route.summary.waypoints.forEach((point) => {
+              const lat = point.y; // 위도
+              const lng = point.x; // 경도
+              waypoints.push(new kakao.maps.LatLng(lat, lng));
+            });
+          }
+        });
+      } else {
+        console.error('JSON 데이터에 waypoints가 없습니다.');
+      }
+      return waypoints;
+    }
+
+    export async function drawRoute(map, jsonData, localButtons, startIcon, endIcon, waypointsIcon) {
+
+      console.log("마이페이지 테스트")
+      console.log(localButtons)
+      const linePath = extractLatLngFromJson(jsonData);
+      const waypoints = extractWaypointsFromJson(jsonData); 
+      console.log("함수 테스트",jsonData)
+    
+      if (linePath.length > 0) {
+        const polyline = new kakao.maps.Polyline({
+          path: linePath,
+          strokeWeight: 5,
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.7,
+          strokeStyle: 'solid',
+        });
+    
+        polyline.setMap(map);
+    
+        console.log(localButtons[0].name);
+    
+        // 출발지와 목적지에 마커 추가
+        new kakao.maps.Marker({
+          map: map,
+          position: linePath[0],
+          title: localButtons[0].name,
+          image: new kakao.maps.MarkerImage(startIcon, new kakao.maps.Size(28, 40)) // 출발지 아이콘 설정
+        });
+    
+        new kakao.maps.Marker({
+          map: map,
+          position: linePath[linePath.length - 1],
+          title: localButtons[localButtons.length - 1].name,
+          image: new kakao.maps.MarkerImage(endIcon, new kakao.maps.Size(28, 40)) // 도착지 아이콘 설정
+        });
+    
+        // Waypoint에 마커 추가
+        waypoints.forEach((point, index) => {
+          new kakao.maps.Marker({
+            map: map,
+            position: point,
+            title: localButtons[index + 1].name,
+            image: new kakao.maps.MarkerImage(waypointsIcon, new kakao.maps.Size(28, 40)), // Waypoint 아이콘 설정
+            clickable: true // 마커 클릭 가능하도록 설정 (선택 사항)
+          });
+        });
+    
+        const bounds = new kakao.maps.LatLngBounds();
+        linePath.forEach((point) => bounds.extend(point));
+        map.setBounds(bounds);
+      } else {
+        console.error('경로가 정의되지 않았습니다.');
+      }
+    }
+    
