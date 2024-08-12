@@ -16,7 +16,19 @@
             <result property="sUrlPath" column="sUrlPath"/>
         </collection>
     </resultMap>
-
+    <resultMap id="reviewResultListMap" type="org.pplan.service.dto.review.ReviewListDTO">
+        <id property="id" column="reviewId"/>
+        <result property="title" column="title"/>
+        <result property="contents" column="contents"/>
+        <result property="regDate" column="regDate"/>
+        <result property="likeCount" column="likeCount"/>
+        <!-- 이미지 매핑: 첫 번째 이미지만 가져오기 위해 별도의 쿼리에서 처리 -->
+        <collection property="reviewImageDTOList" ofType="org.pplan.service.dto.review.ReviewImageDTO">
+            <result property="id" column="imageId"/>
+            <result property="urlPath" column="urlPath"/>
+            <result property="sUrlPath" column="sUrlPath"/>
+        </collection>
+    </resultMap>
     <!-- 리뷰 저장 -->
     <insert id="insertReview" parameterType="org.pplan.service.dto.review.ReviewDTO" useGeneratedKeys="true"
             keyProperty="id" keyColumn="ID">
@@ -30,16 +42,35 @@
         VALUES (#{urlPath}, #{sUrlPath}, #{reviewId})
     </insert>
 
-    <select id="reviewList" resultMap="reviewResultMap">
-        SELECT r.id,
-               r.title,
-               r.contents,
-               r.reg_date   AS regDate,
-               i.id         AS imageId,
-               i.url_path   AS urlPath,
-               i.s_url_path AS sUrlPath
-        FROM T_REVIEW r
-                 LEFT JOIN T_REVIEW_IMAGE i ON r.id = i.t_review_id
+    <select id="reviewList" resultMap="reviewResultListMap">
+        SELECT
+            r.id AS reviewId,
+            r.title,
+            r.contents,
+            r.reg_date AS regDate,
+            i.urlPath AS urlPath,
+            i.sUrlPath AS sUrlPath,
+            NVL(like_counts.like_count, 0) AS likeCount
+        FROM
+            T_REVIEW r
+                LEFT JOIN (
+                SELECT
+                    i.t_review_id,
+                    i.url_path AS urlPath,
+                    i.s_url_path AS sUrlPath,
+                    ROW_NUMBER() OVER (PARTITION BY i.t_review_id ORDER BY i.id) AS rn
+                FROM
+                    T_REVIEW_IMAGE i
+            ) i ON r.id = i.t_review_id AND i.rn = 1
+                LEFT JOIN (
+                SELECT
+                    s.t_review_id,
+                    COUNT(*) AS like_count
+                FROM
+                    T_SHARE s
+                GROUP BY
+                    s.t_review_id
+            ) like_counts ON r.id = like_counts.t_review_id
     </select>
 
     <select id="getReview" parameterType="long" resultMap="reviewResultMap">
@@ -68,5 +99,15 @@
         from T_REVIEW
         where id = #{id}
     </delete>
+
+    <select id="getMyLikeReview" parameterType="string" resultType="org.pplan.service.dto.myPage.MyPageDTO">
+    -- 특정 사용자가 좋아요한 리뷰를 조회하는 쿼리 예제
+    SELECT r.id AS id,
+    r.title AS title,
+    r.reg_date as regDate
+    FROM t_share s
+    JOIN t_review r ON s.t_review_id = r.id
+    WHERE s.t_user_email = #{userEmail}
+    </select>
 
 </mapper>

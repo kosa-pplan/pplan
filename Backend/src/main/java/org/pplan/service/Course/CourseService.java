@@ -1,9 +1,11 @@
-package org.pplan.service;
+package org.pplan.service.Course;
 
 import org.pplan.repository.mapper.CourseMapper;
-import org.pplan.service.dto.CourseDTO;
+import org.pplan.service.dto.Course.CourseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CourseService {
@@ -13,11 +15,18 @@ public class CourseService {
 
     public void saveCourse(CourseDTO course) {
         System.out.println("변환테스트2: " + course);
-        System.out.println("변환테스트3: " + course.getPlace3().getAddress());
         courseMapper.insertCourse(course);
     }
 
-    public CourseDTO getCourseById(Long id) {
+//    public CourseDTO getCourseById(int id) {
+//        System.out.println(id);
+//        System.out.println("불러오기 테스트"+courseMapper.findById(id));
+//        return courseMapper.findById(id);
+//    }
+
+    // 특정 ID로 여러 CourseDTO 항목을 반환하는 메소드
+    public List<CourseDTO> getCoursesById(Long id) {
         return courseMapper.findById(id);
     }
+
 }

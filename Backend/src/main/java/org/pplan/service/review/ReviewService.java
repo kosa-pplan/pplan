@@ -3,8 +3,10 @@ package org.pplan.service.review;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pplan.repository.mapper.ReviewMapper;
+import org.pplan.service.dto.myPage.MyPageDTO;
 import org.pplan.service.dto.review.ReviewDTO;
 import org.pplan.service.dto.review.ReviewImageDTO;
+import org.pplan.service.dto.review.ReviewListDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +43,8 @@ public class ReviewService {
         return reviewDTO;
     }
 
-    public List<ReviewDTO> reviewList() {
-        List<ReviewDTO> reviews = reviewMapper.reviewList();
+    public List<ReviewListDTO> reviewList() {
+        List<ReviewListDTO> reviews = reviewMapper.reviewList();
 
         return reviews;
     }
@@ -59,5 +61,9 @@ public class ReviewService {
     public long delete(long id) {
         log.info("delete.............");
         return reviewMapper.reviewDelete(id);
+    }
+
+    public List<MyPageDTO> getMyLikeReview(String userEmail) {
+        return reviewMapper.getMyLikeReview(userEmail);
     }
 }
