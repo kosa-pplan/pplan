@@ -30,7 +30,6 @@ public class ShareServiceTest {
         // 테스트 데이터 초기화
         shareDTO = new ShareDTO();
         shareDTO.setReviewId(2L);
-        shareDTO.setUserId(1L);
         shareDTO.setUserEmail("momo@naver.com");
     }
 //
