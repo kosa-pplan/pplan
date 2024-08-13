@@ -111,13 +111,14 @@ public class ReviewService {
      * 이 메소드는 트랜잭션이 적용되어 리뷰 삭제가 원자적으로 처리됩니다.
      * @param id 삭제할 리뷰 ID
      */
+
     @Transactional
-    public void delete(long id) {
-        log.info("Deleting review with id: {}", id);
-        long rowsAffected = reviewMapper.reviewDelete(id);
-        if (rowsAffected == 0) {
-            throw new IllegalArgumentException("Review not found or delete failed.");
-        }
+    public void deleteReview(Long reviewId) {
+        // 각 쿼리를 별도로 실행
+        reviewMapper.deleteReviewImage(reviewId);
+        reviewMapper.deleteShare(reviewId);
+        reviewMapper.updateCourseReviewCheck(reviewId);
+        reviewMapper.deleteReview(reviewId);
     }
 
     /**

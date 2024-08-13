@@ -169,5 +169,14 @@
         and t.T_USER_EMAIL != #{email}
     </select>
 
+    <select id="getReviewId" parameterType="long" resultType="int">
+        select ID
+        from T_REVIEW
+        where T_COURSE_ID = #{courseId}
+    </select>
+
+    <delete id="deleteCourse" parameterType="long">
+        DELETE FROM T_COURSE WHERE ID = #{courseId}
+    </delete>
 </mapper>
 

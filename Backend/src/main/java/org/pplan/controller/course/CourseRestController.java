@@ -1,27 +1,48 @@
 package org.pplan.controller.course;
 
+import lombok.RequiredArgsConstructor;
+import org.pplan.service.Course.CourseService;
 import org.pplan.service.dto.Course.CourseDTO;
 import org.pplan.service.dto.Course.PlaceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.pplan.service.Course.CourseService;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
+
 public class CourseRestController {
 
     @Autowired
     private CourseService courseService;
 
+    /*
+     * @Author KyeongMin
+     * 코스에 따른 리뷰아이디 가져오기
+     * */
+    @GetMapping("/api/reviewId/{courseId}")
+    public ResponseEntity<Integer> getReviewId(@PathVariable("courseId") String courseId) {
 
+        int reviewId = courseService.getReviewId(Integer.parseInt(courseId));
+        return ResponseEntity.ok(reviewId);
+    }
+
+    @DeleteMapping("/api/delete/{courseId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long courseId) {
+        System.out.println("ID: "+courseId);
+        try {
+            courseService.deleteCourse(courseId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @GetMapping("/api/course/id")
-    @CrossOrigin
     public List<CourseDTO> getCourse(@RequestParam int id) {
-        System.out.println(id);
-        System.out.println(courseService.getCourseById(id));
         return courseService.getCourseById(id); // 서비스에서 CourseDTO를 반환
     }
 
@@ -29,8 +50,7 @@ public class CourseRestController {
     @CrossOrigin
     public List<CourseDTO> getCoursesById(String email) {
         // 데이터베이스에서 ID로 내가 저장한 ourse 정보를 가져오는 로직
-        System.out.println(email);
-        System.out.println(courseService.getCoursesByEmail(email));
+
         return courseService.getCoursesByEmail(email);
     }
 
@@ -38,16 +58,13 @@ public class CourseRestController {
     @CrossOrigin
     public List<CourseDTO> getAllCourses(String email) {
         // 데이터베이스에서 ID로 좋아요 누른 Course 정보를 가져오는 로직
-        System.out.println(courseService.getAllCourses(email));
         return courseService.getAllCourses(email);
     }
-
 
 
     @PostMapping("/api/course/save")
     @CrossOrigin
     public String receiveString(@RequestBody List<Map<String, String>> data) {
-        System.out.println("Received data: " + data);
 
         // Total number of PlaceDTO objects needed
         int totalPlaces = 5;
@@ -62,9 +79,7 @@ public class CourseRestController {
             data.add(emptyMap);
         }
 
-        System.out.println(data);
 
-        
         // Convert List<PlaceDTO> to CourseDTO
         CourseDTO courseDTO = new CourseDTO();
         // Set places from data to CourseDTO
@@ -114,13 +129,11 @@ public class CourseRestController {
 
         // Set static user information
         courseDTO.setUserEmail(data.get(0).get("email"));
-        System.out.println("이메일: " + courseDTO.getUserEmail());
         courseDTO.setTitle(data.get(0).get("title"));
 
 
         courseService.saveCourse(courseDTO);
-//        System.out.println(courseService.getCourseById(2L));
-//        courseService.getCourseById(1L);
+
         return "Data received";
     }
 }

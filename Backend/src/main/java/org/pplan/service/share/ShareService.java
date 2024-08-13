@@ -26,7 +26,6 @@ public class ShareService {
     public void toggleLike(ShareDTO shareDTO) {
         // 현재 좋아요 여부 확인
         Integer existingLike = shareMapper.checkLike(shareDTO);
-        System.out.println("existingLike: " + existingLike);
 
         if (existingLike != null && existingLike > 0) {
             // 이미 좋아요가 존재하면 삭제
@@ -44,7 +43,6 @@ public class ShareService {
      */
     public boolean checkLikeCount(ShareDTO shareDTO) {
         int count = shareMapper.checkedLikeCount(shareDTO);
-        System.out.println(count + " count");
         return count > 0;
     }
 }

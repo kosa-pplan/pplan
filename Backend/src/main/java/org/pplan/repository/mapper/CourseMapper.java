@@ -17,4 +17,8 @@ public interface CourseMapper {
     List<CourseDTO> findById(String email);
 
     List<CourseDTO> findAllCourses(String email);
+
+    int getReviewId(long courseId);
+
+    void deleteCourse(Long courseId);
 }

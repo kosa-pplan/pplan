@@ -3,9 +3,15 @@
 -->
 <template>
   <div class="page-container" v-if="isReviewExists">
-    
+
     <div class="content-wrapper">
-      <div>
+
+
+      <h1 align="center">{{ title }}</h1>
+      <p align="right">여행자 - {{ nickName }}</p>
+      <p align="right">기록 일시 {{ regDate }}</p>
+      <hr/>
+      <div style="margin-left: 40px">
         <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
         출발지
         <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
@@ -13,18 +19,15 @@
         <img src="@/assets/blackmarker.png" alt="blackmarker" style="width: 28px; height: 40px;">
         경유지
       </div>
-      <div id="map" style="width: 100%; height: 400px;">
+      <div id="map" style="width: 80%; height: 300px; margin: auto">
         <!-- 지도는 이 div에 렌더링 됩니다. -->
       </div>
-      
-      <h1 align="center">{{ title }}</h1>
-      <p align="right">기록 일시 {{ regDate }}</p>
       <hr/>
       <div v-if="reviewImageDTOList.length">
         <div class="image-gallery">
           <div v-for="image in reviewImageDTOList" :key="image.imageId" class="image-item">
             <img
-                :src="getImageUrl(image.urlPath)"
+                :src="ImageUrl(image.urlPath)"
                 :alt="'Image ' + image.imageId"
                 class="thumbnail-image"
                 @click="openModal(image.urlPath)"
@@ -34,8 +37,6 @@
       </div>
       <!-- HTML 콘텐츠를 안전하게 렌더링 -->
       <div v-html="safeContents"></div>
-
-      <h1>지도 추가{{ courseId }}</h1>
 
       <!--비로그인시 좋아요 버튼 안나옴-->
       <button
@@ -66,6 +67,7 @@ export default {
       contents: '', // 리뷰의 HTML 콘텐츠
       reviewImageDTOList: [], // 리뷰에 포함된 이미지 목록
       courseId: '',
+      nickName: '',
       regDate: '', // 리뷰 등록 날짜
       showModal: false, // 이미지 모달의 표시 여부
       isLiked: false, // 리뷰의 좋아요 상태
@@ -83,20 +85,9 @@ export default {
     };
   },
   mounted() {
-    //지도 그릴 준비
-    
-    // try {
-    //   this.jsonData = JSON.parse(this.directions);
-    // } catch (e) {
-    //   console.error('Invalid JSON data:', e);
-    //   this.jsonData = {}; // 파싱 실패 시 빈 객체 할당
-    // }
-    // console.log('Parsed JSON Data:', this.jsonData); // 확인을 위해 콘솔 출력
 
-    
   },
   async created() {
-    
     this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화
     this.id = this.$route.params.id; // URL 파라미터에서 리뷰 ID를 가져옴
     await this.checkReviewExistence(this.id); // 리뷰 존재 여부를 확인
@@ -110,7 +101,6 @@ export default {
           console.error('Invalid JSON data:', e);
           this.jsonData = {}; // 파싱 실패 시 빈 객체 할당
         }
-    console.log('Parsed JSON Data:', this.jsonData); // 확인을 위해 콘솔 출력
       if (window.kakao && window.kakao.maps) {
         this.initMap();
       } else {
@@ -119,11 +109,15 @@ export default {
         script.onload = () => kakao.maps.load(() => this.initMap());
         script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_API_key2}&libraries=services`;
         document.head.appendChild(script);
-      } 
+      }
     }
-    
+
   },
   methods: {
+    ImageUrl(path) {
+      // 이미지 URL을 반환하는 메서드
+      return `http://localhost:8080/imgs/${path}`;
+    },
     initMap() {
         const container = document.getElementById('map');
         const options = {
@@ -131,43 +125,38 @@ export default {
           level: 5,
         };
         this.map = new kakao.maps.Map(container, options);
-        
+
         drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointsIcon);
       },
     async getDirections(){
       try {
-        console.log(parseInt(this.courseId, 10))
         const response = await axios.get('http://localhost:8080/api/course/id', {
           params: { id: parseInt(this.courseId, 10)}
         });
         const course = response.data;
-        
-        console.log(course[0]);
-        
+
         //주소 변환
         for(let i =0;i<5;i++){
         let propertyName = `placeDTO${i + 1}`;
 
         // Access the property using bracket notation
         if (course[0][propertyName].business!=='없음') {
-          
+
           // Your logic here
           this.locationdata[i] = course[0][propertyName]
         }
       }
       const updatedButtons = await convertAllAddressesToCoordinates(this.locationdata);
-      
+
       if(updatedButtons==="주소변환 실패"){
         alert("주소가 잘못되었습니다")
       }else{
         this.locationdata = updatedButtons;
-        console.log("리뷰 데이터",this.locationdata)
         this.directions = await fetchDirections(this.locationdata);
-        console.log(this.directions)
         // this.jsonData = JSON.parse(directions);
       }
       } catch (error) {
-        console.error('Error fetching course data:', error);
+        console.error('Error  course data:', error);
       }
 
     },
@@ -182,6 +171,9 @@ export default {
         this.reviewImageDTOList = data.reviewImageDTOList; // 리뷰 이미지 목록
         this.regDate = data.regDate; // 리뷰 등록 날짜
         this.courseId = data.courseId;
+        this.nickName = data.nickName;
+        console.log(this.nickName);
+        console.log(this.title);
       } catch (error) {
         console.error('Error fetching data:', error);
         alert('데이터를 가져오는 데 실패했습니다.');
@@ -199,7 +191,7 @@ export default {
         });
         this.isLiked = response.data; // 서버에서 받은 좋아요 상태를 업데이트
       } catch (error) {
-        console.log('Error checking like status:', error);
+        console.error('Error checking like status:', error);
       }
     },
     async checkReviewExistence(reviewId) {
@@ -244,6 +236,7 @@ export default {
     },
     getImageUrl(path) {
       // 이미지 경로를 URL로 변환하는 메소드
+      console.log(path);
       return `http://localhost:8080/imgs/${path}`;
     },
     openModal(imageUrl) {
