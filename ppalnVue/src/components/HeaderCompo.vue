@@ -36,7 +36,7 @@ export default {
   <div class="header">
     <img @click="goToHome" src="@/assets/logo.png" alt="logo" class="logo"/>
     <div class="nav-button">
-      <router-link to="/review" class="board-button">게시판</router-link>
+      <router-link to="/review" class="board-button">여행리뷰</router-link>
 
       <!-- 로그인된 경우 마이페이지와 로그아웃 버튼을 표시하고, 그렇지 않으면 로그인과 회원가입 버튼을 표시 -->
       <template v-if="isLoggedIn">

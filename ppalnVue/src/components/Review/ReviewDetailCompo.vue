@@ -35,15 +35,14 @@
       <!-- HTML 콘텐츠를 안전하게 렌더링 -->
       <div v-html="safeContents"></div>
 
-      <h1>지도 추가{{courseId}}</h1>
+      <h1>지도 추가{{ courseId }}</h1>
 
       <!--비로그인시 좋아요 버튼 안나옴-->
-        <button v-if="userEmail"
-            :class="['btn_like', { 'on': isLiked }]"
-            @click="toggleLike">
-          <!-- 버튼에 아이콘이나 텍스트 추가 가능 -->
-
-        </button>
+      <button
+          :class="['btn_like', { 'on': isLiked }]"
+          @click="toggleLike">
+        <!-- 버튼에 아이콘이나 텍스트 추가 가능 -->
+      </button>
 
       <!-- Modal for enlarged image -->
       <div v-if="showModal" class="modal" @click="closeModal">
@@ -208,7 +207,7 @@ export default {
       const url = 'http://localhost:8080/review/checkReviewCount';
       try {
         const response = await axios.get(url, {
-          params: { reviewId }
+          params: {reviewId}
         });
         if (response.data === 0) {
           this.isReviewExists = false; // 리뷰가 존재하지 않는 경우
@@ -225,17 +224,22 @@ export default {
     },
     async toggleLike() {
       // 좋아요 상태를 토글하는 메소드
-      const url = 'http://localhost:8080/share/toggle';
-      const payload = {
-        reviewId: this.id,
-        userEmail: this.userEmail
-      };
-
-      try {
-        await axios.post(url, payload);
-        this.isLiked = !this.isLiked; // 좋아요 상태를 반전
-      } catch (error) {
-        console.error('Error toggling like:', error);
+      if (this.userEmail === null) {
+        alert('로그인 해주세요.')
+        // Vue.js에서 페이지를 전환하는 방법
+        this.$router.push('/login');
+      } else {
+        const url = 'http://localhost:8080/share/toggle';
+        const payload = {
+          reviewId: this.id,
+          userEmail: this.userEmail,
+        }
+        try {
+          await axios.post(url, payload);
+          this.isLiked = !this.isLiked; // 좋아요 상태를 반전
+        } catch (error) {
+          console.error('Error toggling like:', error);
+        }
       }
     },
     getImageUrl(path) {
@@ -264,7 +268,8 @@ export default {
     },
   },
 };
-</script><style scoped>
+</script>
+<style scoped>
 .page-container {
   height: 100vh; /* 전체 화면 높이 */
   overflow-y: auto; /* 세로 스크롤 허용 */

@@ -7,7 +7,8 @@
     <div class="review_list">
       <!-- 데이터가 없는 경우 -->
       <!-- 카드 리스트를 반복하여 표시 -->
-      <router-link v-for="(card, index) in displayedCards" :key="index" :to="`/review/detail/${card.id}`" class="card-link">
+      <router-link v-for="(card, index) in displayedCards" :key="index" :to="`/review/detail/${card.id}`"
+                   class="card-link">
         <div class="card">
           <!-- 첫 번째 썸네일 이미지가 있을 때 표시 -->
           <img v-if="card.reviewImageDTOList && card.reviewImageDTOList.length > 0"
@@ -32,15 +33,17 @@
                 :src="'https://cdn-icons-png.flaticon.com/512/833/833472.png'"
                 class="like-icon"
             >
-            <span class="like-count">{{card.likeCount}}</span>
+            <span class="like-count">{{ card.likeCount }}</span>
           </div>
         </div>
       </router-link>
     </div>
 
-    <!-- 더보기 버튼 표시: 표시된 카드 수가 전체 카드 수보다 적을 때만 보이게 함 -->
-    <button @click="loadMore" v-if="displayedCards.length < cards.length" class="load-more-button">더보기</button>
+    <div class="button-container">
+      <button @click="loadMore" v-if="displayedCards.length < totalCards" class="load-more-button">더보기</button>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -52,6 +55,8 @@ export default {
       displayedCards: [], // 현재 화면에 표시될 카드들
       cardsToShow: 6, // 한 번에 보여줄 카드 수
       currentPage: 0, // 현재 페이지 번호
+      totalCards: 0, // 전체 카드 수
+      loading: false, // 데이터 로딩 상태
     };
   },
   computed: {
@@ -60,47 +65,49 @@ export default {
       return this.$store.getters.getUserEmail;
     }
   },
-  created() {
-    // 컴포넌트가 생성될 때 호출되는 라이프사이클 훅
-    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화
-    this.fetchCards(); // 카드 데이터를 가져오는 메소드 호출
-  },
   methods: {
-    async fetchCards() {
-      // 카드 데이터를 서버에서 가져오는 메소드
+    async fetchCards(page, size) {
+      this.loading = true;
       try {
         const response = await this.$axios.get("/review/list", {
-          headers: {
-            'Authorization': `Bearer ${this.$store.state.token}` // JWT 토큰을 Authorization 헤더에 포함
-          }
+          params: {
+            page: page,
+            size: size,
+          },
         });
-        this.cards = response.data; // 서버에서 가져온 카드 데이터를 저장
-        this.loadMore(); // 초기 로드 시 카드 일부를 화면에 표시
+        console.log('Total Cards from Server:', response.headers['x-total-count']);
+        this.totalCards = parseInt(response.headers['x-total-count'], 10) || 0;
+        this.cards = [...this.cards, ...response.data]; // 기존 cards 배열에 추가
+        this.updateDisplayCards();
       } catch (error) {
         console.error('카드 데이터를 가져오는 중 오류 발생:', error);
-
         if (error.response && error.response.status === 401) {
-          // 401 오류가 발생하면 로그아웃하고 로그인 페이지로 리다이렉트
           this.$store.dispatch('logout');
           this.$router.push('/login');
         }
+      } finally {
+        this.loading = false;
       }
     },
-    loadMore() {
-      // 현재 페이지에 맞는 카드 범위를 설정하여 화면에 표시하는 메소드
+    updateDisplayCards() {
       const start = this.currentPage * this.cardsToShow;
       const end = start + this.cardsToShow;
-      const nextCards = this.cards.slice(start, end);
-
-      if (nextCards.length > 0) {
-        this.displayedCards = [...this.displayedCards, ...nextCards]; // 새 카드를 기존 카드 배열에 추가
-        this.currentPage++; // 페이지 번호 증가
+      this.displayedCards = this.cards.slice(0, end);
+      console.log('Displayed Cards:', this.displayedCards.length, 'out of', this.totalCards);
+    },
+    loadMore() {
+      if (this.displayedCards.length < this.totalCards) {
+        this.currentPage++;
+        this.fetchCards(this.currentPage, this.cardsToShow);
       }
     }
+  },
+  created() {
+    this.$store.dispatch('initializeAuth');
+    this.fetchCards(this.currentPage, this.cardsToShow);
   }
 };
-</script>
-<style scoped>
+</script><style scoped>
 .page-container {
   padding: 16px;
 }
@@ -138,16 +145,22 @@ export default {
   margin: 0; /* 등록 날짜의 여백 제거 */
 }
 
+.button-container {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 (선택 사항) */
+  height: 100px; /* 부모 컨테이너의 높이를 조정해야 할 수도 있습니다 */
+}
+
 .load-more-button {
-  display: block; /* 버튼을 블록 레벨 요소로 설정 */
-  margin: 16px auto; /* 버튼 중앙 정렬 및 여백 설정 */
-  padding: 8px 16px; /* 버튼 내부 여백 설정 */
-  font-size: 16px; /* 버튼 텍스트 크기 설정 */
-  cursor: pointer; /* 버튼에 커서 포인터 표시 */
-  border: none; /* 버튼 테두리 제거 */
-  border-radius: 4px; /* 버튼 모서리 둥글게 설정 */
-  background-color: #007bff; /* 버튼 배경 색상 설정 */
-  color: white; /* 버튼 텍스트 색상 설정 */
+  background-color: #2C3E50;
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  text-decoration: none;
 }
 
 .card-link {
@@ -155,13 +168,14 @@ export default {
 }
 
 .like-icon {
-  width: 16px;  /* 기존 크기보다 작게 조정 */
+  width: 16px; /* 기존 크기보다 작게 조정 */
   height: 16px; /* 기존 크기보다 작게 조정 */
   cursor: pointer;
   transition: color 0.3s, transform 0.3s;
 }
+
 .like-icon {
-  width: 20px;  /* 하트 아이콘 크기 조정 */
+  width: 20px; /* 하트 아이콘 크기 조정 */
   height: 20px;
   cursor: pointer;
   margin-right: 6px;

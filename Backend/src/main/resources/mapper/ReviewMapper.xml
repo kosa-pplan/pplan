@@ -51,7 +51,7 @@
     </update>
 
 
-    <select id="reviewList" resultMap="reviewResultListMap">
+    <select id="reviewList" parameterType="map" resultMap="reviewResultListMap">
         SELECT
             r.id AS reviewId,
             r.title,
@@ -82,6 +82,8 @@
             ) like_counts ON r.id = like_counts.t_review_id
         ORDER BY
             r.id DESC
+        OFFSET #{offset} ROWS
+        FETCH NEXT #{limit} ROWS ONLY
     </select>
 
     <select id="getReview" parameterType="long" resultMap="reviewResultMap">
@@ -140,5 +142,11 @@
         SELECT count(*)
         FROM T_REVIEW
         where id = #{id}
+    </select>
+
+    <!--리뷰갯수 체크-->
+    <select id="getTotalReviewCount" resultType="long">
+        SELECT COUNT(*)
+        FROM T_REVIEW
     </select>
 </mapper>

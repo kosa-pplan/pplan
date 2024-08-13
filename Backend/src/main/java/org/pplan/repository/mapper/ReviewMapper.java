@@ -7,6 +7,7 @@ import org.pplan.service.dto.review.ReviewListDTO;
 import org.pplan.service.dto.review.ReviewWriterCheckDTO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 리뷰 관련 데이터베이스 작업을 위한 MyBatis 매퍼 인터페이스
@@ -46,7 +47,7 @@ public interface ReviewMapper {
      * 모든 리뷰 목록을 가져옵니다.
      * @return 리뷰 목록
      */
-    List<ReviewListDTO> reviewList();
+    List<ReviewListDTO> reviewList(Map<String, Object> params);
 
     /**
      * 특정 리뷰를 가져옵니다.
@@ -84,4 +85,6 @@ public interface ReviewMapper {
     int checkCountReviewId(long reviewId);
 
     ReviewWriterCheckDTO getAuthorCheckYNInfoByCourseId(long courseId);
+
+    long getTotalReviewCount();
 }
