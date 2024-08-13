@@ -18,11 +18,11 @@
     </div>
 
     <!-- 경로 보기 모달 컴포넌트 -->
-    <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
+    <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''" class="test">
         <h2>경로</h2>
         <MapModalCompo :message="directions" :email="this.email" @close="showModal = false, modalType=''"/>
     </ModalCompo>
-    <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
+    <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''" class="test">
         <h2>장소 정보</h2>
         <div class="modal-body">
           <p>분류: {{ selectedButton.category }}</p>
@@ -346,5 +346,18 @@ export default {
   font-size: 16px;
   color: #555;
   text-align: left; /* 왼쪽 정렬 */
+}
+
+.test{
+animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

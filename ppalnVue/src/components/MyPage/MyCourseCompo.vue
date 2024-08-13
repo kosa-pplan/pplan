@@ -24,7 +24,7 @@
       <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
     </div>
 
-    <div class="modal" v-if="isModalOpen">
+    <div class="modal test" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>경로</h2>
@@ -245,5 +245,17 @@ export default {
 
 .pagination span {
   margin: 0 10px;
+}
+.test{
+animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

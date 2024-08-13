@@ -15,10 +15,10 @@
       <button @click="saveMap" class="button2">저장</button>
     </div>
     <!-- 확인 모달 컴포넌트 -->
-    <SaveConfirmModal v-if="showConfirmModal" @confirm="handleSave" @close="showConfirmModal = false" />
+    <SaveConfirmModal v-if="showConfirmModal" @confirm="handleSave" @close="showConfirmModal = false" class="test"></SaveConfirmModal>
 
     <!-- 저장 완료 알림 모달 -->
-    <div v-if="showNotification" class="notification-modal">
+    <div v-if="showNotification" class="notification-modal test">
       <div class="notification-content">
         <span class="close" @click="showNotification = false">&times;</span>
         <h3>저장 완료</h3>
@@ -288,5 +288,17 @@ export default {
 .close:focus {
   color: black;
   text-decoration: none;
+}
+.test{
+animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>
