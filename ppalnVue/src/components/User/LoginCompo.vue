@@ -11,7 +11,7 @@
             required 
             placeholder="이메일" 
           />
-          <span>@</span>
+          <strong>@</strong>&nbsp;
           <input 
             type="text" 
             v-model="form.emailDomain" 
@@ -21,10 +21,12 @@
           />
           <select v-model="form.emailDomain" @change="updateEmailDomain">
             <option value="">직접입력</option>
-            <option value="gmail.com">gmail.com</option>
-            <option value="naver.com">naver.com</option>
             <option value="daum.net">daum.net</option>
+            <option value="gmail.com">gmail.com</option>
             <option value="hanmail.net">hanmail.net</option>
+            <option value="icloud.com">icloud.com</option>
+            <option value="nate.com">nate.com</option>
+            <option value="naver.com">naver.com</option>
           </select>
         </div>
       </div>
@@ -132,8 +134,7 @@ form {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
+  width: 450px;
 }
 
 .email-group {
