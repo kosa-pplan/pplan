@@ -87,4 +87,12 @@ public interface ReviewMapper {
     ReviewWriterCheckDTO getAuthorCheckYNInfoByCourseId(long courseId);
 
     long getTotalReviewCount();
+
+    void deleteReviewImage(Long reviewId);
+
+    void deleteShare(Long reviewId);
+
+    void updateCourseReviewCheck(Long reviewId);
+
+    void deleteReview(Long reviewId);
 }

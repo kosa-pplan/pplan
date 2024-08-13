@@ -8,7 +8,8 @@
         <result property="title" column="title"/>
         <result property="contents" column="contents"/>
         <result property="regDate" column="regDate"/>
-        <result property="courseId" column="courseId" />
+        <result property="courseId" column="courseId"/>
+        <result property="nickName" column="nickname"/> <!-- 닉네임 추가 -->
 
         <!-- 리뷰에 속한 이미지 리스트를 설정합니다. -->
         <collection property="reviewImageDTOList" ofType="org.pplan.service.dto.review.ReviewImageDTO">
@@ -88,15 +89,18 @@
 
     <select id="getReview" parameterType="long" resultMap="reviewResultMap">
         SELECT r.id,
-               r.title,
-               r.contents,
-               r.T_COURSE_ID as courseId,
-               r.reg_date   AS regDate,
-               i.id         AS imageId,
-               i.url_path   AS urlPath,
-               i.s_url_path AS sUrlPath
+        r.title,
+        r.contents,
+        r.T_COURSE_ID as courseId,
+        r.reg_date AS regDate,
+        i.id AS imageId,
+        i.url_path AS urlPath,
+        i.s_url_path AS sUrlPath,
+        u.nickname AS nickname  <!-- 닉네임 추가 -->
         FROM T_REVIEW r
-                 LEFT JOIN T_REVIEW_IMAGE i ON r.id = i.t_review_id
+        LEFT JOIN T_REVIEW_IMAGE i ON r.id = i.t_review_id
+        LEFT JOIN T_COURSE c ON r.T_COURSE_ID = c.ID  <!-- 코스 테이블과 조인 -->
+        LEFT JOIN T_USER u ON c.T_USER_EMAIL = u.EMAIL  <!-- 유저 테이블과 조인 -->
         WHERE r.id = #{id}
     </select>
 
@@ -107,13 +111,6 @@
           , REG_DATE = sysdate
         where ID = #{id}
     </update>
-
-    <delete id="reviewDelete">
-        delete
-        from T_REVIEW
-        where id = #{id}
-    </delete>
-
 
     <select id="getMyLikeReview" parameterType="string" resultType="org.pplan.service.dto.myPage.MyPageDTO">
     -- 특정 사용자가 좋아요한 리뷰를 조회하는 쿼리 예제
@@ -149,4 +146,30 @@
         SELECT COUNT(*)
         FROM T_REVIEW
     </select>
+
+
+
+
+
+    <!--리뷰 삭제-->
+    <delete id="deleteReviewImage" parameterType="long">
+        DELETE FROM T_REVIEW_IMAGE WHERE T_REVIEW_ID = #{reviewId}
+    </delete>
+
+    <delete id="deleteShare" parameterType="long">
+        DELETE FROM T_SHARE WHERE T_REVIEW_ID = #{reviewId}
+    </delete>
+
+    <update id="updateCourseReviewCheck" parameterType="long">
+        UPDATE T_COURSE
+        SET REVIEW_CHECK = 'NO'
+        WHERE ID = (
+            SELECT T_COURSE_ID FROM T_REVIEW WHERE ID = #{reviewId}
+        )
+    </update>
+
+    <delete id="deleteReview" parameterType="long">
+        DELETE FROM T_REVIEW WHERE ID = #{reviewId}
+    </delete>
+
 </mapper>

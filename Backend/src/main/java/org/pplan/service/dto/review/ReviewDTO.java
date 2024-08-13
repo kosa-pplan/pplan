@@ -12,6 +12,7 @@ import java.util.List;
 public class ReviewDTO {
     private Long id;
     private Long courseId;
+    private String nickName;
     private String title;
     private String contents;
     private List<ReviewImageDTO> reviewImageDTOList;

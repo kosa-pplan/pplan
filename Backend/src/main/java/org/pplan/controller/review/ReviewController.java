@@ -108,10 +108,11 @@ public class ReviewController {
      * @param id 삭제할 리뷰의 ID
      * @return 204 No Content 상태 코드. 리뷰가 존재하지 않을 경우 404 상태 코드 반환
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+        System.out.println("ID: "+id);
         try {
-            reviewService.delete(id);
+            reviewService.deleteReview(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

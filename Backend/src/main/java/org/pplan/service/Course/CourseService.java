@@ -32,4 +32,11 @@ public class CourseService {
         return courseMapper.findAllCourses(email);
     }
 
+    public int getReviewId(long courseId){
+        return courseMapper.getReviewId(courseId);
+    }
+
+    public void deleteCourse(Long courseId) {
+        courseMapper.deleteCourse(courseId);
+    }
 }
