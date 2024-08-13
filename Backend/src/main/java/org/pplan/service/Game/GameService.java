@@ -20,10 +20,10 @@ public class GameService {
         List<GameDTO> games = gameMapper.getGamesByCategoryAndColor(category, regions); //j
 
         // 리스트를 무작위로 섞기
-        Collections.shuffle(games); //j
+        Collections.shuffle(games);
 
         // 상위 20개의 항목만 반환
-        return games.size() > 20 ? games.subList(0, 20) : games;//j
+        return games.size() > 20 ? games.subList(0, 20) : games;
     }
 
     private List<String> getRegionsByColor(String color) {
@@ -51,11 +51,6 @@ public class GameService {
     // 카테고리로 게임 데이터 조회
     public List<GameDTO> getGameByCategory(String category) {
         return gameMapper.getGameByCategory(category);
-    }
-
-    // 모든 게임 데이터 조회
-    public List<GameDTO> getAllGames() {
-        return gameMapper.getAll();
     }
 
     // 게임 데이터 삽입
