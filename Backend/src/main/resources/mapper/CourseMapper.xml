@@ -16,11 +16,11 @@
         )
         VALUES (
         #{reviewCheck},
-        PLACE(#{placeDTO1.locationName}, #{placeDTO1.address}, #{placeDTO1.category}, #{placeDTO1.business}),
-        PLACE(#{placeDTO2.locationName}, #{placeDTO2.address}, #{placeDTO2.category}, #{placeDTO2.business}),
-        PLACE(#{placeDTO3.locationName}, #{placeDTO3.address}, #{placeDTO3.category}, #{placeDTO3.business}),
-        PLACE(#{placeDTO4.locationName}, #{placeDTO4.address}, #{placeDTO4.category}, #{placeDTO4.business}),
-        PLACE(#{placeDTO5.locationName}, #{placeDTO5.address}, #{placeDTO5.category}, #{placeDTO5.business}),
+        PLACE(#{placeDTO1.category}, #{placeDTO1.locationName}, #{placeDTO1.address}, #{placeDTO1.business}),
+        PLACE(#{placeDTO2.category}, #{placeDTO2.locationName}, #{placeDTO2.address}, #{placeDTO2.business}),
+        PLACE(#{placeDTO3.category}, #{placeDTO3.locationName}, #{placeDTO3.address}, #{placeDTO3.business}),
+        PLACE(#{placeDTO4.category}, #{placeDTO4.locationName}, #{placeDTO4.address}, #{placeDTO4.business}),
+        PLACE(#{placeDTO5.category}, #{placeDTO5.locationName}, #{placeDTO5.address}, #{placeDTO5.business}),
         #{userEmail},
         #{title}
         )
@@ -28,10 +28,10 @@
 
     <select id="findById" parameterType="String" resultMap="CourseResultMap">
         SELECT
+        t.id AS courseId,
         t.review_check AS reviewCheck,
         t.t_user_email AS userEmail,
-        t.T_USER_EMAIL AS userId,
-        t.TITLE AS title,
+        t.title AS title,
         t.place1.location_name AS place1LocationName,
         t.place1.address AS place1Address,
         t.place1.category AS place1Category,
@@ -90,10 +90,10 @@
 
     <select id="findAllCourses" parameterType="String" resultMap="CourseResultMap">
         SELECT
+        t.id AS courseId
         t.review_check AS reviewCheck,
         t.t_user_email AS userEmail,
-        t.t_user_id AS userId,
-        t.t_title AS title,
+        t.title AS title,
         t.place1.location_name AS place1LocationName,
         t.place1.address AS place1Address,
         t.place1.category AS place1Category,
