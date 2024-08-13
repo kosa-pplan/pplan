@@ -8,6 +8,7 @@ import org.pplan.service.dto.review.ReviewImageDTO;
 import org.pplan.service.dto.review.ReviewListDTO;
 import org.pplan.service.dto.review.ReviewWriterCheckDTO;
 import org.pplan.service.review.ReviewService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +36,20 @@ public class ReviewController {
      * @return 리뷰 목록을 담은 ResponseEntity 객체
      */
     @GetMapping("/list")
-    public ResponseEntity<List<ReviewListDTO>> getReviewList() {
-        List<ReviewListDTO> reviews = reviewService.reviewList();
-        return ResponseEntity.ok(reviews);
+    public ResponseEntity<List<ReviewListDTO>> getReviewList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+
+        // 리뷰 리스트와 총 리뷰 수 가져오기
+        List<ReviewListDTO> reviews = reviewService.reviewList(page, size);
+        long totalReviews = reviewService.getTotalReviewCount();
+
+        // 헤더에 총 리뷰 수 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(totalReviews));
+
+        // 리뷰 리스트와 헤더를 포함한 응답 반환
+        return ResponseEntity.ok().headers(headers).body(reviews);
     }
 
     /**
@@ -68,12 +80,17 @@ public class ReviewController {
             @RequestParam("contents") String contents,
             @RequestParam("images") MultipartFile[] images) {
         try {
+            if (images == null) {
+                System.out.println("No images were provided.");
+            } else {
+                System.out.println("Number of images received: " + images.length);
+            }
+
             ReviewDTO reviewDTO = new ReviewDTO();
             reviewDTO.setTitle(title);
             reviewDTO.setContents(contents);
             reviewDTO.setCourseId(courseId);
 
-            // 이미지 처리 및 DTO에 추가
             List<ReviewImageDTO> reviewImageDTOList = reviewService.processImages(images);
             reviewDTO.setReviewImageDTOList(reviewImageDTOList);
 

@@ -90,7 +90,7 @@
 
     <select id="findAllCourses" parameterType="String" resultMap="CourseResultMap">
         SELECT
-        t.id AS courseId
+        t.id AS courseId,
         t.review_check AS reviewCheck,
         t.t_user_email AS userEmail,
         t.title AS title,

@@ -34,6 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:8000") // 허용할 오리진 설정
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드 설정
                 .allowedHeaders("*") // 모든 헤더 허용
+                .exposedHeaders("X-Total-Count") // 클라이언트에서 접근할 수 있는 응답 헤더 설정
                 .allowCredentials(true); // 인증 정보 허용 (쿠키, Authorization 헤더 등)
     }
 
@@ -45,6 +46,7 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedOrigin("http://localhost:8000"); // 허용할 오리진 설정
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        config.addExposedHeader("X-Total-Count"); // 클라이언트에서 접근할 수 있는 응답 헤더 설정
         source.registerCorsConfiguration("/**", config); // 모든 경로에 대해 CORS 설정
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setOrder(0); // 필터의 순서를 0으로 설정하여 가장 먼저 실행되도록 함

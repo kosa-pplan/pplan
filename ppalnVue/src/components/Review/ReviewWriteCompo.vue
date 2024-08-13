@@ -5,9 +5,13 @@
   <div class="page-container">
     <div class="editor-header">
       <h2 class="title">여행 기록</h2>
-      <button @click="fnSave" class="save-button">기록저장</button>
-      <button @click="fnList" class="save-button">목록</button>
     </div>
+    <div class="group-button">
+      <button @click="fnSave" class="save-button">기록저장</button>
+      <button @click="fnList" class="list-button">목록</button>
+
+    </div>
+    <br>
     <div class="editor-content">
       <input
           v-model="title"
@@ -20,7 +24,27 @@
           :editorOptions="editorOptions"
           ref="quillEditor"
       />
-      <input type="file" multiple @change="handleFileChange"/>
+      <!-- Hidden file input -->
+      <input
+          type="file"
+          multiple
+          class="file-input"
+          @change="handleFileChange"
+          ref="fileInput"
+      />
+      <!-- Custom button -->
+      <button
+          class="file-button"
+          @click="triggerFileInput"
+      >
+        이미지 첨부
+      </button>
+      <div v-if="fileCount > 0" class="file-info">
+        <p>선택된 파일 수: {{ fileCount }}</p>
+        <ul>
+          <li v-for="(file, index) in fileNames" :key="index">{{ file }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -53,7 +77,9 @@ export default {
         }
       },
       images: [], // 업로드할 이미지 파일들
-      courseId: '' // URL 파라미터에서 가져올 courseId
+      courseId: '', // URL 파라미터에서 가져올 courseId
+      fileCount: 0,       // 파일 수
+      fileNames: []       // 파일 이름들
     };
   },
   computed: {
@@ -65,13 +91,19 @@ export default {
   methods: {
     async fnSave() {
       // 여행 기록을 서버에 저장하는 메소드
+      if (this.images.length === 0) {
+        alert('최소 하나의 이미지를 첨부해야 합니다.');
+        return; // 이미지가 없으면 저장하지 않음
+      }
       const formData = new FormData();
       formData.append('courseId', this.courseId);
       formData.append('title', this.title);
       formData.append('contents', this.content);
 
       // 이미지 파일 추가
-      this.images.forEach(image => formData.append('images', image));
+      this.images.forEach(image => {
+        formData.append('images', image);
+      });
 
       try {
         const response = await axios.post('http://localhost:8080/review/write', formData, {
@@ -83,7 +115,7 @@ export default {
         alert('저장 성공');
         this.$router.push('/review'); // 저장 성공 후 리뷰 페이지로 이동
       } catch (error) {
-        console.error('저장 실패:', error);
+        console.error('저장 실패:', error.response ? error.response.data : error.message);
         alert('저장 실패');
       }
     },
@@ -92,8 +124,38 @@ export default {
       this.$router.push('/review');
     },
     handleFileChange(event) {
-      // 파일 선택 이벤트 핸들러: 선택된 파일을 images 배열에 저장
-      this.images = Array.from(event.target.files);
+      const files = Array.from(event.target.files);
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
+      const maxFileCount = 3;
+
+      if (files.length > maxFileCount) {
+        alert(`최대 ${maxFileCount}개의 파일만 업로드할 수 있습니다.`);
+        event.target.value = ''; // Clear the input
+        return;
+      }
+
+      const validFiles = [];
+      const validFileNames = [];
+      files.forEach(file => {
+        if (file.size > maxFileSize) {
+          alert(`파일 ${file.name}은(는) 5MB를 초과합니다.`);
+        } else if (!file.type.startsWith('image/')) {
+          alert(`파일 ${file.name}은(는) 이미지 파일이 아닙니다.`);
+        } else {
+          validFiles.push(file); // Add valid files to the array
+          validFileNames.push(file.name);
+        }
+      });
+
+      this.images = validFiles; // Store valid files in the array
+      this.fileCount = validFiles.length;
+      this.fileNames = validFileNames;
+
+      // Clear the input
+      event.target.value = '';
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
     },
     async checkAuthorEmail() {
       try {
@@ -139,6 +201,7 @@ export default {
   padding-bottom: 20px; /* footer 높이 */
   box-sizing: border-box;
   overflow: hidden;
+
 }
 
 .editor-header {
@@ -146,10 +209,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px; /* 상하 패딩 제거 */
+  padding: 0 8px; /* 상하 패딩 제거 */
   box-sizing: border-box;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 5px; /* 제목과 에디터 사이의 마진 최소화 */
+  margin-bottom: 20px; /* 제목과 에디터 사이의 마진 최소화 */
 }
 
 .title {
@@ -159,15 +221,28 @@ export default {
   flex: 1;
 }
 
-.save-button {
-  padding: 6px 12px;
-  font-size: 16px;
-  cursor: pointer;
+.group-button {
+  display: flex;
+  top: 20px;
+  right: 20px;
+  gap: 10px;
+  margin-right: 20px;
+  justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+}
+
+.save-button, .list-button {
+  background-color: #2C3E50;
   border: none;
-  border-radius: 4px;
-  background-color: #007bff;
   color: white;
-  margin-left: auto; /* 버튼을 오른쪽에 배치 */
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.save-button:hover, .list-button {
+  background-color: #1a252f;
 }
 
 .editor-content {
@@ -200,5 +275,69 @@ export default {
   font-family: Arial, sans-serif; /* 폰트 패밀리 설정 */
   font-size: 16px; /* 폰트 크기 설정 */
   line-height: 1.5; /* 줄 높이를 설정하여 가독성 향상 */
+}
+
+/* Hide the default file input */
+.file-input {
+  display: none;
+}
+
+/* Custom button styling */
+.file-button {
+  display: inline-block;
+  padding: 8px 15px; /* 기존 버튼과 유사한 패딩으로 조정 */
+  background-color: #2C3E50; /* 기존 버튼과 유사한 배경색으로 조정 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px; /* 기존 버튼과 유사한 폰트 크기로 조정 */
+  text-decoration: none;
+}
+
+.file-button:hover {
+  background-color: #1a252f; /* 기존 버튼과 유사한 호버 색상으로 조정 */
+}
+/* File info container */
+.file-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa; /* Light gray background for better visibility */
+  border-radius: 8px;       /* Rounded corners */
+  border: 1px solid #ddd;   /* Light border for separation */
+}
+
+/* Title for file info */
+.file-info p {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333; /* Dark gray color for better readability */
+  margin-bottom: 10px;
+}
+
+/* List of files */
+.file-info ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Individual file items styled as cards */
+.file-info li {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #ffffff; /* White background for each file item */
+  border-radius: 5px;       /* Rounded corners for file items */
+  border: 1px solid #ddd;   /* Light border for file items */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for a card effect */
+  font-size: 14px;          /* Font size for file names */
+  color: #555;              /* Slightly darker color for text */
+}
+
+/* Hover effect for file items */
+.file-info li:hover {
+  background-color: #f1f1f1; /* Slightly darker background on hover */
+  border-color: #ccc;        /* Darker border color on hover */
+  cursor: pointer;           /* Pointer cursor to indicate interactivity */
 }
 </style>

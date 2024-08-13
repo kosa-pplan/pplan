@@ -15,7 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 리뷰 관련 비즈니스 로직을 처리하는 서비스 클래스
@@ -70,10 +72,18 @@ public class ReviewService {
      * 모든 리뷰 목록을 가져옵니다.
      * @return 리뷰 목록
      */
-    public List<ReviewListDTO> reviewList() {
-        return reviewMapper.reviewList();
+    public List<ReviewListDTO> reviewList(int page, int size) {
+        int offset = page* size;
+        Map<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("limit", size);
+
+        return reviewMapper.reviewList(params);
     }
 
+    public long getTotalReviewCount() {
+        return reviewMapper.getTotalReviewCount();
+    }
     /**
      * 상세 리뷰를 가져옵니다.
      * @param id 리뷰 ID
