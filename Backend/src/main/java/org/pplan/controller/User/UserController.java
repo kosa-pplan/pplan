@@ -16,28 +16,28 @@ public class UserController {
 
     private final UserService userService;
 
-    // 회원 가입 API
+    // 회원 가입
     @PostMapping("/sign-up")
     public ResponseEntity<UserSignUpDTO> registerUser(@RequestBody UserSignUpDTO user) {
         UserSignUpDTO registeredUser = userService.registerUser(user);
         return ResponseEntity.ok(registeredUser);
     }
 
-    // 회원 가입 시 이메일 중복 확인 API
+    // 회원 가입 시 이메일 중복 확인
     @GetMapping("/check-email")
     public ResponseEntity<Boolean> signUpCheckEmail(@RequestParam String email) {
         boolean exists = userService.signUpCheckEmailExists(email);
         return ResponseEntity.ok(exists);
     }
 
-    // 회원 가입 시 닉네임 중복 확인 API
+    // 회원 가입 시 닉네임 중복 확인
     @GetMapping("/check-nickname")
     public ResponseEntity<Boolean> signUpCheckNickname(@RequestParam String nickname) {
         boolean exists = userService.signUpCheckNicknameExists(nickname);
         return ResponseEntity.ok(exists);
     }
 
-    // 로그인 API
+    // 로그인
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO) {
         String token = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPwd());
@@ -47,4 +47,12 @@ public class UserController {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
     }
+
+    // 회원 탈퇴
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestParam String email) {
+        userService.deleteUser(email);
+        return ResponseEntity.ok("User deleted successfully");
+    }
+
 }

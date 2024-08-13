@@ -41,4 +41,8 @@ public class UserService {
         }
     }
 
+    // 회원 탈퇴 기능
+    public void deleteUser(String email) {
+        userMapper.deleteUserByEmail(email);
+    }
 }
