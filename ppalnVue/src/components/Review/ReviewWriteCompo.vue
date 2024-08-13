@@ -56,7 +56,7 @@ export default {
   data() {
     return {
       title: '', // 여행 기록의 제목
-      content: '<p>당신의 여행 기록을 담아주세요</p>', // 여행 기록의 내용 (기본값)
+      content: '', // 여행 기록의 내용 (기본값)
       editorOptions: {
         modules: {
           toolbar: {
@@ -126,7 +126,7 @@ export default {
     handleFileChange(event) {
       const files = Array.from(event.target.files);
       const maxFileSize = 5 * 1024 * 1024; // 5MB
-      const maxFileCount = 3;
+      const maxFileCount = 5;
 
       if (files.length > maxFileCount) {
         alert(`최대 ${maxFileCount}개의 파일만 업로드할 수 있습니다.`);

@@ -21,13 +21,13 @@ export default {
 }
 
 .left{
-  border: 1px solid black;
-  width: 20%;
+  width: 15%;
   height: 100%;
+  background-color: rgba(161, 201, 241, 0.3);
 }
 .right{
-  border: 1px solid black;
-  width: 80%;
+
+  width: 85%;
   height: 100%;
 }
 </style>
