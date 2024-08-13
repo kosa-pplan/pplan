@@ -1,6 +1,11 @@
+<!--
+@Author KyeongMin
+-->
 <template>
   <div class="page-container">
+    <p class="no-data-message" v-if="cards.length === 0">데이터가 없습니다.</p>
     <div class="review_list">
+      <!-- 데이터가 없는 경우 -->
       <!-- 카드 리스트를 반복하여 표시 -->
       <router-link v-for="(card, index) in displayedCards" :key="index" :to="`/review/detail/${card.id}`" class="card-link">
         <div class="card">
@@ -51,29 +56,22 @@ export default {
   },
   computed: {
     userEmail() {
-      return this.$store.getters.getUserEmail; // Vuex 스토어에서 userEmail을 가져옴
+      // Vuex 스토어에서 사용자 이메일을 가져오는 계산된 속성
+      return this.$store.getters.getUserEmail;
     }
   },
   created() {
-    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화합니다.
-    this.fetchCards(); // 컴포넌트가 생성될 때 카드 데이터를 가져옴
+    // 컴포넌트가 생성될 때 호출되는 라이프사이클 훅
+    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화
+    this.fetchCards(); // 카드 데이터를 가져오는 메소드 호출
   },
   methods: {
     async fetchCards() {
-      // Vuex 스토어에서 인증 상태를 확인
-      // if (!this.$store.getters.isAuthenticated) {
-      //   // 인증되지 않았으면 로그인 페이지로 리다이렉트
-      //   this.$router.push('/login');
-      //   return;
-      // }
-
-      console.log(this.userEmail);
-
+      // 카드 데이터를 서버에서 가져오는 메소드
       try {
-        // 서버에서 카드 데이터 가져오기, JWT 토큰을 Authorization 헤더에 포함
         const response = await this.$axios.get("/review/list", {
           headers: {
-            'Authorization': `Bearer ${this.$store.state.token}`
+            'Authorization': `Bearer ${this.$store.state.token}` // JWT 토큰을 Authorization 헤더에 포함
           }
         });
         this.cards = response.data; // 서버에서 가져온 카드 데이터를 저장
@@ -89,20 +87,19 @@ export default {
       }
     },
     loadMore() {
-      // 현재 페이지에 맞는 카드 범위 설정
+      // 현재 페이지에 맞는 카드 범위를 설정하여 화면에 표시하는 메소드
       const start = this.currentPage * this.cardsToShow;
       const end = start + this.cardsToShow;
       const nextCards = this.cards.slice(start, end);
+
       if (nextCards.length > 0) {
-        // 새 카드를 기존 카드 배열에 추가
-        this.displayedCards = this.displayedCards.concat(nextCards);
+        this.displayedCards = [...this.displayedCards, ...nextCards]; // 새 카드를 기존 카드 배열에 추가
         this.currentPage++; // 페이지 번호 증가
       }
     }
   }
 };
 </script>
-
 <style scoped>
 .page-container {
   padding: 16px;
@@ -179,5 +176,12 @@ export default {
   font-size: 18px; /* 숫자 폰트 크기 조정 */
   font-weight: bold; /* 숫자 폰트 굵게 */
   color: #333; /* 숫자 색상 설정 */
+}
+
+.no-data-message {
+  text-align: center; /* 메시지 가운데 정렬 */
+  color: #555; /* 메시지 색상 설정 */
+  font-size: 1.2em; /* 메시지 폰트 크기 설정 */
+  padding: 20px; /* 메시지 패딩 설정 */
 }
 </style>

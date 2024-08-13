@@ -9,9 +9,10 @@
 <!--        VALUES (#{reviewCheck}, #{placeDTO1}, #{placeDTO2}, #{placeDTO3}, #{placeDTO4}, #{placeDTO5}, #{userEmail}, #{userId})-->
 <!--    </insert>-->
 
+    <!--InsertCourse 수정-->
     <insert id="insertCourse" parameterType="org.pplan.service.dto.Course.CourseDTO">
         INSERT INTO t_course (
-        review_check, place1, place2, place3, place4, place5, t_user_email, t_user_id, t_title
+        review_check, place1, place2, place3, place4, place5, t_user_email, title
         )
         VALUES (
         #{reviewCheck},
@@ -21,7 +22,6 @@
         PLACE(#{placeDTO4.locationName}, #{placeDTO4.address}, #{placeDTO4.category}, #{placeDTO4.business}),
         PLACE(#{placeDTO5.locationName}, #{placeDTO5.address}, #{placeDTO5.category}, #{placeDTO5.business}),
         #{userEmail},
-        #{userId},
         #{title}
         )
     </insert>
@@ -30,8 +30,8 @@
         SELECT
         t.review_check AS reviewCheck,
         t.t_user_email AS userEmail,
-        t.t_user_id AS userId,
-        t.t_title AS title,
+        t.T_USER_EMAIL AS userId,
+        t.TITLE AS title,
         t.place1.location_name AS place1LocationName,
         t.place1.address AS place1Address,
         t.place1.category AS place1Category,

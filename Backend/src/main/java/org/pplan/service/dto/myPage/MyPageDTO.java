@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.sql.Date;
 
+/**
+ * @Author KyeongMin
+ */
 @Data
 public class MyPageDTO {
     private int id;

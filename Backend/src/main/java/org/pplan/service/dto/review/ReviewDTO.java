@@ -5,6 +5,9 @@ import lombok.Data;
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * @Author KyeongMin
+ */
 @Data
 public class ReviewDTO {
     private Long id;

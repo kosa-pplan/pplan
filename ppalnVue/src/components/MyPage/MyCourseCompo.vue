@@ -27,7 +27,7 @@
       </div>
     </div>
 
-   
+
   </div>
 
 </template>
@@ -85,7 +85,7 @@ export default {
 
       for(let i =0;i<5;i++){
         let propertyName = `placeDTO${i + 1}`;
-    
+
         // Access the property using bracket notation
         if (value[propertyName].business!=='없음') {
           console.log(value[propertyName])
@@ -93,9 +93,9 @@ export default {
           this.locationdata[i] = value[propertyName]
         }
       }
-      
 
-      
+
+
       const updatedButtons = await convertAllAddressesToCoordinates(this.locationdata);
       console.log(updatedButtons)
       if(updatedButtons==="주소변환 실패"){
@@ -109,7 +109,7 @@ export default {
           alert("경로 찾기 실패")
         }else{
           this.isModalOpen = true; // 모달 열기
-        } 
+        }
       }
     }
   }

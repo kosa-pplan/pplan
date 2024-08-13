@@ -20,8 +20,8 @@
 
     <!--좋아요 추가-->
     <insert id="addLike" parameterType="org.pplan.service.dto.share.ShareDTO">
-        INSERT INTO T_Share (T_REVIEW_ID, T_USER_EMAIL, T_USER_ID)
-        VALUES (#{reviewId}, #{userEmail},(SELECT id FROM T_User WHERE EMAIL = #{userEmail}))
+        INSERT INTO T_Share (T_REVIEW_ID, T_USER_EMAIL)
+        VALUES (#{reviewId}, #{userEmail})
     </insert>
 
     <!--좋아요 삭제-->

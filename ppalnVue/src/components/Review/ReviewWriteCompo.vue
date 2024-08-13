@@ -1,3 +1,6 @@
+<!--
+@Author KyeongMin
+-->
 <template>
   <div class="page-container">
     <div class="editor-header">
@@ -28,12 +31,13 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      title: '',
-      content: '<p>당신의 여행 기록을 담아주세요</p>',
+      title: '', // 여행 기록의 제목
+      content: '<p>당신의 여행 기록을 담아주세요</p>', // 여행 기록의 내용 (기본값)
       editorOptions: {
         modules: {
           toolbar: {
             container: [
+              // 툴바 설정: 텍스트 스타일, 리스트, 인덴트, 방향, 헤더, 색상, 폰트, 비디오 삽입
               ['bold', 'italic', 'underline', 'strike'],
               ['code-block'],
               [{'header': 1}, {'header': 2}],
@@ -48,54 +52,83 @@ export default {
           }
         }
       },
-      images: [],
-      courseId: '' // courseId를 URL 파라미터에서 가져올 예정
+      images: [], // 업로드할 이미지 파일들
+      courseId: '' // URL 파라미터에서 가져올 courseId
     };
   },
+  computed: {
+    userEmail() {
+      // Vuex 스토어에서 사용자 이메일을 가져오는 계산된 속성
+      return this.$store.getters.getUserEmail;
+    }
+  },
   methods: {
-    fnSave() {
+    async fnSave() {
+      // 여행 기록을 서버에 저장하는 메소드
       const formData = new FormData();
       formData.append('courseId', this.courseId);
       formData.append('title', this.title);
       formData.append('contents', this.content);
 
-// 이미지 파일 추가
-      for (const image of this.images) {
-        formData.append('images', image);
+      // 이미지 파일 추가
+      this.images.forEach(image => formData.append('images', image));
+
+      try {
+        const response = await axios.post('http://localhost:8080/review/write', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log('저장 성공:', response.data);
+        alert('저장 성공');
+        this.$router.push('/review'); // 저장 성공 후 리뷰 페이지로 이동
+      } catch (error) {
+        console.error('저장 실패:', error);
+        alert('저장 실패');
       }
-
-      axios.post('http://localhost:8080/review/write', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-          .then(response => {
-            console.log('저장 성공:', response.data);
-            alert('저장성공');
-            // 저장 성공 후 페이지 이동
-            this.$router.push('/review');
-          })
-          .catch(error => {
-            console.error('저장 실패:', error);
-            console.log('course',this.courseId);
-
-            alert('저장실패');
-          });
     },
     fnList() {
+      // 리뷰 목록 페이지로 이동하는 메소드
       this.$router.push('/review');
     },
     handleFileChange(event) {
+      // 파일 선택 이벤트 핸들러: 선택된 파일을 images 배열에 저장
       this.images = Array.from(event.target.files);
     },
+    async checkAuthorEmail() {
+      try {
+        const response = await axios.get('http://localhost:8080/review/creator', {
+          params: { courseId: this.courseId }
+        });
+
+        // 응답에서 DTO를 받아옵니다
+        const { userEmail, reviewCheck } = response.data;
+
+        if (reviewCheck === 'YES') {
+          alert('이미 작성한 글입니다.');
+          this.$router.push('/review'); // 작성 여부가 'YES'일 경우 리뷰 페이지로 이동
+        } else if (userEmail !== this.userEmail) {
+          alert('접근 권한이 없습니다.');
+          this.$router.push('/review'); // 접근 권한이 없을 경우 리뷰 페이지로 이동
+        } else {
+          // 접근 권한이 있고, 작성 여부가 'NO'인 경우
+          // 필요한 추가 작업을 여기서 수행합니다.
+        }
+      } catch (error) {
+        console.error('작성자 이메일 확인 실패:', error);
+        alert('오류가 발생했습니다.');
+        this.$router.push('/review'); // 오류 발생 시 리뷰 페이지로 이동
+      }
+    }
   },
   async created() {
-    // URL 파라미터에서 courseId를 가져와서 설정합니다
-    this.courseId = this.$route.params.courseId || '';
+    // 컴포넌트가 생성될 때 호출되는 라이프사이클 훅
+    this.courseId = this.$route.params.courseId || ''; // URL 파라미터에서 courseId를 가져옴
+    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화
+    await this.checkAuthorEmail(); // 작성자 이메일 확인
   }
 };
-</script>
-<style scoped>
+</script><style scoped>
 /* 기존 스타일 */
 
 .page-container {

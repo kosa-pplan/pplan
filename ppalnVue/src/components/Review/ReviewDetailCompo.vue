@@ -1,5 +1,8 @@
+<!--
+@Author KyeongMin
+-->
 <template>
-  <div class="page-container">
+  <div class="page-container" v-if="isReviewExists">
     <div class="content-wrapper">
       <h1 align="center">{{ title }}</h1>
       <p align="right">기록 일시 {{ regDate }}</p>
@@ -18,13 +21,17 @@
       </div>
       <!-- HTML 콘텐츠를 안전하게 렌더링 -->
       <div v-html="safeContents"></div>
-      <!--  비로그인시 좋아요 버튼 안보이게 해야함.-->
-      <div>
-        <button
+
+      <h1>지도 추가{{courseId}}</h1>
+
+      <!--비로그인시 좋아요 버튼 안나옴-->
+        <button v-if="userEmail"
             :class="['btn_like', { 'on': isLiked }]"
             @click="toggleLike">
+          <!-- 버튼에 아이콘이나 텍스트 추가 가능 -->
+
         </button>
-      </div>
+
       <!-- Modal for enlarged image -->
       <div v-if="showModal" class="modal" @click="closeModal">
         <img :src="getImageUrl(enlargedImageUrl)" class="modal-image"/>
@@ -36,93 +43,126 @@
 
 <script>
 import axios from 'axios';
-import DOMPurify from 'dompurify'; // DOMPurify를 사용하여 HTML을 정화
+import DOMPurify from 'dompurify'; // HTML 콘텐츠를 안전하게 정화하기 위한 라이브러리
 
 export default {
   data() {
     return {
-      id: null,
-      title: '',
-      contents: '', // HTML 콘텐츠
-      reviewImageDTOList: [],
-      regDate: '',
-      showModal: false,
-      isLiked: false,
-      enlargedImageUrl: '',
-      userId: 2,              // ID를 1로 고정
-      userEmail: 'test@naver.com', // 이메일을 고정
+      id: null, // 리뷰의 ID를 저장하는 변수
+      title: '', // 리뷰 제목
+      contents: '', // 리뷰의 HTML 콘텐츠
+      reviewImageDTOList: [], // 리뷰에 포함된 이미지 목록
+      courseId: '',
+      regDate: '', // 리뷰 등록 날짜
+      showModal: false, // 이미지 모달의 표시 여부
+      isLiked: false, // 리뷰의 좋아요 상태
+      enlargedImageUrl: '', // 확대된 이미지의 URL
+      isReviewExists: true, // 리뷰 존재 여부를 확인하는 변수
     };
   },
-  mounted() {
-    this.id = this.$route.params.id;
-    this.checkedLikeStatus();
-    this.fetchData();
+  async created() {
+    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화
+    this.id = this.$route.params.id; // URL 파라미터에서 리뷰 ID를 가져옴
+    await this.checkReviewExistence(this.id); // 리뷰 존재 여부를 확인
+    if (this.isReviewExists) {
+      await this.fetchData(); // 리뷰가 존재하면 데이터를 로드
+      await this.checkedLikeStatus(); // 좋아요 상태를 확인
+    }
   },
   methods: {
-    fetchData() {
+    async fetchData() {
+      // 서버에서 리뷰 데이터를 가져오는 메소드
       const url = `http://localhost:8080/review/${this.id}`;
-      axios.get(url)
-          .then(response => {
-            const data = response.data;
-            this.title = data.title;
-            this.contents = DOMPurify.sanitize(data.contents); // HTML 콘텐츠 정화
-            this.reviewImageDTOList = data.reviewImageDTOList;
-            this.regDate = data.regDate;
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
-          });
+      try {
+        const response = await axios.get(url);
+        const data = response.data; // 서버로부터 받은 데이터
+        this.title = data.title; // 리뷰 제목
+        this.contents = DOMPurify.sanitize(data.contents); // HTML 콘텐츠를 정화하여 저장
+        this.reviewImageDTOList = data.reviewImageDTOList; // 리뷰 이미지 목록
+        this.regDate = data.regDate; // 리뷰 등록 날짜
+        this.courseId = data.courseId;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('데이터를 가져오는 데 실패했습니다.');
+      }
     },
     async checkedLikeStatus() {
+      // 사용자의 좋아요 상태를 확인하는 메소드
+      const url = 'http://localhost:8080/share/isLiked';
       try {
-        const response = await axios.get('http://localhost:8080/share/isLiked', {
+        const response = await axios.get(url, {
           params: {
             reviewId: this.id,
-            userId: this.userId,
+            userEmail: this.userEmail
           }
         });
         this.isLiked = response.data; // 서버에서 받은 좋아요 상태를 업데이트
       } catch (error) {
-        console.log('Error checking like status', error);
+        console.log('Error checking like status:', error);
       }
     },
-    toggleLike() {
-      const url = `http://localhost:8080/share/toggle`;
+    async checkReviewExistence(reviewId) {
+      // 리뷰의 존재 여부를 확인하는 메소드
+      const url = 'http://localhost:8080/review/checkReviewCount';
+      try {
+        const response = await axios.get(url, {
+          params: { reviewId }
+        });
+        if (response.data === 0) {
+          this.isReviewExists = false; // 리뷰가 존재하지 않는 경우
+          alert('리뷰가 존재하지 않습니다.');
+          this.$router.go(-1); // 이전 페이지로 이동
+        } else {
+          this.isReviewExists = true; // 리뷰가 존재하는 경우
+        }
+      } catch (error) {
+        console.error('Error checking review existence:', error);
+        alert('오류가 발생했습니다.');
+        this.$router.go(-1); // 오류 발생 시 이전 페이지로 이동
+      }
+    },
+    async toggleLike() {
+      // 좋아요 상태를 토글하는 메소드
+      const url = 'http://localhost:8080/share/toggle';
       const payload = {
         reviewId: this.id,
-        userId: this.userId,
         userEmail: this.userEmail
       };
 
-      axios.post(url, payload)
-          .then(() => {
-            this.isLiked = !this.isLiked; // 상태 토글
-          })
-          .catch(error => {
-            console.error('Error toggling like:', error);
-          });
+      try {
+        await axios.post(url, payload);
+        this.isLiked = !this.isLiked; // 좋아요 상태를 반전
+      } catch (error) {
+        console.error('Error toggling like:', error);
+      }
     },
     getImageUrl(path) {
+      // 이미지 경로를 URL로 변환하는 메소드
       return `http://localhost:8080/imgs/${path}`;
     },
     openModal(imageUrl) {
-      this.enlargedImageUrl = imageUrl;
-      this.showModal = true;
+      // 이미지 모달을 여는 메소드
+      this.enlargedImageUrl = imageUrl; // 확대할 이미지의 URL 설정
+      this.showModal = true; // 모달을 표시
     },
     closeModal() {
-      this.showModal = false;
-      this.enlargedImageUrl = '';
+      // 이미지 모달을 닫는 메소드
+      this.showModal = false; // 모달을 숨김
+      this.enlargedImageUrl = ''; // 확대된 이미지 URL 초기화
     },
   },
   computed: {
     safeContents() {
-      return this.contents; // 정화된 HTML 콘텐츠 반환
-    }
-  }
+      // 정화된 HTML 콘텐츠를 반환하는 계산된 속성
+      return this.contents;
+    },
+    userEmail() {
+      // Vuex 스토어에서 사용자 이메일을 가져오는 계산된 속성
+      return this.$store.getters.getUserEmail;
+    },
+  },
 };
-</script>
-
-<style scoped>
+</script><style scoped>
 .page-container {
   height: 100vh; /* 전체 화면 높이 */
   overflow-y: auto; /* 세로 스크롤 허용 */
@@ -180,6 +220,7 @@ export default {
   max-height: 90%;
   cursor: pointer;
 }
+
 .btn_like {
   width: 50px;
   height: 50px;
@@ -197,9 +238,17 @@ export default {
 }
 
 @keyframes beating {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.25); }
-  70% { transform: scale(0.9); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
