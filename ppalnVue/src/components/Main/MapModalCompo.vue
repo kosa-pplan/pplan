@@ -44,6 +44,10 @@ export default {
       type: String,
       required: true
     },
+    email: {
+      type: String,
+      required: true
+    },
   },
   computed: {
     localButtons: {
@@ -79,7 +83,8 @@ export default {
           address: button.address,
           category: button.category,
           business: button.business,
-          title:title
+          title:title,
+          email:this.email
         };
       });
       console.log(newArray);
@@ -193,6 +198,7 @@ export default {
     //   }
     // },
     saveMap() {
+      console.log(this.email)
       this.showConfirmModal = true; // 확인 모달 열기
     },
     handleSave(title) {

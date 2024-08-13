@@ -20,7 +20,7 @@
     <!-- 경로 보기 모달 컴포넌트 -->
     <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''">
         <h2>경로</h2>
-        <MapModalCompo :message="directions" @close="showModal = false, modalType=''"/>
+        <MapModalCompo :message="directions" :email="this.email" @close="showModal = false, modalType=''"/>
     </ModalCompo>
     <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
         <h2>버튼 정보</h2>
@@ -42,6 +42,8 @@ import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; // 추가된 모달 �
 
 import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
 
+// import axios from 'axios';
+
 export default {
   components: {
     draggable,
@@ -49,7 +51,13 @@ export default {
     MapModalCompo,
     ConfirmDeleteModal // 모달 컴포넌트 등록
   },
+  created() {
+    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화합니다.
+  },
   computed: {
+    userEmail() {
+      return this.$store.getters.getUserEmail; // Vuex 스토어에서 userEmail을 가져옴
+    },
     localButtons: {
       get() {
         return this.$store.getters.items;
@@ -57,6 +65,9 @@ export default {
       set(value) {
         this.$store.dispatch('updateItems', value);
       }
+    },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated; // Vuex에서 인증 상태 가져오기
     }
   },
   data() {
@@ -67,7 +78,8 @@ export default {
       buttonToDelete: null, // 삭제할 버튼의 ID 저장
       directions: '',
       modalType: '',
-      selectedButton: {} // 선택된 버튼 저장
+      selectedButton: {}, // 선택된 버튼 저장
+      email:''
     };
   },
   methods: {
@@ -100,27 +112,78 @@ export default {
       this.showModal = true;
     },
     async handleButtonClick() {
-      if(this.localButtons.length<2){
-      console.log()
-        alert("경로를 더 추가해주세요")
+      this.email = this.userEmail
+      if(this.userEmail===null){
+        this.$router.push('/login');
       }else{
-        const updatedButtons = await convertAllAddressesToCoordinates(this.localButtons);
-        console.log(updatedButtons)
-        if(updatedButtons==="주소변환 실패"){
-          alert("주소가 잘못되었습니다")
+        if(this.localButtons.length<2){
+          console.log(this.userEmail)
+         alert("경로를 더 추가해주세요")
         }else{
-          this.localButtons = updatedButtons;
-          this.directions = await fetchDirections(this.localButtons);
-          console.log(this.directions)
-          if(this.directions==="경로 찾기 실패"){
-            alert("경로 찾기 실패")
+          const updatedButtons = await convertAllAddressesToCoordinates(this.localButtons);
+          console.log(updatedButtons)
+          if(updatedButtons==="주소변환 실패"){
+            alert("주소가 잘못되었습니다")
           }else{
-            this.modalType = 'directions';
-            this.showModal = true;
+            this.localButtons = updatedButtons;
+            this.directions = await fetchDirections(this.localButtons);
+            console.log(this.directions)
+            if(this.directions==="경로 찾기 실패"){
+              alert("경로 찾기 실패")
+            }else{
+              this.modalType = 'directions';
+              this.showModal = true;
+            }
           }
         }
       }
 
+    //주소 불러와서 경로 찍기
+    // const testbuttons = {}
+    //   // user id 불러오기 테스트
+    //   try {
+    //     const response = await axios.get('http://localhost:8080/api/course/userid', {
+    //       params: { id: 123 } // 예시로 ID 1을 사용
+    //     });
+    //     const course = response.data;
+
+    //     for(let i =0;i<5;i++){
+    //     let propertyName = `placeDTO${i + 1}`;
+    
+    // // Access the property using bracket notation
+    // if (course[0][propertyName]!=null) {
+    //   console.log("dkdkdkdk")
+    //     // Your logic here
+    //     testbuttons[i] = course[0][propertyName]
+    // }
+    //   }
+        
+    //   } catch (error) {
+    //     console.error('Error fetching course data:', error);
+    //   }
+
+      
+    //   console.log(testbuttons)
+    //   this.directions = testbuttons
+
+
+
+      ////////////////////////////////////////////////////////////////////////////////////////
+
+
+      //좋아요 누른거 가져오기
+      // try {
+      //   const response = await axios.get('http://localhost:8080/api/course/all', {
+      //     params: { id: 123 } // 예시로 ID 1을 사용
+      //   });
+      //   const course = response.data;
+      //   console.log(course)
+      // } catch (error) {
+      //   console.error('Error fetching course data:', error);
+      // }
+
+      
+      
     },
   },
 };
