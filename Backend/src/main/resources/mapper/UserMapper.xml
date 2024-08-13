@@ -35,4 +35,8 @@
         VALUES (#{email}, #{pwd}, #{nickname})
     </insert>
 
+    <delete id="deleteUserByEmail">
+        DELETE FROM t_user WHERE email = #{email}
+    </delete>
+
 </mapper>

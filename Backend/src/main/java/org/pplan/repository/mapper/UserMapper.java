@@ -12,4 +12,6 @@ public interface UserMapper {
     UserSignUpDTO signUpFindByNickname(String nickname);
 
     UserLoginDTO loginFindByEmail(String email);
+
+    void deleteUserByEmail(String email);
 }
