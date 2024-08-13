@@ -16,6 +16,16 @@
     </div>
     <!-- 확인 모달 컴포넌트 -->
     <SaveConfirmModal v-if="showConfirmModal" @confirm="handleSave" @close="showConfirmModal = false" />
+
+    <!-- 저장 완료 알림 모달 -->
+    <div v-if="showNotification" class="notification-modal">
+      <div class="notification-content">
+        <span class="close" @click="showNotification = false">&times;</span>
+        <h3>저장 완료</h3>
+        <p>데이터가 성공적으로 저장되었습니다!</p>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -34,6 +44,7 @@ export default {
       map: null,
       jsonData: null,
       showConfirmModal: false, // 저장 확인 모달 표시 여부
+      showNotification: false, // 저장 완료 알림 모달 표시 여부
       startIcon: require('@/assets/redmarker.png'), // 출발지 아이콘 이미지 경로
       endIcon: require('@/assets/bluemarker.png'), // 경유지 아이콘 이미지 경로
       waypointsIcon: require('@/assets/blackmarker.png') // 목적지 아이콘 이미지 경로
@@ -100,9 +111,17 @@ export default {
         }
       })
       .then(response => {
-        this.$emit('close');
-        this.showConfirmModal = false; // 모달 닫기
-        console.log(response.data);
+        
+        this.showNotification = true; // 저장 완료 알림 모달 열기
+      
+
+        // 2초 후에 showNotification을 false로 설정하고, showConfirmModal과 close 이벤트를 처리
+        setTimeout(() => {
+          this.showNotification = false;
+          this.showConfirmModal = false; // 확인 모달 닫기
+          this.$emit('close'); // 상위 컴포넌트에 'close' 이벤트 전송
+          console.log(response.data);
+        }, 1000); // 2000ms = 2초
       })
       .catch(error => {
         console.error('There was an error!', error);
@@ -231,5 +250,43 @@ export default {
 .button2:hover {
   background-color: cadetblue;
   opacity: 80%;
+}
+
+.notification-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* 모달이 다른 콘텐츠 위에 나타나도록 설정 */
+}
+
+.notification-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  text-align: center;
+  position: relative; /* close 버튼을 모달 내용 안에 배치하기 위함 */
+}
+
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
 }
 </style>
