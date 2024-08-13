@@ -60,17 +60,27 @@ export default {
         alert('최대 5개까지 선택 가능합니다.');
         return;
       }
+
       const diceNums = document.querySelectorAll('.dice-num');
+      diceNums.forEach(dice => dice.classList.add('rotating'));
+
       let sum = 0;
-      diceNums.forEach((dice, index) => {
-        const randomNum = Math.floor(Math.random() * 6);
-        sum += randomNum;
-        dice.innerHTML = this.getDiceFace(randomNum);
-        this[`dice${index + 1}`] = randomNum + 1;
-      });
-      console.log(`sum: ${sum}`);
-      this.animateSelection(sum);
+      setTimeout(() => {
+        diceNums.forEach((dice, index) => {
+          const randomNum = Math.floor(Math.random() * 6);
+          sum += randomNum;
+          dice.innerHTML = this.getDiceFace(randomNum);
+          this[`dice${index + 1}`] = randomNum + 1;
+        });
+
+        console.log(`sum: ${sum}`);
+        this.animateSelection(sum);
+
+        // 애니메이션 클래스 제거
+        diceNums.forEach(dice => dice.classList.remove('rotating'));
+      }, 500); // 0.5초 후에 주사위 결과 표시
     },
+
     getDiceFace(num) {
       const dot = '●';
       const faces = [
@@ -385,4 +395,16 @@ export default {
 .selected {
   background-color: #39A78E; /* 선택된 박스의 배경색 */
 }
+
+/* CSS 애니메이션 추가 */
+@keyframes rotateDice {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rotating {
+  animation: rotateDice 0.5s linear infinite; /* 0.5초 동안 회전 */
+}
+
+
 </style>
