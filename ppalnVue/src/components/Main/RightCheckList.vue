@@ -23,9 +23,14 @@
         <MapModalCompo :message="directions" :email="this.email" @close="showModal = false, modalType=''"/>
     </ModalCompo>
     <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''">
-        <h2>버튼 정보</h2>
-        <p>버튼 이름: {{ selectedButton.name }}</p>
-        <p>버튼 주소: {{ selectedButton.address }}</p>
+        <h2>장소 정보</h2>
+        <div class="modal-body">
+          <p>분류: {{ selectedButton.category }}</p>
+          <p>장소 이름: {{ selectedButton.name }}</p>
+          <p>주소: {{ selectedButton.address }}</p>
+        </div>
+        
+        <div id="map" style="width: 100%; height: 300px;"></div>
     </ModalCompo>
 
     <!-- 삭제 확인 모달 컴포넌트 -->
@@ -43,7 +48,7 @@ import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; // 추가된 모달 �
 import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
 
 // import axios from 'axios';
-
+/* eslint-disable */
 export default {
   components: {
     draggable,
@@ -83,6 +88,64 @@ export default {
     };
   },
   methods: {
+    async convertAddressToCoordinates(address) {
+  const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
+  console.log("api테스트");
+  const REST_API_KEY = process.env.VUE_APP_API_key;
+  console.log(REST_API_KEY);
+  
+  try {
+    const response = await fetch(API_URL + `?query=${encodeURIComponent(address)}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `KakaoAK ${REST_API_KEY}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    const { x, y } = data.documents[0]?.address || {};
+    return { lat: parseFloat(y), lon: parseFloat(x) };
+  } catch (error) {
+    console.error('Error fetching coordinates:', error);
+    throw error;
+  }
+},
+    async loadMap() {
+      const coordinates = await this.convertAddressToCoordinates(this.selectedButton.address); // API 키를 입력하세요.
+      if (coordinates) {
+        const { lat, lon } = coordinates;
+
+        // Kakao Maps API 로드 확인
+        if (!window.kakao) {
+          console.error('Kakao Maps API is not loaded.');
+          return;
+        }
+
+        // 지도 생성
+        const container = document.getElementById('map');
+        const options = {
+          center: new kakao.maps.LatLng(lat, lon),
+          level: 3
+        };
+        const map = new kakao.maps.Map(container, options);
+
+        // 마커 추가
+        const markerPosition = new kakao.maps.LatLng(lat, lon);
+        new kakao.maps.Marker({
+          position: markerPosition,
+          map: map
+        });
+
+        map.setCenter(markerPosition);
+      } else {
+        console.error('주소 변환 실패');
+      }
+    },
+  
     
     onDragStart() {
       // 드래그 시작 시 처리할 로직
@@ -110,6 +173,7 @@ export default {
       this.selectedButton = button;
       this.modalType = 'button'; // 버튼 클릭 모달을 열기 위해 modalType 설정
       this.showModal = true;
+      this.loadMap();
     },
     
     async handleButtonClick() {
@@ -275,5 +339,12 @@ export default {
 .button2:hover {
   background-color: cadetblue;
   opacity: 80%;
+}
+
+.modal-body {
+  margin: 20px 0;
+  font-size: 16px;
+  color: #555;
+  text-align: left; /* 왼쪽 정렬 */
 }
 </style>

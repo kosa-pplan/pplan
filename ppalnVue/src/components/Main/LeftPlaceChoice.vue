@@ -12,7 +12,15 @@ export default {
     ...mapState(['selectedColor']), // Vuex에서 선택된 색상 가져오기
     isAuthenticated() {
       return this.$store.getters.isAuthenticated; // Vuex에서 인증 상태 가져오기
-    }
+    },
+    localButtons: {
+      get() {
+        return this.$store.getters.items;
+      },
+      set(value) {
+        this.$store.dispatch('updateItems', value);
+      }
+    },
   },
   methods: {
     ...mapActions(['updateColor']), // Vuex 액션을 매핑하여 사용
@@ -33,10 +41,12 @@ export default {
       const randomIndex = Math.floor(Math.random() * this.colors.length);
       const color = this.colors[randomIndex];
       this.updateColor(color);
+
+       this.$store.dispatch('resetListState');
     },
     selectColor() {
       this.closeModal();
-    }
+    },
   }
 };
 </script>

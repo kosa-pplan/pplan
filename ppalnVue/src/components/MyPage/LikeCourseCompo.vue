@@ -3,21 +3,26 @@
     <table class="styled-table">
       <thead>
         <tr>
-          <th>키</th>
-          <th>값</th>
-          <th>액션</th>
+          <th>제목</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(value, key) in data" :key="key">
-          <td>{{ key }}</td>
+        <tr v-for="([key, value]) in paginatedData" :key="key">
+          <!-- <td>{{ key }}</td> -->
           <td>{{ value.title }}</td>
-          <td>
-            <button @click="handleButtonClick(value)">자세히 보기</button>
+          <td style="width: 20%; text-align: center;">
+            <button @click="handleButtonClick(value)" class="button2">자세히 보기</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <div class="pagination">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+    </div>
 
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
@@ -26,12 +31,8 @@
         <CourseDetailModalCompo :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''"/>
       </div>
     </div>
-
-
   </div>
-
 </template>
-
 <script>
 import axios from 'axios';
 import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
@@ -50,6 +51,16 @@ export default {
     },
     isAuthenticated() {
       return this.$store.getters.isAuthenticated; // Vuex에서 인증 상태 가져오기
+    },
+    // 현재 페이지에 해당하는 데이터 범위 계산
+    paginatedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return Object.entries(this.data).slice(start, end);
+    },
+    // 페이지 네이션 총 페이지 수 계산
+    totalPages() {
+      return Math.ceil(Object.keys(this.data).length / this.itemsPerPage);
     }
   },
   data() {
@@ -60,7 +71,9 @@ export default {
       selectedData: {},
       locationdata: [], // locationdata 추가
       check: false,
-      courseId: ''
+      courseId: '',
+      currentPage: 1, // 현재 페이지
+      itemsPerPage: 10 // 페이지당 아이템 수
     };
   },
   mounted() {
@@ -70,7 +83,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get('http://localhost:8080/api/course/all', {
-          params: { email: "test@gmail.com" }
+          params: { email: this.userEmail }
         });
         const course = response.data;
 
@@ -121,21 +134,27 @@ export default {
           this.isModalOpen = true; // 모달 열기
         }
       }
+    },
+    // 페이지 변경 메서드
+    changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
     }
   }
 };
 </script>
-
 <style scoped>
 .table-container {
   display: flex;
-  justify-content: center; /* 가로 가운데 정렬 */
-  align-items: center; /* 세로 가운데 정렬 (필요한 경우) */
+  flex-direction: column;
+  align-items: center; /* 가로 가운데 정렬 */
   height: 100%; /* 전체 화면 높이 */
 }
 
 .styled-table {
-  width: 80%; /* 테이블 너비를 80%로 설정 */
+  margin-top: 20px;
+  width: 80%; /* 테이블 너비를 100%로 설정 */
   border-collapse: collapse;
 }
 
@@ -147,6 +166,7 @@ export default {
 
 .styled-table th {
   background-color: #f2f2f2; /* 헤더 배경색 */
+  text-align: center; /* 텍스트 가운데 정렬 */
 }
 
 /* 모달 스타일 */
@@ -182,5 +202,48 @@ export default {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.button2 {
+  width: 60%;
+  border: none;
+  border-radius: 5px;
+  background-color: cadetblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button2:hover {
+  background-color: cadetblue;
+  opacity: 80%;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  border: 1px solid #ddd;
+  background-color: #f2f2f2;
+  color: #333;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination span {
+  margin: 0 10px;
 }
 </style>

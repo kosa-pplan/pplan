@@ -1,24 +1,8 @@
 
 /* eslint-disable */
-// 주소를 위경도로 변환
-// async function convertAddressToCoordinates(address, REST_API_KEY) {
-//   const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
-//   console.log("api테스트")
-//   console.log(REST_API_KEY)
-//   try {
-//     const response = await axios.get(API_URL, {
-//       params: { query: address },
-//       headers: { Authorization: `KakaoAK ${REST_API_KEY}` },
-//     });
 
-//     const { x, y } = response.data.documents[0]?.address || {};
-//     return { lat: parseFloat(y), lon: parseFloat(x) };
-//   } catch (error) {
-//     console.error('Error fetching coordinates:', error);
-//     throw error;
-//   }
-// }
-async function convertAddressToCoordinates(address, REST_API_KEY) {
+// 주소를 위경도로 변환
+export async function convertAddressToCoordinates(address, REST_API_KEY) {
   const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
   console.log("api테스트");
   console.log(REST_API_KEY);
@@ -71,39 +55,6 @@ export async function convertAllAddressesToCoordinates(buttons) {
     return "주소변환 실패";
   }
 }
-
-// 경로 찾기
-// export async function fetchDirections(buttons) {
-//   const API_URL = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
-//   const REST_API_KEY = process.env.VUE_APP_API_key;
-//   console.log(buttons)
-//   try {
-//     const response = await axios.post(API_URL, {
-//       origin: { x: buttons[0].lon, y: buttons[0].lat },
-//       destination: { x: buttons[buttons.length - 1].lon, y: buttons[buttons.length - 1].lat },
-//       waypoints: buttons.slice(1, -1).map(button => ({
-//         name: button.name,
-//         x: button.lon,
-//         y: button.lat,
-//       })),
-//       priority: 'RECOMMEND',
-//       car_fuel: 'GASOLINE',
-//       car_hipass: false,
-//       alternatives: false,
-//       road_details: false,
-//     }, {
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `KakaoAK ${REST_API_KEY}`,
-//       },
-//     });
-
-//     return JSON.stringify(response.data, null, 2);
-//   } catch (error) {
-//     console.error('Error fetching directions:', error);
-//     return "경로 찾기 실패";
-//   }
-// }
 
 export async function fetchDirections(buttons) {
   const API_URL = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';

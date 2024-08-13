@@ -166,6 +166,7 @@
         JOIN t_review ON t_share.t_review_id = t_review.id
         WHERE t_share.T_USER_EMAIL = #{email}
         )
+        and t.T_USER_EMAIL != #{email}
     </select>
 
 </mapper>

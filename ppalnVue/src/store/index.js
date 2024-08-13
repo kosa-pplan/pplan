@@ -47,6 +47,10 @@ const store = new Vuex.Store({
       UPDATE_ITEMS(state, newItems) {
           state.items = newItems;
       },
+      RESET_LISTSTATE(state) {
+        state.items = [];
+        state.nextIdx = 0;
+      },
       setColor(state, color) {
           state.selectedColor = color;
       },
@@ -84,6 +88,9 @@ const store = new Vuex.Store({
       },
       updateCategory({ commit }, category) {
           commit('setCategory', category);
+      },
+      resetListState({ commit }) {
+        commit('RESET_LISTSTATE');
       },
       initializeAuth({ commit }) {
           const token = getToken();
