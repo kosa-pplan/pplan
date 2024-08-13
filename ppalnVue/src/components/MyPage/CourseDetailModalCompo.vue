@@ -98,10 +98,10 @@
         drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointsIcon);
       },
       writeReview() {
-        this.$router.push(`/review/detail/${this.courseId}`); // courseId 값을 경로에 포함
+        this.$router.push(`/review/write/${this.courseId}`); // courseId 값을 경로에 포함
       },
       viewReview(){
-        this.$router.push(`/review/write/${this.courseId}`);
+        this.$router.push(`/review/detail/${this.courseId}`);
       }
     }
   }
