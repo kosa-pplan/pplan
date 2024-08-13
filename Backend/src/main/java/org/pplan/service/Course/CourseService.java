@@ -18,14 +18,13 @@ public class CourseService {
         courseMapper.insertCourse(course);
     }
 
-//    public CourseDTO getCourseById(int id) {
-//        System.out.println(id);
-//        System.out.println("불러오기 테스트"+courseMapper.findById(id));
-//        return courseMapper.findById(id);
-//    }
+    //course id로 가져오기
+    public List<CourseDTO> getCourseById(int id) {
+        return courseMapper.getById(id);
+    }
 
     // 특정 ID로 여러 CourseDTO 항목을 반환하는 메소드
-    public List<CourseDTO> getCoursesById(String email) {
+    public List<CourseDTO> getCoursesByEmail(String email) {
         return courseMapper.findById(email);
     }
 

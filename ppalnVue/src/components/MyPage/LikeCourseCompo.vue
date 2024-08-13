@@ -23,11 +23,11 @@
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>경로</h2>
-        <CourseDetailModalCompo :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''"/>
+        <CourseDetailModalCompo :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''"/>
       </div>
     </div>
 
-   
+
   </div>
 
 </template>
@@ -48,6 +48,9 @@ export default {
     userEmail() {
       return this.$store.getters.getUserEmail; // Vuex 스토어에서 userEmail을 가져옴
     },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated; // Vuex에서 인증 상태 가져오기
+    }
   },
   data() {
     return {
@@ -55,7 +58,9 @@ export default {
       data: {},
       isModalOpen: false,
       selectedData: {},
-      locationdata: [] // locationdata 추가
+      locationdata: [], // locationdata 추가
+      check: false,
+      courseId: ''
     };
   },
   mounted() {
@@ -65,7 +70,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get('http://localhost:8080/api/course/all', {
-          params: { email: this.userEmail }
+          params: { email: "test@gmail.com" }
         });
         const course = response.data;
 
@@ -85,15 +90,15 @@ export default {
       this.locationdata = [];
     },
     async handleButtonClick(value) {
-      console.log(value)
-      for(let i=0;i<5;i++){
-        console.log('데이터 데스트')
-        console.log(value)
+      this.courseId = value.courseId
+      if(value.reviewCheck==='YES'){
+        this.check = true
+      }else{
+        this.check = false;
       }
-
       for(let i =0;i<5;i++){
         let propertyName = `placeDTO${i + 1}`;
-    
+
         // Access the property using bracket notation
         if (value[propertyName].business!=='없음') {
           console.log(value[propertyName])
@@ -101,23 +106,20 @@ export default {
           this.locationdata[i] = value[propertyName]
         }
       }
-      
-
-      
       const updatedButtons = await convertAllAddressesToCoordinates(this.locationdata);
-      console.log(updatedButtons)
+      
       if(updatedButtons==="주소변환 실패"){
         alert("주소가 잘못되었습니다")
       }else{
         this.locationdata = updatedButtons;
         this.directions = await fetchDirections(this.locationdata);
-        console.log("마이코스 direction")
-        console.log(this.directions)
+        
+        
         if(this.directions==="경로 찾기 실패"){
           alert("경로 찾기 실패")
         }else{
           this.isModalOpen = true; // 모달 열기
-        } 
+        }
       }
     }
   }

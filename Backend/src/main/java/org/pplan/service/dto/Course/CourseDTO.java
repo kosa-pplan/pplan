@@ -4,30 +4,30 @@ import lombok.Data;
 
 @Data
 public class CourseDTO {
+    private int courseId;
     private String reviewCheck;
+    private String title;
     private PlaceDTO placeDTO1;
     private PlaceDTO placeDTO2;
     private PlaceDTO placeDTO3;
     private PlaceDTO placeDTO4;
     private PlaceDTO placeDTO5;
     private String userEmail;
-    private int courseId;
-    private String title;
+
 
     // Constructors
     public CourseDTO() {}
 
     public CourseDTO(String reviewCheck, PlaceDTO placeDTO1, PlaceDTO placeDTO2, PlaceDTO placeDTO3, PlaceDTO placeDTO4, PlaceDTO placeDTO5, String userEmail, int courseId, String title) {
+        this.courseId = courseId;
         this.reviewCheck = reviewCheck;
+        this.title = title;
         this.placeDTO1 = placeDTO1;
         this.placeDTO2 = placeDTO2;
         this.placeDTO3 = placeDTO3;
         this.placeDTO4 = placeDTO4;
         this.placeDTO5 = placeDTO5;
         this.userEmail = userEmail;
-        this.courseId = courseId;
-        this.title = title;
-
     }
     @Override
     public String toString() {
@@ -40,7 +40,7 @@ public class CourseDTO {
                 ", placeDTO5=" + placeDTO5 + '\'' +
                 ", userEmail='" + userEmail + '\'' +
                 ", courseId=" + courseId + '\'' +
-                ", title=" +
+                ", title=" + title +
                 '}';
     }
 }

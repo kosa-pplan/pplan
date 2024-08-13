@@ -12,10 +12,10 @@
         <!-- 지도는 이 div에 렌더링 됩니다. -->
       </div>
       <div>
-        <button v-if="this.check" @click="viewReview">리뷰 보기</button>
+        <button v-if="this.check" @click="viewReview" class="button2">리뷰 보기</button>
       </div>
       <div>
-        <button v-if="!this.check" @click="writeReview">리뷰 작성</button>
+        <button v-if="!this.check" @click="writeReview" class="button2">리뷰 작성</button>
       </div>
     </div>
   </template>
@@ -64,8 +64,6 @@
       }
     },
     mounted() {
-      console.log(this.check)
-      console.log(this.courseId)
       try {
         this.jsonData = JSON.parse(this.message);
       } catch (e) {
@@ -108,6 +106,22 @@
   </script>
   
   <style scoped>
-  /* 필요한 경우 스타일을 추가하세요 */
+.button2 {
+  width: 20%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: cadetblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button2:hover {
+  background-color: cadetblue;
+  opacity: 80%;
+}
   </style>
   

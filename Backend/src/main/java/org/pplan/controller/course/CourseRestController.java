@@ -17,20 +17,21 @@ public class CourseRestController {
     private CourseService courseService;
 
 
-//    @GetMapping("/api/course")
-//    @CrossOrigin
-//    public CourseDTO getCourse(@RequestParam int id) {
-//        System.out.println(courseService.getCourseById(id));
-//        return courseService.getCourseById(id); // 서비스에서 CourseDTO를 반환
-//    }
+    @GetMapping("/api/course/id")
+    @CrossOrigin
+    public List<CourseDTO> getCourse(@RequestParam int id) {
+        System.out.println(id);
+        System.out.println(courseService.getCourseById(id));
+        return courseService.getCourseById(id); // 서비스에서 CourseDTO를 반환
+    }
 
     @GetMapping("/api/course/userid")
     @CrossOrigin
     public List<CourseDTO> getCoursesById(String email) {
         // 데이터베이스에서 ID로 내가 저장한 ourse 정보를 가져오는 로직
         System.out.println(email);
-        System.out.println(courseService.getCoursesById(email));
-        return courseService.getCoursesById(email);
+        System.out.println(courseService.getCoursesByEmail(email));
+        return courseService.getCoursesByEmail(email);
     }
 
     @GetMapping("/api/course/all")
@@ -40,6 +41,7 @@ public class CourseRestController {
         System.out.println(courseService.getAllCourses(email));
         return courseService.getAllCourses(email);
     }
+
 
 
     @PostMapping("/api/course/save")
@@ -115,7 +117,6 @@ public class CourseRestController {
         System.out.println("이메일: " + courseDTO.getUserEmail());
         courseDTO.setTitle(data.get(0).get("title"));
 
-        System.out.println("변환테스트: " + courseDTO);
 
         courseService.saveCourse(courseDTO);
 //        System.out.println(courseService.getCourseById(2L));

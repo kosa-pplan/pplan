@@ -14,7 +14,7 @@
       </draggable>
     </div>
     <div class="bottom" style="height: 10%;">
-      <button @click="handleButtonClick">경로 보기</button>
+      <button class="button2" @click="handleButtonClick">경로 보기</button>
     </div>
 
     <!-- 경로 보기 모달 컴포넌트 -->
@@ -111,6 +111,7 @@ export default {
       this.modalType = 'button'; // 버튼 클릭 모달을 열기 위해 modalType 설정
       this.showModal = true;
     },
+    
     async handleButtonClick() {
       this.email = this.userEmail
       if(this.userEmail===null){
@@ -256,5 +257,23 @@ export default {
   border: 15px solid rgba(57, 167, 142, 0.3); /* 테두리 색상 및 투명도 설정 */
   box-sizing: border-box;
   display: inline-block;
+}
+
+.button2 {
+  width: 60%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: cadetblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button2:hover {
+  background-color: cadetblue;
+  opacity: 80%;
 }
 </style>

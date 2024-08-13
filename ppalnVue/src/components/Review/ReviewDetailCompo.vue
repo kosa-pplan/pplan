@@ -3,7 +3,20 @@
 -->
 <template>
   <div class="page-container" v-if="isReviewExists">
+    
     <div class="content-wrapper">
+      <div>
+        <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
+        출발지
+        <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
+        도착지
+        <img src="@/assets/blackmarker.png" alt="blackmarker" style="width: 28px; height: 40px;">
+        경유지
+      </div>
+      <div id="map" style="width: 100%; height: 400px;">
+        <!-- 지도는 이 div에 렌더링 됩니다. -->
+      </div>
+      
       <h1 align="center">{{ title }}</h1>
       <p align="right">기록 일시 {{ regDate }}</p>
       <hr/>
@@ -44,6 +57,7 @@
 <script>
 import axios from 'axios';
 import DOMPurify from 'dompurify'; // HTML 콘텐츠를 안전하게 정화하기 위한 라이브러리
+import {drawRoute, convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
 
 export default {
   data() {
@@ -58,18 +72,106 @@ export default {
       isLiked: false, // 리뷰의 좋아요 상태
       enlargedImageUrl: '', // 확대된 이미지의 URL
       isReviewExists: true, // 리뷰 존재 여부를 확인하는 변수
+
+      startIcon: require('@/assets/redmarker.png'), // 출발지 아이콘 이미지 경로
+      endIcon: require('@/assets/bluemarker.png'), // 경유지 아이콘 이미지 경로
+      waypointsIcon: require('@/assets/blackmarker.png'), // 목적지 아이콘 이미지 경로
+      map: null,
+      jsonData: null,
+      locationdata:[],
+      directions:''
+
     };
   },
+  mounted() {
+    //지도 그릴 준비
+    
+    // try {
+    //   this.jsonData = JSON.parse(this.directions);
+    // } catch (e) {
+    //   console.error('Invalid JSON data:', e);
+    //   this.jsonData = {}; // 파싱 실패 시 빈 객체 할당
+    // }
+    // console.log('Parsed JSON Data:', this.jsonData); // 확인을 위해 콘솔 출력
+
+    
+  },
   async created() {
+    
     this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화
     this.id = this.$route.params.id; // URL 파라미터에서 리뷰 ID를 가져옴
     await this.checkReviewExistence(this.id); // 리뷰 존재 여부를 확인
     if (this.isReviewExists) {
       await this.fetchData(); // 리뷰가 존재하면 데이터를 로드
       await this.checkedLikeStatus(); // 좋아요 상태를 확인
+      await this.getDirections()
+      try {
+        this.jsonData = JSON.parse(this.directions);
+      } catch (e) {
+          console.error('Invalid JSON data:', e);
+          this.jsonData = {}; // 파싱 실패 시 빈 객체 할당
+        }
+    console.log('Parsed JSON Data:', this.jsonData); // 확인을 위해 콘솔 출력
+      if (window.kakao && window.kakao.maps) {
+        this.initMap();
+      } else {
+        const script = document.createElement('script');
+        /* global kakao */
+        script.onload = () => kakao.maps.load(() => this.initMap());
+        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_API_key2}&libraries=services`;
+        document.head.appendChild(script);
+      } 
     }
+    
   },
   methods: {
+    initMap() {
+        const container = document.getElementById('map');
+        const options = {
+          center: new kakao.maps.LatLng(37.65191, 126.88418), // 경로의 중간 지점
+          level: 5,
+        };
+        this.map = new kakao.maps.Map(container, options);
+        
+        drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointsIcon);
+      },
+    async getDirections(){
+      try {
+        console.log(parseInt(this.courseId, 10))
+        const response = await axios.get('http://localhost:8080/api/course/id', {
+          params: { id: parseInt(this.courseId, 10)}
+        });
+        const course = response.data;
+        
+        console.log(course[0]);
+        
+        //주소 변환
+        for(let i =0;i<5;i++){
+        let propertyName = `placeDTO${i + 1}`;
+
+        // Access the property using bracket notation
+        if (course[0][propertyName].business!=='없음') {
+          
+          // Your logic here
+          this.locationdata[i] = course[0][propertyName]
+        }
+      }
+      const updatedButtons = await convertAllAddressesToCoordinates(this.locationdata);
+      
+      if(updatedButtons==="주소변환 실패"){
+        alert("주소가 잘못되었습니다")
+      }else{
+        this.locationdata = updatedButtons;
+        console.log("리뷰 데이터",this.locationdata)
+        this.directions = await fetchDirections(this.locationdata);
+        console.log(this.directions)
+        // this.jsonData = JSON.parse(directions);
+      }
+      } catch (error) {
+        console.error('Error fetching course data:', error);
+      }
+
+    },
     async fetchData() {
       // 서버에서 리뷰 데이터를 가져오는 메소드
       const url = `http://localhost:8080/review/${this.id}`;

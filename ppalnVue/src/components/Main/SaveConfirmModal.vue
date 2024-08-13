@@ -10,9 +10,10 @@
         type="text" 
         placeholder="제목을 입력하세요" 
       />
-      
-      <button @click="confirm">확인</button>
-      <button @click="$emit('close')">취소</button>
+      <div>
+        <button @click="confirm" class="button2">확인</button>
+        <button @click="$emit('close')" class="button2">취소</button>
+      </div>
     </div>
   </div>
 </template>
@@ -61,5 +62,23 @@ export default {
 
 button {
   margin: 0 5px;
+}
+
+.button2 {
+  width: 40%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: cadetblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button2:hover {
+  background-color: cadetblue;
+  opacity: 80%;
 }
 </style>

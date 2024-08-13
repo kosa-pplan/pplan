@@ -12,6 +12,7 @@ public interface CourseMapper {
     void insertCourse(CourseDTO courseDTO);
 
     //CourseDTO findById(@Param("id") int id);
+    List<CourseDTO> getById(int id);
 
     List<CourseDTO> findById(String email);
 

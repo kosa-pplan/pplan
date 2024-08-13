@@ -12,7 +12,7 @@
       <!-- 지도는 이 div에 렌더링 됩니다. -->
     </div>
     <div>
-      <button @click="saveMap">저장</button>
+      <button @click="saveMap" class="button2">저장</button>
     </div>
     <!-- 확인 모달 컴포넌트 -->
     <SaveConfirmModal v-if="showConfirmModal" @confirm="handleSave" @close="showConfirmModal = false" />
@@ -64,12 +64,17 @@ export default {
       this.jsonData = {}; // 파싱 실패 시 빈 객체 할당
     }
     console.log('Parsed JSON Data:', this.jsonData); // 확인을 위해 콘솔 출력
-
+    const script = document.createElement('script');
+      /* global kakao */
+      script.onload = () => kakao.maps.load(() => this.initMap());
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_API_key2}&libraries=services`;
+      document.head.appendChild(script);
     if (window.kakao && window.kakao.maps) {
       this.initMap();
     } else {
+      console.log('스크립트 로드 테스트')
       const script = document.createElement('script');
-      /* global kakao */
+      
       script.onload = () => kakao.maps.load(() => this.initMap());
       script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.VUE_APP_API_key2}&libraries=services`;
       document.head.appendChild(script);
@@ -210,5 +215,21 @@ export default {
 </script>
 
 <style scoped>
-/* 필요한 경우 스타일을 추가하세요 */
+.button2 {
+  width: 20%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: cadetblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button2:hover {
+  background-color: cadetblue;
+  opacity: 80%;
+}
 </style>

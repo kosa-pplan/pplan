@@ -70,7 +70,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get('http://localhost:8080/api/course/userid', {
-          params: { email: "test@gmail.com" }
+          params: { email: "test2@gmail.com" }
         });
         const course = response.data;
 
