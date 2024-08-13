@@ -1,33 +1,21 @@
 <script>
 export default {
   name: "appHeader",
-  data() {
-    return {
-      isLoggedIn: !!localStorage.getItem('token')  // 초기 로그인 상태 설정
-    };
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isAuthenticated; // Vuex 스토어에서 로그인 상태를 가져옴
+    }
   },
   methods: {
     logout() {
-      // 로그아웃 시 localStorage에서 토큰 제거
       console.log("click");
-      localStorage.removeItem('token');
-      this.isLoggedIn = false;  // 반응형 로그인 상태 업데이트
+      this.$store.dispatch('logout'); // Vuex 스토어의 로그아웃 액션 호출
       window.location.href = '/'; // '/' 경로로 이동하면서 새로고침
-    },
-    handleLoginSuccess() {
-      this.isLoggedIn = true;  // 반응형 로그인 상태 업데이트
     },
     goToHome() {
+      this.$store.dispatch('resetState'); // 로그인 상태를 제외한 모든 상태를 초기화
       window.location.href = '/'; // '/' 경로로 이동하면서 새로고침
     }
-  },
-  created() {
-    // 필요 시 전역 로그인 이벤트를 수신
-    this.$root.$on('login-success', this.handleLoginSuccess);
-  },
-  destroyed() {
-    // 컴포넌트가 destroy될 때 이벤트 리스너 정리
-    this.$root.$off('login-success', this.handleLoginSuccess);
   }
 }
 </script>
