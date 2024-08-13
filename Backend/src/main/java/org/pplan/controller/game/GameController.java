@@ -20,7 +20,6 @@ public class GameController {
         return gameService.getGamesByCategoryAndColor(category, color);
     }
 
-
     @GetMapping("/{id}")
     public GameDTO getGameById(@PathVariable Long id) {
         return gameService.getGameById(id);
@@ -29,11 +28,6 @@ public class GameController {
     @GetMapping("/category/{category}")
     public List<GameDTO> getGameByCategory(@PathVariable String category) {
         return gameService.getGameByCategory(category);
-    }
-
-    @GetMapping
-    public List<GameDTO> getAllGames() {
-        return gameService.getAllGames();
     }
 
     @PostMapping

@@ -13,8 +13,6 @@ public interface GameMapper {
 
     List<GameDTO> getGameByCategory(String category);
 
-    List<GameDTO> getAll();
-
     void insertLocation(GameDTO gameDTO);
 
     void updateLocation(GameDTO gameDTO);
