@@ -107,12 +107,12 @@ public class CourseRestController {
             courseDTO.setPlaceDTO5(placeDTO);
         }
 
-        courseDTO.setReviewCheck("N"); // or some logic to set reviewCheck
+        courseDTO.setReviewCheck("NO"); // or some logic to set reviewCheck
 
 
         // Set static user information
-        courseDTO.setUserEmail("test@gmail.com");
-        courseDTO.setUserId(789L); // Example user ID
+        courseDTO.setUserEmail(data.get(0).get("email"));
+        System.out.println("이메일: " + courseDTO.getUserEmail());
         courseDTO.setTitle(data.get(0).get("title"));
 
         System.out.println("변환테스트: " + courseDTO);

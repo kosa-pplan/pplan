@@ -22,7 +22,9 @@ public class FileController {
      * 이미지 파일을 다운로드하는 API
      * @param filename 파일명
      * @return 이미지 파일의 Resource
+     * @Author Kyeongmin
      */
+
     @GetMapping("/imgs/{filename:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {

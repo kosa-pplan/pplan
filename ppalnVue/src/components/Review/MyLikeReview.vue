@@ -1,3 +1,6 @@
+<!--
+@Author KyeongMin
+-->
 <template>
   <div class="board-list">
     <h1>게시판</h1>

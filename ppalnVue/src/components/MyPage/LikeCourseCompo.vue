@@ -41,6 +41,14 @@ export default {
   components: {
     CourseDetailModalCompo
   },
+  created() {
+    this.$store.dispatch('initializeAuth'); // Vuex 스토어에서 인증 상태를 초기화합니다.
+  },
+  computed: {
+    userEmail() {
+      return this.$store.getters.getUserEmail; // Vuex 스토어에서 userEmail을 가져옴
+    },
+  },
   data() {
     return {
       directions: '',
@@ -57,7 +65,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get('http://localhost:8080/api/course/all', {
-          params: { email: "test@gmail.com" }
+          params: { email: this.userEmail }
         });
         const course = response.data;
 

@@ -8,6 +8,7 @@
         <result property="title" column="title"/>
         <result property="contents" column="contents"/>
         <result property="regDate" column="regDate"/>
+        <result property="courseId" column="courseId" />
 
         <!-- 리뷰에 속한 이미지 리스트를 설정합니다. -->
         <collection property="reviewImageDTOList" ofType="org.pplan.service.dto.review.ReviewImageDTO">
@@ -79,12 +80,15 @@
                 GROUP BY
                     s.t_review_id
             ) like_counts ON r.id = like_counts.t_review_id
+        ORDER BY
+            r.id DESC
     </select>
 
     <select id="getReview" parameterType="long" resultMap="reviewResultMap">
         SELECT r.id,
                r.title,
                r.contents,
+               r.T_COURSE_ID as courseId,
                r.reg_date   AS regDate,
                i.id         AS imageId,
                i.url_path   AS urlPath,
@@ -119,4 +123,22 @@
     WHERE s.t_user_email = #{userEmail}
     </select>
 
+    <!--코스작성자 확인 및 코스 리뷰 작성여부확인-->
+    <select id="getAuthorCheckYNInfoByCourseId" parameterType="long" resultType="org.pplan.service.dto.review.ReviewWriterCheckDTO">
+        SELECT
+            T_USER_EMAIL AS userEmail,
+            review_check AS reviewCheck
+        FROM
+            T_COURSE
+        WHERE
+            id = #{id}
+    </select>
+
+
+    <!--코스를 만든 사람 이메일 조회   -->
+    <select id="checkCountReviewId" resultType="int">
+        SELECT count(*)
+        FROM T_REVIEW
+        where id = #{id}
+    </select>
 </mapper>
