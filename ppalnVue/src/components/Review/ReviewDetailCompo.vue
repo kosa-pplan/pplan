@@ -11,7 +11,8 @@
       <p align="right">여행자 - {{ nickName }}</p>
       <p align="right">기록 일시 {{ regDate }}</p>
       <hr/>
-      <div style="margin-left: 40px">
+      <div>
+        <div class="centered-content" >
         <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
         출발지
         <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
@@ -22,6 +23,8 @@
       <div id="map" style="width: 80%; height: 300px; margin: auto">
         <!-- 지도는 이 div에 렌더링 됩니다. -->
       </div>
+      </div>
+      
       <hr/>
       <div v-if="reviewImageDTOList.length">
         <div class="image-gallery">
@@ -350,5 +353,12 @@ export default {
   100% {
     transform: scale(1);
   }
+}
+.centered-content {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  align-items: center; /* Centers items vertically, if needed */
+  gap: 10px; /* Optional: Adds spacing between items */
+  margin-left: 40px; /* Your existing margin */
 }
 </style>

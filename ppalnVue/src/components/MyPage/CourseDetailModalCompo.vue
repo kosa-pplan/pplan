@@ -13,11 +13,11 @@
     </div>
     <div>
       <button v-if="this.check" @click="viewReview" class="button2">리뷰 보기</button>
-      <button v-if="this.check" @click="deleteReview" class="button2">리뷰 삭제</button>
+      <button v-if="this.check&&!this.like" @click="deleteReview" class="button2">리뷰 삭제</button>
 
     </div>
     <div>
-      <button v-if="!this.check" @click="writeReview" class="button2">리뷰 작성</button>
+      <button v-if="!this.check" @click="writeReview" class="button2" style="margin-right: 10px">리뷰 작성</button>
       <button v-if="!this.check" @click="deleteCourse" class="button2">코스 삭제</button>
     </div>
   </div>
@@ -51,6 +51,10 @@ export default {
     },
     courseId: {
       type: Number,
+      required: true
+    },
+    like: {
+      type: Boolean,
       required: true
     },
     locationdata: {},

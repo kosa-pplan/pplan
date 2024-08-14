@@ -3,8 +3,8 @@
       <div class="modal-content">
         <h2>삭제 확인</h2>
         <p>정말로 이 버튼을 삭제하시겠습니까?</p>
-        <button @click="confirmDelete">확인</button>
-        <button @click="$emit('close')">취소</button>
+        <button class="button2" @click="confirmDelete">확인</button>
+        <button class="button2" @click="$emit('close')">취소</button>
       </div>
     </div>
   </template>
@@ -45,5 +45,22 @@
   .modal-content button {
     margin: 10px;
   }
+  .button2 {
+  width: 60%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: cadetblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button2:hover {
+  background-color: cadetblue;
+  opacity: 80%;
+}
   </style>
   

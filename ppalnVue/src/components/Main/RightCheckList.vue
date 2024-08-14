@@ -13,6 +13,14 @@
         </transition-group>
       </draggable>
     </div>
+    
+   
+
+      
+
+
+
+
     <div class="bottom" style="height: 10%;">
       <button class="button2" @click="handleButtonClick">경로 보기</button>
     </div>
@@ -34,7 +42,7 @@
     </ModalCompo>
 
     <!-- 삭제 확인 모달 컴포넌트 -->
-    <ConfirmDeleteModal v-if="showConfirmDeleteModal" @confirm="deleteButton" @close="showConfirmDeleteModal = false" />
+    <ConfirmDeleteModal class="test" v-if="showConfirmDeleteModal" @confirm="deleteButton" @close="showConfirmDeleteModal = false" />
   </div>
 </template>
 
@@ -43,6 +51,7 @@ import draggable from 'vuedraggable';
 import ModalCompo from './ModalCompo.vue';
 import MapModalCompo from './MapModalCompo.vue';
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; // 추가된 모달 컴포넌트
+
 
 
 import {convertAllAddressesToCoordinates, fetchDirections} from '@/services/mapService'
@@ -263,13 +272,24 @@ export default {
 .button-container {
   display: flex;
   flex-direction: column; /* 세로로 정렬 */
-  width: 150px;
+  width: 180px;
 }
-
+.place-button {
+  background-color: #2C3E50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  text-decoration: none;
+}
 .button {
   padding: 10px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
+  border-radius: 5px;
+  color: black;
   cursor: move;
   text-align: center;
   transition: margin 0.3s ease; /* 간격 조정 애니메이션 */
@@ -329,7 +349,7 @@ export default {
   margin-bottom: 10px;
   border: none;
   border-radius: 5px;
-  background-color: cadetblue;
+  background-color: #2C3E50;;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -360,4 +380,8 @@ animation: fadeIn 0.3s ease;
     opacity: 1;
   }
 }
+
+
+
+
 </style>

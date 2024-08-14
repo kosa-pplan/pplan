@@ -56,6 +56,7 @@ export default {
     <button @click="openModal" class="region-select">지역 선택</button>
     <div v-if="isModalOpen" class="modal">
       <div class="modal-content">
+        <button class="close-button" @click="$emit('close')">X</button>
         <h2>지역 선택</h2>
         <button @click="chooseRandomColor" class="btn">랜덤 색상 선택</button>
         <div :style="{backgroundColor:selectedColor}" class="selected-color"></div>
@@ -149,5 +150,15 @@ h2 {
   text-decoration: none;
   margin: 10px 0;
   transition: background-color 0.3s ease;
+}
+.close-button {
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: #ff0000;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 50%;
 }
 </style>

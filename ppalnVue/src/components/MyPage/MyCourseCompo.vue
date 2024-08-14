@@ -73,7 +73,8 @@ export default {
       check: false,
       courseId: '',
       currentPage: 1, // 현재 페이지
-      itemsPerPage: 10 // 페이지당 아이템 수
+      itemsPerPage: 10, // 페이지당 아이템 수
+      like: false
     };
   },
   mounted() {
@@ -145,6 +146,7 @@ export default {
 };
 </script>
 <style scoped>
+
 .table-container {
   display: flex;
   flex-direction: column;
