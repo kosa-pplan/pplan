@@ -20,7 +20,6 @@ body, html {
     align-items: center;
     justify-content: center;
     background-color: rgba(229, 241, 255, 0.5); /* 50% 투명도 */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
 }
 
 /* middle 클래스를 가진 요소를 flexbox 컨테이너로 설정하고, flex-grow를 사용하여 남은 공간을 차지하게 합니다 */

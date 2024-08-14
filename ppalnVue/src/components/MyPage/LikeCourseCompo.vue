@@ -146,6 +146,9 @@ export default {
 };
 </script>
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
+
 .table-container {
   display: flex;
   flex-direction: column;
@@ -171,6 +174,10 @@ export default {
 }
 
 /* 모달 스타일 */
+th{
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
+}
 .modal {
   display: flex;
   justify-content: center;
@@ -189,6 +196,8 @@ export default {
   padding: 20px;
   border-radius: 5px;
   width: 50%; /* 모달 너비 */
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .close {
@@ -198,7 +207,6 @@ export default {
   font-weight: bold;
 }
 
-.close:hover,
 .close:focus {
   color: black;
   text-decoration: none;
@@ -214,6 +222,8 @@ export default {
   font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .button2:hover {
