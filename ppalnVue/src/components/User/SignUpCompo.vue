@@ -382,13 +382,13 @@ button:hover {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: cadetblue;
   color: white;
   font-size: 16px;
   cursor: pointer;
 }
 
 .modal button:hover {
-  background-color: #0056b3;
+  background-color: cadetblue;
 }
 </style>

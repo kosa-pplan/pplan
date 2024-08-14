@@ -3,10 +3,14 @@
     <div>
       <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
       출발지
+      <img src="@/assets/orangemarker.png" alt="orangemarker" style="width: 28px; height: 40px;">
+      경유지1
+      <img src="@/assets/yellowmarker.png" alt="yellowmarker" style="width: 28px; height: 40px;">
+      경유지2
+      <img src="@/assets/greenmarker.png" alt="greenmarker" style="width: 28px; height: 40px;">
+      경유지3
       <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
       도착지
-      <img src="@/assets/blackmarker.png" alt="blackmarker" style="width: 28px; height: 40px;">
-      경유지
     </div>
     <div id="map" style="width: 100%; height: 400px;">
       <!-- 지도는 이 div에 렌더링 됩니다. -->
@@ -35,8 +39,10 @@ export default {
       jsonData: null,
       showConfirmModal: false, // 저장 확인 모달 표시 여부
       startIcon: require('@/assets/redmarker.png'), // 출발지 아이콘 이미지 경로
-      endIcon: require('@/assets/bluemarker.png'), // 경유지 아이콘 이미지 경로
-      waypointsIcon: require('@/assets/blackmarker.png'),// 목적지 아이콘 이미지 경로
+      endIcon: require('@/assets/bluemarker.png'), // 도착지 아이콘 이미지 경로
+      waypointIcon1: require('@/assets/orangemarker.png'), // 경유지1 아이콘 이미지 경로
+      waypointIcon2: require('@/assets/yellowmarker.png'), // 경유지2 아이콘 이미지 경로
+      waypointIcon3: require('@/assets/greenmarker.png'), // 경유지2 아이콘 이미지 경로
       reviewData: {},
     };
   },
@@ -108,10 +114,12 @@ export default {
       if (this.reviewData) {
         try {
           await axios.delete(`http://localhost:8080/review/delete/${this.reviewData}`);
+          this.$emit('modal-close')
           // 성공적으로 삭제된 경우 처리할 로직 (예: 알림 메시지, 목록 갱신 등)
           alert('리뷰가 성공적으로 삭제되었습니다.');
           // 삭제 후 페이지를 리다이렉트하거나 목록을 갱신할 수 있습니다.
-          this.$router.push('/review'); // 예를 들어 리뷰 목록 페이지로 이동
+          // this.$router.push('/mypage/mycourse'); // 예를 들어 리뷰 목록 페이지로 이동
+          
         } catch (error) {
           console.error('Error deleting review:', error);
           alert('리뷰 삭제 중 오류가 발생했습니다.');
@@ -122,10 +130,12 @@ export default {
       if (this.courseId) {
         try {
           await axios.delete(`http://localhost:8080/api/delete/${this.courseId}`);
+          this.$emit('modal-close')
           // 성공적으로 삭제된 경우 처리할 로직 (예: 알림 메시지, 목록 갱신 등)
           alert('코스가 성공적으로 삭제되었습니다.');
           // 삭제 후 페이지를 리다이렉트하거나 목록을 갱신할 수 있습니다.
-          this.$router.push('/review'); // 예를 들어 리뷰 목록 페이지로 이동
+          // this.$router.push('/mypage/mycourse'); // 예를 들어 리뷰 목록 페이지로 이동
+          
         } catch (error) {
           console.error('Error deleting review:', error);
           alert('리뷰 삭제 중 오류가 발생했습니다.');

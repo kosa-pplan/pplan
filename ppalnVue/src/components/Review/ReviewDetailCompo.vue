@@ -13,12 +13,16 @@
       <hr/>
       <div>
         <div class="centered-content" >
-        <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
-        출발지
-        <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
-        도착지
-        <img src="@/assets/blackmarker.png" alt="blackmarker" style="width: 28px; height: 40px;">
-        경유지
+          <img src="@/assets/redmarker.png" alt="redmarker" style="width: 28px; height: 40px;">
+      출발지
+      <img src="@/assets/orangemarker.png" alt="orangemarker" style="width: 28px; height: 40px;">
+      경유지1
+      <img src="@/assets/yellowmarker.png" alt="yellowmarker" style="width: 28px; height: 40px;">
+      경유지2
+      <img src="@/assets/greenmarker.png" alt="greenmarker" style="width: 28px; height: 40px;">
+      경유지3
+      <img src="@/assets/bluemarker.png" alt="bluemarker" style="width: 28px; height: 40px;">
+      도착지
       </div>
       <div id="map" style="width: 80%; height: 300px; margin: auto">
         <!-- 지도는 이 div에 렌더링 됩니다. -->
@@ -78,8 +82,10 @@ export default {
       isReviewExists: true, // 리뷰 존재 여부를 확인하는 변수
 
       startIcon: require('@/assets/redmarker.png'), // 출발지 아이콘 이미지 경로
-      endIcon: require('@/assets/bluemarker.png'), // 경유지 아이콘 이미지 경로
-      waypointsIcon: require('@/assets/blackmarker.png'), // 목적지 아이콘 이미지 경로
+      endIcon: require('@/assets/bluemarker.png'), // 도착지 아이콘 이미지 경로
+      waypointIcon1: require('@/assets/orangemarker.png'), // 경유지1 아이콘 이미지 경로
+      waypointIcon2: require('@/assets/yellowmarker.png'), // 경유지2 아이콘 이미지 경로
+      waypointIcon3: require('@/assets/greenmarker.png'), // 경유지2 아이콘 이미지 경로
       map: null,
       jsonData: null,
       locationdata:[],
@@ -129,7 +135,7 @@ export default {
         };
         this.map = new kakao.maps.Map(container, options);
 
-        drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointsIcon);
+        drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointIcon1,this.waypointIcon2,this.waypointIcon3);
       },
     async getDirections(){
       try {

@@ -27,7 +27,7 @@
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>경로</h2>
-        <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''"/>
+        <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''" @modal-close="handleClose"/>
       </div>
     </div>
   
@@ -74,13 +74,21 @@ export default {
       courseId: '',
       currentPage: 1, // 현재 페이지
       itemsPerPage: 8, // 페이지당 아이템 수
-      like: true
+      like: false
     };
   },
   mounted() {
     this.fetchData();
   },
   methods: {
+    handleClose() {
+      this.isModalOpen=false
+      this.showModal = false
+      this.modalType=''
+      this.fetchData();
+      // 'close' 이벤트를 수신하고, 모달 창이나 팝업을 닫는 등의 작업을 수행합니다.
+      console.log('Close event received');
+    },
     async fetchData() {
       try {
         const response = await axios.get('http://localhost:8080/api/course/all', {

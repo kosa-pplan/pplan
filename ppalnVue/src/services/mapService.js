@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 // 주소를 위경도로 변환
-export async function convertAddressToCoordinates(address, REST_API_KEY) {
+async function convertAddressToCoordinates(address, REST_API_KEY) {
   const API_URL = 'https://dapi.kakao.com/v2/local/search/address.json';
   console.log("api테스트");
   console.log(REST_API_KEY);
@@ -134,7 +134,7 @@ function extractWaypointsFromJson(jsonData) {
   return waypoints;
 }
 
-export async function drawRoute(map, jsonData, localButtons, startIcon, endIcon, waypointsIcon) {
+export async function drawRoute(map, jsonData, localButtons, startIcon, endIcon, waypointIcon1,waypointIcon2,waypointIcon3) {
   const linePath = extractLatLngFromJson(jsonData);
   const waypoints = extractWaypointsFromJson(jsonData);
 
@@ -162,13 +162,35 @@ export async function drawRoute(map, jsonData, localButtons, startIcon, endIcon,
     });
 
     waypoints.forEach((point, index) => {
-      new kakao.maps.Marker({
-        map: map,
-        position: point,
-        title: localButtons[index + 1].name,
-        image: new kakao.maps.MarkerImage(waypointsIcon, new kakao.maps.Size(28, 40)),
-        clickable: true
-      });
+      console.log(index)
+      if(index==0){
+        new kakao.maps.Marker({
+          map: map,
+          position: point,
+          title: localButtons[index + 1].name,
+          image: new kakao.maps.MarkerImage(waypointIcon1, new kakao.maps.Size(28, 40)),
+          clickable: true
+        });
+
+      }else if(index==1){
+        new kakao.maps.Marker({
+          map: map,
+          position: point,
+          title: localButtons[index + 1].name,
+          image: new kakao.maps.MarkerImage(waypointIcon2, new kakao.maps.Size(28, 40)),
+          clickable: true
+        });
+      }else if(index==2){
+        new kakao.maps.Marker({
+          map: map,
+          position: point,
+          title: localButtons[index + 1].name,
+          image: new kakao.maps.MarkerImage(waypointIcon3, new kakao.maps.Size(28, 40)),
+          clickable: true
+        });
+        
+      }
+      
     });
 
     const bounds = new kakao.maps.LatLngBounds();
@@ -178,3 +200,4 @@ export async function drawRoute(map, jsonData, localButtons, startIcon, endIcon,
     console.error('경로가 정의되지 않았습니다.');
   }
 }
+

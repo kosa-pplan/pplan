@@ -85,6 +85,7 @@
         t_course t
         WHERE
         t.t_user_email = #{email}
+        order by t.id desc
     </select>
 
     <select id="getById" parameterType="int" resultMap="CourseResultMap">
@@ -123,6 +124,7 @@
         t_course t
         WHERE
         t.id = #{id}
+        order by t.id desc
     </select>
 
 
