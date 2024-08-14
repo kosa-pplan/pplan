@@ -10,7 +10,7 @@ export default {
 
 <template>
 <div class="middle">
- 404에러
+    <img src="@/assets/404page.jpg">
 </div>
 </template>
 

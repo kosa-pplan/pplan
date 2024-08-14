@@ -1,6 +1,6 @@
 <template>
   <div class="deleteSection">
-    <button type="button" @click="deleteAccount">회원 탈퇴</button>
+    <button class="deleteButton" type="button" @click="deleteAccount">회원 탈퇴</button>
   </div>
 </template>
 
@@ -39,5 +39,18 @@ export default {
 <style scoped>
 .deleteSection {
   align-content: center;
+}
+
+.deleteButton {
+  border: 0;
+  border-radius: 10px;
+  background-color: #2C3E50;
+  color: white;
+  padding: 15px 25px;
+  font-size: 16px;
+}
+
+.deleteButton:hover {
+  cursor: pointer;
 }
 </style>
