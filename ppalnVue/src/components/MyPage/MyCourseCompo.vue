@@ -5,12 +5,12 @@
     <tbody>
       <tr>
         <th>제목</th>
-        <th>버튼</th>
+        <th>상세보기</th>
       </tr>
         <tr v-for="([key, value]) in paginatedData" :key="key">
           <!-- <td>{{ key }}</td> -->
           <td data-th="제목">{{ value.title }}</td>
-          <td data-th="버튼" style="width: 20%; text-align: center;">
+          <td data-th="상세보기" style="width: 20%; text-align: center;">
             <button @click="handleButtonClick(value)" class="button2">자세히 보기</button>
           </td>
         </tr>
