@@ -231,7 +231,6 @@ export default {
   align-items: center;
   background-color: #FEFCE7;
   border: 1px solid black;
-  cursor: pointer;
   z-index: 2;
   font-family: 'Nanum Barun Gothic', sans-serif;
   font-weight: 900;
