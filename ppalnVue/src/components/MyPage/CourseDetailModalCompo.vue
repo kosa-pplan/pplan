@@ -152,7 +152,7 @@ export default {
       console.log("드로우 전 확인 this.jsonData")
       console.log(this.locationdata)
       console.log("왜 안되냐")
-      drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointsIcon);
+      drawRoute(this.map, this.jsonData, this.locationdata, this.startIcon, this.endIcon, this.waypointIcon1,this.waypointIcon2,this.waypointIcon3);
     },
     writeReview() {
       this.$router.push(`/review/write/${this.courseId}`); // courseId 값을 경로에 포함
