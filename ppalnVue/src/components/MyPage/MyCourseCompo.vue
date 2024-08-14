@@ -162,6 +162,7 @@ export default {
   border: 1px solid #dddddd; /* 테두리 색상 */
   text-align: left;
   padding: 8px; /* 여백 */
+
 }
 
 .styled-table th {
@@ -213,6 +214,8 @@ export default {
   font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .button2:hover {

@@ -75,7 +75,7 @@ export default {
 
         console.log(`sum: ${sum}`);
         this.animateSelection(sum);
-
+``
         // 애니메이션 클래스 제거
         diceNums.forEach(dice => dice.classList.remove('rotating'));
       }, 500); // 0.5초 후에 주사위 결과 표시
@@ -196,17 +196,21 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 80vh;
 }
 
 .map-container {
   margin-top: 10px;
-  position: fixed;
+  position: relative;
   display: grid;
   width: 800px;
   height: 550px;
   grid-template-columns: repeat(6, 1fr); /* 6개의 컬럼 */
   grid-template-rows: repeat(6, 1fr); /* 6개의 행 */
   gap: 0;
+  z-index: 0;
 }
 
 .map-image {
@@ -219,15 +223,19 @@ export default {
   z-index: 1;
   margin-top: 5px;
 }
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
 
 .clickable-box {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(229, 241, 255, 1.0);
-  border: 1px solid #A1C9F1;
+  background-color: #FEFCE7;
+  border: 1px solid black;
   cursor: pointer;
   z-index: 2;
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
+  text-align: center;
 }
 
 /* 상단 박스 */
@@ -393,7 +401,8 @@ export default {
 }
 
 .selected {
-  background-color: #39A78E; /* 선택된 박스의 배경색 */
+  background-color: #A1C9F1; /* 50% 투명도 */
+  /* 선택된 박스의 배경색 */
 }
 
 /* CSS 애니메이션 추가 */

@@ -54,21 +54,24 @@ export default {
 <template>
   <aside>
     <button @click="openModal" class="region-select">지역 선택</button>
-    <div v-if="isModalOpen" class="modal">
+    <div v-show="isModalOpen" class="modal">
       <div class="modal-content">
+        <span class="close-button" @click="closeModal">&times;</span>
         <h2>지역 선택</h2>
         <button @click="chooseRandomColor" class="btn">랜덤 색상 선택</button>
         <div :style="{backgroundColor:selectedColor}" class="selected-color"></div>
         <button @click="selectColor" class="btn">선택</button>
       </div>
     </div>
-    <div>
-      선택된 색상 : {{ selectedColor}}
+    <div class="choice">
+      선택된 색상 <br>: {{ selectedColor}}
     </div>
   </aside>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
+
 .region-select{
   background-color: #2C3E50; /* 버튼 배경색 */
   color: white; /* 텍스트 색상 */
@@ -76,7 +79,9 @@ export default {
   border: none; /* 테두리 제거 */
   border-radius: 5px;
   cursor: pointer; /* 커서 변경 */
-  font-size: 12px; /* 폰트 크기 */
+  font-size: 15px; /* 폰트 크기 */
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .modal {
@@ -110,6 +115,7 @@ export default {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
   max-width: 300px; /* 최대 너비 설정 */
   width: 100%;
+  position: relative;
   animation: scaleIn 0.3s ease; /* 모달 콘텐츠 팝업 애니메이션 */
 }
 
@@ -126,7 +132,8 @@ h2 {
   font-size: 24px;
   color: #2C3E50;
   margin-bottom: 20px;
-  font-family: 'Arial', sans-serif; /* 폰트 변경 */
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .selected-color {
@@ -138,10 +145,19 @@ h2 {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* 내부 그림자 추가 */
 }
 
-.btn{
-  background-color: cadetblue;
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
   border: none;
-  color: white;
+}
+
+.btn{
+  background-color: rgba(229, 241, 255, 0.9);
+  border: none;
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 5px;
@@ -149,5 +165,15 @@ h2 {
   text-decoration: none;
   margin: 10px 0;
   transition: background-color 0.3s ease;
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
+}
+
+.choice{
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
+  text-align: center;
+  border-bottom: 1px solid #1a252f;
+  margin-top: 10px;
 }
 </style>

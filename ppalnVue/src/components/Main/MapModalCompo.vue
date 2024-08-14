@@ -234,6 +234,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
+
 .button2 {
   width: 20%;
   padding: 10px;
@@ -245,6 +247,8 @@ export default {
   font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
+  font-weight: bold;
+  font-family: 'Nanum Barun Gothic', sans-serif;
 }
 
 .button2:hover {

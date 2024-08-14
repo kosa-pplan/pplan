@@ -63,6 +63,7 @@ export default {
   top: 20px;
   right: 20px;
 }
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
 
 .board-button, .login-button, .signup-button, .mypage-button, .logout-button {
   background-color: #2C3E50;
@@ -73,6 +74,8 @@ export default {
   border-radius: 5px;
   font-size: 14px;
   text-decoration: none;
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .board-button:hover, .login-button:hover, .signup-button:hover, .mypage-button:hover, .logout-button:hover {

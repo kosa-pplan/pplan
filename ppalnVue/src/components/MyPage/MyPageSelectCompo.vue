@@ -19,6 +19,8 @@ export default {
 </script>
   
   <style scoped>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
+
   .button-container {
     display: flex;
     flex-direction: column;
@@ -38,5 +40,7 @@ export default {
     width : 150px;
     height: 40px;
     max-width: 100%;
+    font-family: 'Nanum Barun Gothic', sans-serif;
+    font-weight: 900;
   }
   </style>

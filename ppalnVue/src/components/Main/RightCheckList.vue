@@ -255,9 +255,18 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
+
+h3{
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
+}
+
 .btndiv {
   display: flex;
   justify-content: center; /* 가로 가운데 정렬 */
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .button-container {
@@ -329,16 +338,13 @@ export default {
   margin-bottom: 10px;
   border: none;
   border-radius: 5px;
-  background-color: cadetblue;
+  background-color: #2C3E50;
   color: white;
   font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
-}
-
-.button2:hover {
-  background-color: cadetblue;
-  opacity: 80%;
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
 }
 
 .modal-body {
@@ -360,4 +366,15 @@ animation: fadeIn 0.3s ease;
     opacity: 1;
   }
 }
+
+.test h2{
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: 900;
+}
+
+.test.modal-body{
+  font-family: 'Nanum Barun Gothic', sans-serif;
+  font-weight: bold;
+}
+
 </style>
