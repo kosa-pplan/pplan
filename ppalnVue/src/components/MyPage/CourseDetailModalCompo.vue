@@ -12,7 +12,7 @@
       <!-- 지도는 이 div에 렌더링 됩니다. -->
     </div>
     <div>
-      <button v-if="this.check" @click="viewReview" class="button2">리뷰 보기</button>
+      <button v-if="this.check" @click="viewReview" class="button2" style="margin-right: 10px">리뷰 보기</button>
       <button v-if="this.check&&!this.like" @click="deleteReview" class="button2">리뷰 삭제</button>
 
     </div>

@@ -20,7 +20,7 @@
     <!-- 저장 완료 알림 모달 -->
     <div v-if="showNotification" class="notification-modal test">
       <div class="notification-content">
-        <span class="close" @click="showNotification = false">&times;</span>
+        <!-- <span class="close" @click="showNotification = false">&times;</span> -->
         <h3>저장 완료</h3>
         <p>데이터가 성공적으로 저장되었습니다!</p>
       </div>

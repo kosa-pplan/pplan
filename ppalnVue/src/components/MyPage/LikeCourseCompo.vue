@@ -1,23 +1,22 @@
 <template>
-  <div class="table-container">
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>제목</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
+  <div>
+    <div class="container">
+  <table class="rwd-table">
+    <tbody>
+      <tr>
+        <th>제목</th>
+        <th>버튼</th>
+      </tr>
         <tr v-for="([key, value]) in paginatedData" :key="key">
           <!-- <td>{{ key }}</td> -->
-          <td>{{ value.title }}</td>
-          <td style="width: 20%; text-align: center;">
+          <td data-th="제목">{{ value.title }}</td>
+          <td data-th="버튼" style="width: 20%; text-align: center;">
             <button @click="handleButtonClick(value)" class="button2">자세히 보기</button>
           </td>
         </tr>
       </tbody>
-    </table>
-
+  </table>
+</div>
     <div class="pagination">
       <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
       <span>{{ currentPage }} / {{ totalPages }}</span>
@@ -31,7 +30,8 @@
         <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''"/>
       </div>
     </div>
-  </div>
+  
+</div>
 </template>
 <script>
 import axios from 'axios';
@@ -73,8 +73,8 @@ export default {
       check: false,
       courseId: '',
       currentPage: 1, // 현재 페이지
-      itemsPerPage: 10, // 페이지당 아이템 수
-      like : true
+      itemsPerPage: 8, // 페이지당 아이템 수
+      like: true
     };
   },
   mounted() {
@@ -147,8 +147,6 @@ export default {
 </script>
 <style scoped>
 
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Barun+Gothic:wght@400;700&display=swap');
-
 .table-container {
   display: flex;
   flex-direction: column;
@@ -166,6 +164,7 @@ export default {
   border: 1px solid #dddddd; /* 테두리 색상 */
   text-align: left;
   padding: 8px; /* 여백 */
+
 }
 
 .styled-table th {
@@ -174,10 +173,6 @@ export default {
 }
 
 /* 모달 스타일 */
-th{
-  font-family: 'Nanum Barun Gothic', sans-serif;
-  font-weight: 900;
-}
 .modal {
   display: flex;
   justify-content: center;
@@ -196,8 +191,6 @@ th{
   padding: 20px;
   border-radius: 5px;
   width: 50%; /* 모달 너비 */
-  font-family: 'Nanum Barun Gothic', sans-serif;
-  font-weight: 900;
 }
 
 .close {
@@ -207,6 +200,7 @@ th{
   font-weight: bold;
 }
 
+.close:hover,
 .close:focus {
   color: black;
   text-decoration: none;
@@ -268,5 +262,163 @@ animation: fadeIn 0.3s ease;
   to {
     opacity: 1;
   }
+}
+
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:600,700';
+
+* {font-family: 'Open Sans', sans-serif;}
+
+.rwd-table {
+  
+  margin: auto;
+  margin-top: 20px;
+  min-width: 80%;
+  border-collapse: collapse;
+}
+
+.rwd-table tr:first-child {
+  border-top: none;
+  background: #428bca;
+  color: #fff;
+}
+
+.rwd-table tr {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background-color: #f5f9fc;
+}
+
+.rwd-table tr:nth-child(odd):not(:first-child) {
+  background-color: #ebf3f9;
+}
+
+.rwd-table th {
+  display: none;
+}
+
+.rwd-table td {
+  display: block;
+}
+
+.rwd-table td:first-child {
+  margin-top: .5em;
+}
+
+.rwd-table td:last-child {
+  margin-bottom: .5em;
+}
+
+.rwd-table td:before {
+  content: attr(data-th) ": ";
+  font-weight: bold;
+  width: 120px;
+  display: inline-block;
+  color: #000;
+}
+
+.rwd-table th,
+.rwd-table td {
+  text-align: left;
+}
+
+.rwd-table {
+  color: #333;
+  border-radius: .4em;
+  overflow: hidden;
+}
+
+.rwd-table tr {
+  border-color: #bfbfbf;
+}
+
+.rwd-table th,
+.rwd-table td {
+  padding: .5em 1em;
+}
+@media screen and (max-width: 601px) {
+  .rwd-table tr:nth-child(2) {
+    border-top: none;
+  }
+}
+@media screen and (min-width: 600px) {
+  .rwd-table tr:hover:not(:first-child) {
+    background-color: #d8e7f3;
+  }
+  .rwd-table td:before {
+    display: none;
+  }
+  .rwd-table th,
+  .rwd-table td {
+    display: table-cell;
+    padding: .25em .5em;
+  }
+  .rwd-table th:first-child,
+  .rwd-table td:first-child {
+    padding-left: 0;
+  }
+  .rwd-table th:last-child,
+  .rwd-table td:last-child {
+    padding-right: 0;
+  }
+  .rwd-table th{
+    text-align: center;
+    padding: 1em !important;
+  }
+  .rwd-table td {
+    
+    padding: 1em !important;
+  }
+}
+
+
+/* THE END OF THE IMPORTANT STUFF */
+
+/* Basic Styling */
+body {
+background: #4B79A1;
+background: -webkit-linear-gradient(to left, #4B79A1 , #283E51);
+background: linear-gradient(to left, #4B79A1 , #283E51);        
+}
+h1 {
+  text-align: center;
+  font-size: 2.4em;
+  color: #f2f2f2;
+}
+.container {
+  display: block;
+  text-align: center;
+}
+h3 {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  font-size: 1.5em;
+  color: #cecece;
+}
+h3:before {
+  content: "\25C0";
+  position: absolute;
+  left: -50px;
+  -webkit-animation: leftRight 2s linear infinite;
+  animation: leftRight 2s linear infinite;
+}
+h3:after {
+  content: "\25b6";
+  position: absolute;
+  right: -50px;
+  -webkit-animation: leftRight 2s linear infinite reverse;
+  animation: leftRight 2s linear infinite reverse;
+}
+@-webkit-keyframes leftRight {
+  0%    { -webkit-transform: translateX(0)}
+  25%   { -webkit-transform: translateX(-10px)}
+  75%   { -webkit-transform: translateX(10px)}
+  100%  { -webkit-transform: translateX(0)}
+}
+@keyframes leftRight {
+  0%    { transform: translateX(0)}
+  25%   { transform: translateX(-10px)}
+  75%   { transform: translateX(10px)}
+  100%  { transform: translateX(0)}
 }
 </style>
