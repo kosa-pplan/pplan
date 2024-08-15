@@ -73,8 +73,8 @@ body, html {
 
 .right{
     width: 20%; /* 너비를 20%로 설정 */
-    height: 80%;
-    text-align: center;
+    height: 95%;
+    text-align: left;
 }
 
 .page-container {

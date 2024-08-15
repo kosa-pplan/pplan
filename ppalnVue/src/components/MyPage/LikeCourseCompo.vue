@@ -27,7 +27,7 @@
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>경로</h2>
-        <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''" @modal-close="handleClose"/>
+        <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''" @modal-close="handleClose" style="text-align: center"/>
       </div>
     </div>
   
@@ -74,7 +74,7 @@ export default {
       courseId: '',
       currentPage: 1, // 현재 페이지
       itemsPerPage: 8, // 페이지당 아이템 수
-      like: false
+      like: true
     };
   },
   mounted() {

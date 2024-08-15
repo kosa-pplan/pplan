@@ -1,5 +1,5 @@
 <template>
-  <div class="deleteSection">
+  <div class="deleteSection" style="text-align: center;">
     <button class="deleteButton" type="button" @click="deleteAccount">회원 탈퇴</button>
   </div>
 </template>

@@ -27,7 +27,7 @@
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>경로</h2>
-        <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''" @modal-close="handleClose"/>
+        <CourseDetailModalCompo :like="this.like" :courseId="this.courseId" :check="this.check" :message="directions" :locationdata="locationdata" @close="showModal = false, modalType=''" @modal-close="handleClose" style="text-align: center"/>
       </div>
     </div>
   
