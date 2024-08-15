@@ -176,14 +176,5 @@ h2 {
   border-bottom: 1px solid #1a252f;
   margin-top: 10px;
 }
-.close-button {
-  top: 10px;
-  right: 10px;
-  border: none;
-  background: #ff0000;
-  color: #fff;
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 50%;
-}
+
 </style>

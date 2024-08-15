@@ -13,20 +13,13 @@
         </transition-group>
       </draggable>
     </div>
-    
-   
-
-      
-
-
-
 
     <div class="bottom" style="height: 10%;">
       <button class="button2" @click="handleButtonClick">경로 보기</button>
     </div>
 
     <!-- 경로 보기 모달 컴포넌트 -->
-    <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''" class="test">
+    <ModalCompo v-if="modalType === 'directions'" @close="showModal = false, modalType=''" class="test" style="text-align: center">
         <h2>경로</h2>
         <MapModalCompo :message="directions" :email="this.email" @close="showModal = false, modalType=''"/>
     </ModalCompo>
@@ -303,6 +296,7 @@ h3{
   border: 15px solid rgba(57, 167, 142, 0.3); /* 테두리 색상 및 투명도 설정 */
   box-sizing: border-box;
   display: inline-block;
+  
 }
 
 .button2 {
