@@ -24,7 +24,7 @@
         <MapModalCompo :message="directions" :email="this.email" @close="showModal = false, modalType=''"/>
     </ModalCompo>
     <ModalCompo v-if="modalType === 'button'" @close="showModal = false, modalType=''" class="test">
-        <h2>장소 정보</h2>
+        <h2 style="text-align: center">장소 정보</h2>
         <div class="modal-body">
           <p>분류: {{ selectedButton.category }}</p>
           <p>장소 이름: {{ selectedButton.name }}</p>

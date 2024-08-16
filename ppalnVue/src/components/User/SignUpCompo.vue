@@ -31,7 +31,7 @@
         <div class="duplicate_section">
           <button class="duplicate_button" type="button" @click="checkEmailDuplicate">중복 확인</button>
           <p v-if="emailError">{{ emailError }}</p>
-          <p v-if="emailCheckMessage && !isEmailChecked">{{ emailCheckMessage }}</p>
+          <p v-if="emailCheckMessage " style="color: green">{{ emailCheckMessage }}</p>
           <p v-if="!emailCheckMessage && !isEmailChecked && form.emailLocal && form.emailDomain" class="warning">이메일 중복 확인이 필요합니다.</p>
         </div>
       </div>
@@ -51,7 +51,7 @@
       <div class="duplicate_section">
         <button class="duplicate_button" type="button" @click="checkNicknameDuplicate">중복 확인</button>
         <p v-if="nicknameError">{{ nicknameError }}</p>
-        <p v-if="nicknameCheckMessage && !isnicknameChecked">{{ nicknameCheckMessage }}</p>
+        <p v-if="nicknameCheckMessage " style="color: green">{{ nicknameCheckMessage }}</p>
         <p v-if="!nicknameCheckMessage && !isnicknameChecked && form.nickname" class="warning">닉네임 중복 확인이 필요합니다.</p>
       </div>
       <button type="submit">가입</button>
@@ -129,9 +129,10 @@ export default {
           params: { email }
         });
         if (response.data) {
+          console.log(response.data)
           this.emailCheckMessage = "이미 사용된 이메일입니다.";
           this.isEmailChecked = false;
-        } else {
+        } else if(!response.data) {
           this.emailCheckMessage = "사용 가능한 이메일입니다.";
           this.isEmailChecked = true;
           this.emailError = ""; // 유효한 이메일에 대한 오류 메시지 지우기
@@ -153,7 +154,6 @@ export default {
         this.nicknameError = "닉네임을 입력해주세요.";
         return;
       }
-
       try {
         const response = await axios.get("http://localhost:8080/check-nickname", {
           params: { nickname: this.form.nickname }
@@ -170,6 +170,7 @@ export default {
         this.nicknameCheckMessage = "오류가 발생했습니다. 다시 시도해주세요.";
         this.isnicknameChecked = false;
       }
+
     },
 
     checkPasswordMatch() {
