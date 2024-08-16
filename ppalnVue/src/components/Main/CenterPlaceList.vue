@@ -55,7 +55,9 @@ export default {
         console.error('해당 장소 가져오는데 실패함:', error);
       }
     },
+    // 주사위를 돌리고 주사위 숫자의 합을 반환하는 함수_이푸름
     rollDice() {
+      // 리스트에 저장한 아이템이 5개일 경우 아이템을 더 추가하지 않는다.
       if(this.$store.state.items.length >= 5) {
         alert('최대 5개까지 선택 가능합니다.');
         return;
@@ -65,14 +67,19 @@ export default {
       diceNums.forEach(dice => dice.classList.add('rotating'));
 
       let sum = 0;
+        // 일정 시간 후에 실행될 코드를 정의하는 setTimeout 함수
       setTimeout(() => {
+        // diceNums 배열의 각 요소(dice)와 해당 요소의 인덱스를 순회하면서 처리
+        // 0~5까지 랜덤 숫자를 생성하고 이전에 생성된 랜덤 숫자를 하나씩 더해서 총합을 만듬
+        // 주사위 눈을 화면에 표시
+        // 현재 주사위의 눈을 인덱스와 함께 this 객체의 속성으로 저장 (1부터 6까지의 값)
         diceNums.forEach((dice, index) => {
           const randomNum = Math.floor(Math.random() * 6);
           sum += randomNum;
           dice.innerHTML = this.getDiceFace(randomNum);
           this[`dice${index + 1}`] = randomNum + 1;
         });
-
+        //총합을 animateSelection에 반환함
         console.log(`sum: ${sum}`);
         this.animateSelection(sum);
 ``
@@ -80,11 +87,11 @@ export default {
         diceNums.forEach(dice => dice.classList.remove('rotating'));
       }, 500); // 0.5초 후에 주사위 결과 표시
     },
-
+    // 주사위 숫자를 주사위 눈으로 변환하여 화면에 표시하는 함수_이푸름
     getDiceFace(num) {
       const dot = '●';
       const faces = [
-        '',
+        '', // 주사위 숫자는 0~5까지 나옴
         dot,
         dot + ' ' + dot,
         dot + ' ' + dot + ' ' + dot,
@@ -177,7 +184,7 @@ export default {
       </div>
       <img src="@/assets/seoul_map.jpg" alt="Seoul Map" class="map-image"/>
 
-      <!-- 주사위 버튼과 주사위 숫자 표시 -->
+      <!-- 주사위 버튼과 주사위 숫자 표시_이푸름 -->
       <div v-if="showDice" class="dice-button-container">
         <div class="dice-container">
           <div class="dice-num">{{ dice1 }}</div>

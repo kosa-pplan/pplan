@@ -29,7 +29,7 @@ export default {
 </script>
 
 <template>
-  <!-- 카테고리 선택 -->
+  <!-- 카테고리 선택_이푸름 -->
   <div v-if="isAuthenticated">
     <select v-model="val_sel" class="choice">  <!-- val_sel에 데이터 연결 -->
       <option v-for="(item, idx) in category" v-bind:key="idx"> <!-- 배열의 각 항목을 반복하여 드롭다운 메뉴의 항목을 만든다?? -->

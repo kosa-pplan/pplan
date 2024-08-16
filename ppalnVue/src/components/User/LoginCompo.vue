@@ -1,6 +1,9 @@
+<!-- 김동혁 -->
 <template>
   <div class="middle_main">
+    <!-- 로그인 폼 -->
     <form @submit.prevent="login">
+      <!-- 이메일 입력 필드 -->
       <div>
         <label for="email">이메일</label>
         <div class="email-group">
@@ -19,6 +22,7 @@
             required 
             placeholder="도메인"
           />
+          <!-- 이메일 도메인 선택 옵션 -->
           <select v-model="form.emailDomain" @change="updateEmailDomain">
             <option value="">직접입력</option>
             <option value="daum.net">daum.net</option>
@@ -30,14 +34,18 @@
           </select>
         </div>
       </div>
+      <!-- 비밀번호 입력 필드 -->
       <div>
         <label for="password">비밀번호</label>
         <input type="password" v-model="form.pwd" @input="resetLoginError" required />
       </div>
+      <!-- 로그인 버튼 -->
       <button type="submit">로그인</button>
+      <!-- 로그인 에러 메시지 -->
       <p v-if="loginError" class="error">{{ loginError }}</p>
     </form>
 
+    <!-- 로그인 성공 모달 -->
     <div v-if="isModalVisible" class="modal-overlay">
       <div class="modal">
         <p>{{ modalMessage }}</p>
@@ -59,12 +67,13 @@ export default {
         emailDomain: "",
         pwd: "",
       },
-      loginError: "",
-      isModalVisible: false,
-      modalMessage: ""
+      loginError: "", // 로그인 에러 메시지
+      isModalVisible: false, // 모달 표시 여부
+      modalMessage: "" // 모달 메시지
     };
   },
   methods: {
+    // 이메일 도메인 선택 처리
     updateEmailDomain(event) {
       if (event.target.value !== 'custom') {
         this.form.emailDomain = event.target.value;
@@ -72,12 +81,15 @@ export default {
         this.form.emailDomain = '';
       }
     },
+    // 로그인 에러 초기화
     resetLoginError() {
       this.loginError = "";
     },
+    // 로그인 처리
     async login() {
       this.loginError = "";
 
+      // 폼 유효성 검사
       if (!this.form.emailLocal || !this.form.emailDomain) {
         this.loginError = "이메일을 입력해주세요.";
         return;
@@ -114,6 +126,7 @@ export default {
         }
       }
     },
+    // 모달 닫기 처리
     handleModalClose() {
       this.isModalVisible = false;
       this.$router.push("/").then(() => {
@@ -125,10 +138,12 @@ export default {
 </script>
 
 <style scoped>
+/* 메인 컨테이너 스타일 */
 .middle_main {
   flex-direction: column;
 }
 
+/* 폼 스타일 */
 form {
   background-color: #fff;
   padding: 20px;
@@ -137,6 +152,7 @@ form {
   width: 450px;
 }
 
+/* 이메일 입력 그룹 스타일 */
 .email-group {
   display: flex;
   align-items: center;
@@ -152,6 +168,7 @@ form {
   flex: 1;
 }
 
+/* 폼 필드 스타일 */
 email-group span {
   margin-right: 5px;
   font-weight: bold;
@@ -181,6 +198,7 @@ input[type="text"] {
   box-sizing: border-box;
 }
 
+/* 버튼 스타일 */
 button {
   width: 100%;
   padding: 10px;
@@ -198,12 +216,14 @@ button:hover {
   opacity: 80%;
 }
 
+/* 에러 메시지 스타일 */
 .error {
   color: red;
   margin-top: 5px;
   text-align: center;
 }
 
+/* 모달 오버레이 및 모달 스타일 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -227,6 +247,7 @@ button:hover {
   animation: fadeIn 0.3s ease;
 }
 
+/* 모달 애니메이션 스타일 */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -236,6 +257,7 @@ button:hover {
   }
 }
 
+/* 모달 버튼 스타일 */
 .modal button {
   margin-top: 10px;
   padding: 10px 20px;

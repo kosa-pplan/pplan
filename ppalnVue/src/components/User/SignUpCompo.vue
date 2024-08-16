@@ -1,6 +1,8 @@
+<!-- 김동혁 -->
 <template>
   <div class="middle_main">
     <form @submit.prevent="register">
+      <!-- 이메일 입력 필드 -->
       <div>
         <label for="email">이메일</label>
         <div class="email-group">
@@ -18,6 +20,7 @@
             @input="handleEmailInput" 
             required 
           />
+          <!-- 이메일 도메인 선택 옵션 -->
           <select v-model="form.emailDomain" @change="updateEmailDomain">
             <option value="">직접입력</option>
             <option value="daum.net">daum.net</option>
@@ -28,6 +31,7 @@
             <option value="naver.com">naver.com</option>
           </select>
         </div>
+        <!-- 이메일 중복 확인 및 메시지 표시 -->
         <div class="duplicate_section">
           <button class="duplicate_button" type="button" @click="checkEmailDuplicate">중복 확인</button>
           <p v-if="emailError">{{ emailError }}</p>
@@ -35,29 +39,40 @@
           <p v-if="!emailCheckMessage && !isEmailChecked && form.emailLocal && form.emailDomain" class="warning">이메일 중복 확인이 필요합니다.</p>
         </div>
       </div>
+
+      <!-- 비밀번호 입력 필드 -->
       <div>
         <label for="password">비밀번호</label>
         <input type="password" v-model="form.pwd" required />
       </div>
+
+      <!-- 비밀번호 확인 필드 -->
       <div>
         <label for="check_password">비밀번호 확인</label>
         <input type="password" v-model="form.confirmPwd" required />
         <p v-if="passwordMismatchError" class="error">{{ passwordMismatchError }}</p>
       </div>
+
+      <!-- 닉네임 입력 필드 -->
       <div>
         <label for="nickname">닉네임</label>
         <input type="text" v-model="form.nickname" @input="handleNicknameInput" required />
       </div>
+
+      <!-- 닉네임 중복 확인 및 메시지 표시 -->
       <div class="duplicate_section">
         <button class="duplicate_button" type="button" @click="checkNicknameDuplicate">중복 확인</button>
         <p v-if="nicknameError">{{ nicknameError }}</p>
         <p v-if="nicknameCheckMessage " style="color: green">{{ nicknameCheckMessage }}</p>
         <p v-if="!nicknameCheckMessage && !isnicknameChecked && form.nickname" class="warning">닉네임 중복 확인이 필요합니다.</p>
       </div>
+
+      <!-- 회원가입 제출 버튼 -->
       <button type="submit">가입</button>
       <p v-if="formError" class="error">{{ formError }}</p>
     </form>
 
+    <!-- 회원가입 완료 모달 -->
     <div v-if="isModalVisible" class="modal-overlay">
       <div class="modal">
         <p>{{ modalMessage }}</p>
@@ -73,6 +88,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      // 폼 데이터와 상태 변수들 정의
       form: {
         emailLocal: "",
         emailDomain: "",
@@ -80,20 +96,21 @@ export default {
         confirmPwd: "",
         nickname: ""
       },
-      emailError: "",
-      emailCheckMessage: "",
-      isEmailChecked: false,
-      nicknameError: "",
-      nicknameCheckMessage: "",
-      isnicknameChecked: false,
-      passwordMismatchError: "",
-      formError: "",
-      isModalVisible: false,
-      modalMessage: ""
+      emailError: "", // 이메일 에러 메시지
+      emailCheckMessage: "", // 이메일 중복 확인 메시지
+      isEmailChecked: false, // 이메일 중복 확인 여부
+      nicknameError: "", // 닉네임 에러 메시지
+      nicknameCheckMessage: "", // 닉네임 중복 확인 메시지
+      isnicknameChecked: false, // 닉네임 중복 확인 여부
+      passwordMismatchError: "", // 비밀번호 불일치 에러 메시지
+      formError: "", // 폼 제출 에러 메시지
+      isModalVisible: false, // 모달 표시 여부
+      modalMessage: "" // 모달 메시지
     };
   },
 
   watch: {
+    // 비밀번호와 비밀번호 확인 필드의 변화를 감지하여 일치 여부를 확인
     'form.confirmPwd': function() {
       this.checkPasswordMatch();
     },
@@ -103,20 +120,24 @@ export default {
   },
 
   methods: {
+    // 이메일 입력 시 중복 확인 초기화
     handleEmailInput() {
       this.resetEmailCheck();
     },
 
+    // 닉네임 입력 시 중복 확인 초기화
     handleNicknameInput() {
       this.resetNicknameCheck();
     },
 
+    // 이메일 중복 확인 초기화
     resetEmailCheck() {
       this.emailCheckMessage = "";
       this.emailError = "";
       this.isEmailChecked = false;
     },
 
+    // 이메일 중복 확인
     async checkEmailDuplicate() {
       if (!this.form.emailLocal || !this.form.emailDomain) {
         this.emailError = "이메일을 입력해주세요.";
@@ -129,7 +150,6 @@ export default {
           params: { email }
         });
         if (response.data) {
-          console.log(response.data)
           this.emailCheckMessage = "이미 사용된 이메일입니다.";
           this.isEmailChecked = false;
         } else if(!response.data) {
@@ -143,12 +163,14 @@ export default {
       }
     },
 
+    // 닉네임 중복 확인 초기화
     resetNicknameCheck() {
       this.nicknameCheckMessage = "";
       this.nicknameError = "";
       this.isnicknameChecked = false;
     },
 
+    // 닉네임 중복 확인
     async checkNicknameDuplicate() {
       if (!this.form.nickname) {
         this.nicknameError = "닉네임을 입력해주세요.";
@@ -173,6 +195,7 @@ export default {
 
     },
 
+    // 비밀번호와 비밀번호 확인의 일치 여부 확인
     checkPasswordMatch() {
       if (this.form.pwd && this.form.confirmPwd && this.form.pwd !== this.form.confirmPwd) {
         this.passwordMismatchError = "비밀번호가 일치하지 않습니다.";
@@ -181,9 +204,11 @@ export default {
       }
     },
 
+    // 회원가입 처리
     async register() {
       this.formError = "";
 
+      // 폼 유효성 검사
       if (!this.form.emailLocal || !this.form.emailDomain) {
         this.formError = "이메일을 입력해주세요.";
         return;
@@ -214,6 +239,7 @@ export default {
         return;
       }
 
+      // 회원가입 요청
       const email = `${this.form.emailLocal}@${this.form.emailDomain}`;
       try {
         const response = await axios.post("http://localhost:8080/sign-up", {
@@ -230,6 +256,7 @@ export default {
       }
     },
     
+    // 이메일 도메인 선택 처리
     updateEmailDomain(event) {
       this.resetEmailCheck();
       if (event.target.value !== 'custom') {
@@ -239,6 +266,7 @@ export default {
       }
     },
 
+    // 모달 닫기 처리
     handleModalClose() {
       this.isModalVisible = false;
       this.$router.push("/login");
@@ -248,10 +276,12 @@ export default {
 </script>
 
 <style scoped>
+/* 메인 컨테이너 스타일 */
 .middle_main {
   flex-direction: column;
 }
 
+/* 폼 스타일 */
 form {
   background-color: #fff;
   padding: 20px;
@@ -260,6 +290,7 @@ form {
   width: 450px;
 }
 
+/* 이메일 입력 그룹 스타일 */
 .email-group {
   display: flex;
   align-items: center;
@@ -280,6 +311,7 @@ form {
   font-weight: bold;
 }
 
+/* 폼 필드 스타일 */
 form div {
   margin-bottom: 15px;
 }
@@ -304,6 +336,7 @@ input[type="text"] {
   box-sizing: border-box;
 }
 
+/* 버튼 스타일 */
 button {
   width: 100%;
   padding: 10px;
@@ -325,6 +358,7 @@ button:hover {
   width: 25%;
 }
 
+/* 중복 확인 섹션 스타일 */
 .duplicate_section {
   display: flex;
 }
@@ -334,6 +368,7 @@ button:hover {
   align-content: center;
 }
 
+/* 에러 및 경고 메시지 스타일 */
 .error {
   color: red;
   margin-top: 5px;
@@ -346,6 +381,7 @@ button:hover {
   text-align: center;
 }
 
+/* 모달 오버레이 및 모달 스타일 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -369,6 +405,7 @@ button:hover {
   animation: fadeIn 0.3s ease;
 }
 
+/* 모달 애니메이션 스타일 */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -378,6 +415,7 @@ button:hover {
   }
 }
 
+/* 모달 버튼 스타일 */
 .modal button {
   margin-top: 10px;
   padding: 10px 20px;
