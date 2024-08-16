@@ -131,7 +131,7 @@ export default {
         if (response.data) {
           this.emailCheckMessage = "이미 사용된 이메일입니다.";
           this.isEmailChecked = false;
-        } else {
+        } else if(!response.data) {
           this.emailCheckMessage = "사용 가능한 이메일입니다.";
           this.isEmailChecked = true;
           this.emailError = ""; // 유효한 이메일에 대한 오류 메시지 지우기
@@ -149,19 +149,25 @@ export default {
     },
 
     async checkNicknameDuplicate() {
+      console.log("테스트")
       if (!this.form.nickname) {
         this.nicknameError = "닉네임을 입력해주세요.";
         return;
       }
-
+      console.log("1")
       try {
         const response = await axios.get("http://localhost:8080/check-nickname", {
           params: { nickname: this.form.nickname }
         });
         if (response.data) {
+          console.log(response.data)
+          console.log("2")
           this.nicknameCheckMessage = "이미 사용된 닉네임입니다.";
           this.isnicknameChecked = false;
-        } else {
+        } else if(!response.data) {
+          console.log(this.nicknameCheckMessage)
+          console.log(this.isnicknameChecked)
+          console.log(this.nicknameCheckMessage)
           this.nicknameCheckMessage = "사용 가능한 닉네임입니다.";
           this.isnicknameChecked = true;
           this.nicknameError = ""; // 유효한 닉네임에 대한 오류 메시지 지우기
