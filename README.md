@@ -70,15 +70,44 @@
 | 2024.08.14-08.16 | 문서 정리 및 발표         |
 
 ## 개발 환경
-| **Category**         | **Tech Stack**                                                                                     |
-|----------------------|----------------------------------------------------------------------------------------------------|
-| **Backend**          | Spring Boot (DevTools, Lombok, MyBatis, Oracle Driver, Thymeleaf, Spring Web)                       |
-| **Frontend**         | Vue.js(2.7) (axios, cors, vue-router, vuex), HTML, CSS, JavaScript                                       |
-| **Database**         | Oracle 21c                                                                                         |
-| **Version Control**  | GIT, GitHub                                                                                         |
-| **Build Tool**       | Maven                                                                                              |
-| **Collaboration**    | Notion, Figma                                                                                      |
-| **IDE**              | IntelliJ IDEA, Visual Studio Code  |
+## Tech Stack
+
+### Backend
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring-boot&logoColor=white)
+![DevTools](https://img.shields.io/badge/DevTools-6DB33F?style=flat&logo=spring&logoColor=white)
+![Lombok](https://img.shields.io/badge/Lombok-CA0C4D?style=flat&logo=lombok&logoColor=white)
+![MyBatis](https://img.shields.io/badge/MyBatis-BD3F15?style=flat&logo=mybatis&logoColor=white)
+![Oracle](https://img.shields.io/badge/Oracle%20Driver-F80000?style=flat&logo=oracle&logoColor=white)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=flat&logo=thymeleaf&logoColor=white)
+![Spring Web](https://img.shields.io/badge/Spring%20Web-6DB33F?style=flat&logo=spring&logoColor=white)
+
+### Frontend
+![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat&logo=vue.js&logoColor=white)
+![axios](https://img.shields.io/badge/axios-671DDF?style=flat&logo=axios&logoColor=white)
+![cors](https://img.shields.io/badge/cors-2E3A40?style=flat&logo=graphql&logoColor=white)
+![vue-router](https://img.shields.io/badge/vue--router-4FC08D?style=flat&logo=vue.js&logoColor=white)
+![vuex](https://img.shields.io/badge/vuex-4FC08D?style=flat&logo=vue.js&logoColor=white)
+![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-1572B6?style=flat&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+
+### Database
+![Oracle](https://img.shields.io/badge/Oracle%2021c-F80000?style=flat&logo=oracle&logoColor=white)
+
+### Version Control
+![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)
+
+### Build Tool
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat&logo=apache-maven&logoColor=white)
+
+### Collaboration
+![Notion](https://img.shields.io/badge/Notion-000000?style=flat&logo=notion&logoColor=white)
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white)
+
+### IDE
+![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ%20IDEA-000000?style=flat&logo=intellij-idea&logoColor=white)
+![Visual Studio Code](https://img.shields.io/badge/VS%20Code-007ACC?style=flat&logo=visual-studio-code&logoColor=white)
 
 ## 시연영상
 [프로젝트 시연 영상 보기](https://www.youtube.com/watch?v=zX_NX8SYDVg)​
